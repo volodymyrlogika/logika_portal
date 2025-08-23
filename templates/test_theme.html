@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Тест теми{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">Тест перемикання тем 🎨</h1>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Карточка 1</h5>
+          <p class="card-text">Це приклад тексту в карточці.</p>
+          <a href="#" class="btn btn-primary">Кнопка</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Карточка 2</h5>
+          <p class="card-text">Світла / темна тема працює і тут.</p>
+          <a href="#" class="btn btn-success">Кнопка</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mt-5">Тест таблиці</h2>
+  <table class="table table-bordered mt-3">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Назва</th>
+        <th>Опис</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Тема</td>
+        <td>Світла / Темна</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Конамі-код</td>
+        <td>↑↑↓↓←→←→BA</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

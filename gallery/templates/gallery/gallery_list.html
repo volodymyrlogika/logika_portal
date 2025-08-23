@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Галерея</h2>
+<div style="display:flex; flex-wrap:wrap; gap:20px;">
+  {% for item in items %}
+    <div style="border:1px solid #ccc; padding:10px; width:300px;">
+      <h3>{{ item.title }}</h3>
+      {% if item.is_image %}
+        <img src="{{ item.file.url }}" width="280">
+      {% elif item.is_video %}
+        <video width="280" controls>
+          <source src="{{ item.file.url }}">
+        </video>
+      {% endif %}
+      <p>Завантажив: {{ item.uploaded_by.username }}</p>
+    </div>
+  {% endfor %}
+</div>
+<a href="{% url 'gallery_upload' %}">Додати матеріал</a>
+{% endblock %}

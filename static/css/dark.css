@@ -1,0 +1,22 @@
+/* 🌙 Темна тема */
+body {
+  background-color: #121212;
+  color: #f8f9fa;
+}
+
+.navbar, footer {
+  background-color: #212529 !important;
+  color: #f8f9fa;
+}
+
+.card {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+}
+
+a {
+  color: #66b2ff;
+}
+a:hover {
+  color: #3399ff;
+}

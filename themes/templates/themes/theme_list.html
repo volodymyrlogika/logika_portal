@@ -1,0 +1,9 @@
+<h1>Workshop (Themes)</h1>
+<ul>
+  {% for theme in themes %}
+    <li>{{ theme.name }} — <a href="{% url 'theme_delete' theme.id %}">Delete</a></li>
+  {% empty %}
+    <li>No themes yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'theme_create' %}">Create new theme</a>
