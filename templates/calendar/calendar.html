@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Календар подій</h1>
+
+
+
+
+<a class="btn btn-primary" href="{% url 'event-create' %}" role="button">Створити подію</a>
+<form method="get" class="d-flex align-items-center gap-2">
+  {{form.as_p}}
+  <button type="submit" class="btn btn-success">Використати фільтр</button>
+</form>
+
+
+<div class="list-group">
+  {% for event in events %}
+    {% if none in event %}
+
+    <h2>Додайте події</h2>
+    {%endif%}
+
+    <div href="{% url 'event-update' event.pk %}" class="list-group-item d-flex justify-content-between align-items-center bg-success p-2 text-dark bg-opacity-10" 
+    aria-current="true">
+    <a>Назва події: {{ event.title }},          важливість: {{ event.speciality }}</a>
+      <div>
+        <a>Коли подія: {{ event.date }}</a>
+      <a href="{% url 'event-update' event.pk %}" class="btn btn-info">Змінити подію</a>
+      <a href="{% url 'event-delete' event.pk %}" class="btn btn-primary"><i class="bi bi-trash"></i></a>
+      </div> 
+</div>
+  {% endfor %}
+</div>
+<div class="card my-4" style="max-width: 400px;">
+  <div class="card-header text-center">
+    <strong>{{ month_name }} {{ year }}</strong>
+  </div>
+  <div class="card-body p-2">
+    <div class="row text-center fw-bold">
+      <div class="col">Пон</div>
+      <div class="col">Вів</div>
+      <div class="col">Сер</div>
+      <div class="col">Чет</div>
+      <div class="col">П'ят</div>
+      <div class="col">Суб</div>
+      <div class="col">Нд</div>
+    </div>
+    {% for week in month_days %}
+      <div class="row text-center">
+        {% for day in week %}
+          <div class="col {% if day == 0 %}text-muted{% endif %}">
+            {% if day != 0 %}{{ day }}{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+{% endblock %}
