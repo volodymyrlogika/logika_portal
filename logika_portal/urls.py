@@ -20,7 +20,10 @@ from django.conf.urls.static import static
 
 from . import settings
 
+from django.urls import include
+
 urlpatterns = [
+    path('', include(('workshops.urls','workshops'), namespace='workshops')),
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('', include('accounts.urls')),

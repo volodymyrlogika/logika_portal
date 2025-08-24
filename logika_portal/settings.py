@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'main',
     'accounts',
     'gallery',
-
+    'themes',
+    'workshops',
 ]
 
 MIDDLEWARE = [
