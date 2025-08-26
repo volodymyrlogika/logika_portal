@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 <h1>Workshop (Themes)</h1>
 <ul>
   {% for theme in themes %}
@@ -7,3 +10,4 @@
   {% endfor %}
 </ul>
 <a href="{% url 'theme_create' %}">Create new theme</a>
+{% endblock %}

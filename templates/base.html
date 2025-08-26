@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+{% include "menu.html" %}
+{% include "alerts.html" %}
+{% include "footer.html" %}
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -31,8 +34,10 @@
 
     <!-- 🔘 Перемикач тем -->
     <div class="text-end p-2">
-      <button class="btn btn-sm btn-outline-primary" onclick="setTheme('light')"><i class="bi bi-sun"></i></button>
-      <button class="btn btn-sm btn-outline-dark" onclick="setTheme('dark')"><i class="bi bi-moon"></i></button>
+      <button id="themeToggle" class="btn btn-sm btn-outline-primary">
+        <i id="themeIcon" class="bi bi-moon"></i>
+        <span id="themeText">Темна</span>
+      </button>
     </div>
 
     <main class="container my-4">
@@ -44,7 +49,7 @@
 
     <!-- Overlay для конамі-коду -->
     <div id="konami-overlay">
-      🎉 Секретний режим активовано! 🎉 <br>
+      <i class="bi bi-stars"></i> Секретний режим активовано! <i class="bi bi-stars"></i> <br>
       <button class="btn btn-light mt-3" onclick="document.getElementById('konami-overlay').style.display='none'">Закрити</button>
     </div>
 
@@ -55,11 +60,31 @@
       function setTheme(theme) {
         document.getElementById("theme-style").href = `/static/css/${theme}.css`;
         localStorage.setItem("theme", theme);
+
+        // Оновлюємо іконку та текст
+        if (theme === "dark") {
+          document.getElementById("themeIcon").className = "bi bi-sun";
+          document.getElementById("themeText").textContent = "Світла";
+        } else {
+          document.getElementById("themeIcon").className = "bi bi-moon";
+          document.getElementById("themeText").textContent = "Темна";
+        }
       }
+
+      // При завантаженні сторінки
       window.onload = function() {
         let theme = localStorage.getItem("theme") || "light";
         setTheme(theme);
       }
+
+      // Клік по кнопці
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("themeToggle").addEventListener("click", function() {
+          let current = localStorage.getItem("theme") || "light";
+          let next = current === "light" ? "dark" : "light";
+          setTheme(next);
+        });
+      });
 
       // ===== Конамі-код =====
       const konami = [38,38,40,40,37,39,37,39,66,65]; // ↑↑↓↓←→←→BA

@@ -1,7 +1,9 @@
 from django.urls import path
 from . import views
 
+app_name = "main"  # ✅ Додаємо app_name
+
 urlpatterns = [
-    # Визнач тут свої URL-шляхи
-    
+    path('', views.index, name='home'),  # головна сторінка
+    # Додай тут свої маршрути, якщо потрібно
 ]

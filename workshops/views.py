@@ -6,7 +6,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 
-from .models import Theme, Workshop, GalleryItem
+from logika_portal.themes.models import Theme, GalleryItem
+from logika_portal.workshops.models import Workshop
 from .forms import ThemeForm, WorkshopForm, GalleryItemForm
 
 # THEMES

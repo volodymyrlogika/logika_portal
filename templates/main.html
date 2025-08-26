@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1 class="mb-4">Ласкаво просимо у Task Tracker</h1>
+    <p class="lead">Обери розділ:</p>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+        <a href="{% url 'workshop' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-shop"></i> Workshop
+        </a>
+        <a href="{% url 'theme_creator' %}" class="btn btn-success btn-lg">
+            <i class="bi bi-brush"></i> Theme Creator
+        </a>
+    </div>
+</div>
+{% endblock %}

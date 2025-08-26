@@ -1,10 +1,12 @@
+# logika_portal/workshops/models.py
 from django.db import models
+from logika_portal.themes.models import Theme
+from workshops.models import Workshop
 
-class Theme(models.Model):
-    name = models.CharField(max_length=100)
-    background_color = models.CharField(max_length=20, default='#ffffff')
-    text_color = models.CharField(max_length=20, default='#000000')
-    custom_css = models.TextField(blank=True, null=True)
+class Workshop(models.Model):
+    theme = models.ForeignKey(Theme, on_delete=models.CASCADE, related_name="workshops")
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
 
     def __str__(self):
-        return self.name
+        return self.title

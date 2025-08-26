@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django import forms
-from .models import Theme
+from .forms import ThemeForm
+from logika_portal.themes.models import Theme
 
-class ThemeForm(forms.ModelForm):
-    class Meta:
-        model = Theme
-        fields = ['name', 'background_color', 'text_color', 'custom_css']
+
 
 def theme_list(request):
     themes = Theme.objects.all()

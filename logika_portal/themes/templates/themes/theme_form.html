@@ -1,7 +1,41 @@
-<h1>Create Theme</h1>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save</button>
-</form>
-<a href="{% url 'theme_list' %}">Back</a>
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg p-4 bg-dark text-light">
+    <h2 class="mb-4"><i class="bi bi-palette-fill"></i> Create Theme</h2>
+    
+    <form method="post" id="themeForm">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label text-light"><i class="bi bi-type"></i> Name</label>
+        {{ form.name }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-light"><i class="bi bi-brush"></i> Background color</label>
+        {{ form.background_color }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-light"><i class="bi bi-droplet"></i> Text color</label>
+        {{ form.text_color }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-light"><i class="bi bi-code-slash"></i> Custom CSS</label>
+        {{ form.custom_css }}
+      </div>
+
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-save"></i> Save
+      </button>
+      <a href="{% url 'themes:theme_list' %}" class="btn btn-outline-light">
+        <i class="bi bi-arrow-left"></i> Back
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}

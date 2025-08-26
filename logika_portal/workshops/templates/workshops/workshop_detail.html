@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl mb-4">{{ object.title }}</h1>
+<div class="mb-2 text-muted">
+  {% if object.start_at %}Початок: {{ object.start_at }}{% endif %}
+  {% if object.location %} • Локація: {{ object.location }}{% endif %}
+</div>
+<div class="mb-4">{{ object.description|linebreaks }}</div>
+<div class="mt-4">
+  <h3 class="h5 mb-2">Галерея воркшопу</h3>
+  <div class="row g-3">
+    {% for i in object.gallery_items.all %}
+      <div class="col-6 col-md-3">
+        <div class="bg-dark p-2 rounded">
+          {% if i.media_type == 'image' %}
+            <img src="{{ i.file.url }}" alt="{{ i.title }}" class="img-fluid rounded">
+          {% else %}
+            <video src="{{ i.file.url }}" controls class="w-100 rounded"></video>
+          {% endif %}
+          <div class="small mt-1">{{ i.title }}</div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Поки немає матеріалів.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

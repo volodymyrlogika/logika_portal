@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="mb-4"><i class="bi bi-brush"></i> Theme Workshop Hub</h1>
+    <p class="lead">Оберіть, куди ви хочете перейти:</p>
+    <div class="d-grid gap-3 col-6 mx-auto mt-4">
+        <a href="{% url 'theme_workshop' %}" class="btn btn-primary btn-lg">📂 Переглянути Workshop</a>
+        <a href="{% url 'theme_create' %}" class="btn btn-success btn-lg"><i class="bi bi-tools"></i> Створити нову тему</a>
+        <a href="/" class="btn btn-secondary btn-lg">⬅️ Назад у головне меню</a>
+    </div>
+</div>
+{% endblock %}

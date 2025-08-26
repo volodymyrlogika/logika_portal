@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!-- Навігаційна панель -->
+    
+
+    <!-- Контент -->
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold">Вітаємо у Logika Portal</h1>
+            <p class="lead">Ваш центр для воркшопів, галерей та керування темами</p>
+        </div>
+
+        <div class="row justify-content-center g-4">
+            <!-- Воркшопи -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-lg rounded-4 border-0 h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-journal-richtext display-4 text-primary"></i>
+                        <h5 class="card-title fw-bold mt-3">Воркшопи</h5>
+                        <p class="card-text">Переглядайте та приєднуйтесь до воркшопів</p>
+                        <a href="/workshops/" class="btn btn-primary w-100"><i class="bi bi-arrow-right-circle me-1"></i>Перейти</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Галерея -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-lg rounded-4 border-0 h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-image-fill display-4 text-success"></i>
+                        <h5 class="card-title fw-bold mt-3">Галерея</h5>
+                        <p class="card-text">Дивіться фото та відео з наших подій</p>
+                        <a href="/gallery/" class="btn btn-success w-100"><i class="bi bi-arrow-right-circle me-1"></i>Перейти</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Теми -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-lg rounded-4 border-0 h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-palette-fill display-4 text-warning"></i>
+                        <h5 class="card-title fw-bold mt-3">Теми</h5>
+                        <p class="card-text">Налаштуйте вигляд порталу</p>
+                        <a href="/themes/" class="btn btn-warning w-100 text-dark"><i class="bi bi-arrow-right-circle me-1"></i>Перейти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5 py-4 border-top">
+        <p class="mb-0">&copy; 2025 Logika Portal | Усі права захищено</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/theme.js' %}"></script>
+{% endblock %}
