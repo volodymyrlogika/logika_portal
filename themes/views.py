@@ -1,30 +1,35 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ThemeForm
-from logika_portal.themes.models import Theme
-from workshops.models import Workshop
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Theme
 
 
+class ThemeListView(ListView):
+    model = Theme
+    template_name = "themes/theme_list.html"
+    context_object_name = "themes"
 
-def theme_list(request):
-    themes = Theme.objects.all()
-    return render(request, 'themes/theme_list.html', {'themes': themes})
 
-def theme_create(request):
-    if request.method == 'POST':
-        form = ThemeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('theme_list')
-    else:
-        form = ThemeForm()
-    return render(request, 'themes/theme_form.html', {'form': form})
+class ThemeDetailView(DetailView):
+    model = Theme
+    template_name = "themes/theme_detail.html"
+    context_object_name = "theme"
 
-def theme_delete(request, pk):
-    theme = get_object_or_404(Theme, pk=pk)
-    if request.method == 'POST':
-        theme.delete()
-        return redirect('theme_list')
-    return render(request, 'themes/theme_confirm_delete.html', {'theme': theme})
 
-def test_theme(request):
-    return render(request, 'themes/test_theme.html')
+class ThemeCreateView(CreateView):
+    model = Theme
+    template_name = "themes/theme_form.html"
+    fields = ["name", "description"]  # ✅ зміни під свої поля
+    success_url = reverse_lazy("themes:home")
+
+
+class ThemeUpdateView(UpdateView):
+    model = Theme
+    template_name = "themes/theme_form.html"
+    fields = ["name", "description"]
+    success_url = reverse_lazy("themes:home")
+
+
+class ThemeDeleteView(DeleteView):
+    model = Theme
+    template_name = "themes/theme_confirm_delete.html"
+    success_url = reverse_lazy("themes:home")

@@ -5,9 +5,17 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponseForbidden
+from themes.models import Theme
+from workshops.models import Workshop
+from gallery.models import GalleryItem
 
-from logika_portal.themes.models import Theme, GalleryItem
-from logika_portal.workshops.models import Workshop
+from themes.models import Theme
+from gallery.models import GalleryItem
+from workshops.models import Workshop
+
+from .forms import ThemeForm, WorkshopForm, GalleryItemForm
+
+from  workshops.models import Workshop
 from .forms import ThemeForm, WorkshopForm, GalleryItemForm
 
 # THEMES

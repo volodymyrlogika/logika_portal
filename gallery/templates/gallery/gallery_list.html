@@ -27,6 +27,7 @@
       <p>Галерея порожня. Будьте першим, хто додасть фото чи відео!</p>
     {% endfor %}
   </div>
-  <a href="{% url 'gallery_upload' %}" class="btn btn-primary mt-3">Додати матеріал</a>
+  <a href="{% url 'gallery:gallery_upload' %}" class="btn btn-primary mt-3">Додати матеріал</a>
+
 </div>
 {% endblock %}

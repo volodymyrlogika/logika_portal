@@ -1,8 +1,0 @@
-{% extends 'base.html' %}
-{% block content %}
-<h1 class="text-2xl mb-4">Підтвердження</h1>
-<form method="post">{% csrf_token %}
-  <p>Ви впевнені?</p>
-  <button class="btn btn-danger">Так, видалити</button>
-</form>
-{% endblock %}

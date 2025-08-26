@@ -1,5 +1,5 @@
 from django import forms
-from logika_portal.themes.models import Theme, Workshop, GalleryItem
+from themes.models import Theme, Workshop, GalleryItem
 
 class ThemeForm(forms.ModelForm):
     class Meta:

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from logika_portal.themes.models import Theme
+from themes.models import Theme
 from .models import Workshop
 
 @admin.register(Theme)

@@ -1,11 +1,14 @@
 from django.urls import path
 from . import views
 
-app_name = "themes"   # якщо хочеш неймспейс для URL
+app_name = 'themes'
 
 urlpatterns = [
-    path('editor/', views.theme_create, name='theme_create'),
-    path('workshop/', views.theme_list, name='theme_list'),
-    path('delete/<int:pk>/', views.theme_delete, name='theme_delete'),
-    path('test-theme/', views.test_theme, name='test_theme'),
+    # головна сторінка тем
+    path('', views.ThemeListView.as_view(), name='home'),
+
+    # Themes CRUD
+    path('new/', views.ThemeCreateView.as_view(), name='theme_create'),
+    path('<int:pk>/edit/', views.ThemeUpdateView.as_view(), name='theme_edit'),
+    path('<int:pk>/delete/', views.ThemeDeleteView.as_view(), name='theme_delete'),
 ]

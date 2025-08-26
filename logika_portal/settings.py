@@ -32,6 +32,10 @@ INSTALLED_APPS = [
 ]
 
 
+WSGI_APPLICATION = "logika_portal.wsgi.application"
+
+
+
 
 
 
@@ -54,6 +58,8 @@ MIDDLEWARE = [
 # === URL CONFIG ===
 ROOT_URLCONF = 'logika_portal.urls'
 
+
+
 # === TEMPLATES ===
 TEMPLATES = [
     {
@@ -72,7 +78,7 @@ TEMPLATES = [
 ]
 
 # === WSGI ===
-WSGI_APPLICATION = 'logika_portal.wsgi.application'
+WSGI_APPLICATION = "logika_portal.wsgi.application"
 
 # === DATABASE ===
 DATABASES = {

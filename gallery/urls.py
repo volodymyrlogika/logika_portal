@@ -1,7 +1,17 @@
 from django.urls import path
 from . import views
 
+app_name = 'gallery'
+
 urlpatterns = [
-    path('', views.gallery_list, name='gallery_list'),
-    path('upload/', views.gallery_upload, name='gallery_upload'),
+    # головна сторінка галереї
+    path('', views.GalleryListView.as_view(), name='home'),
+
+    # Gallery CRUD
+    path('upload/', views.GalleryCreateView.as_view(), name='gallery_upload'),
+
+    # Модерація
+    path('moderation/', views.GalleryModerationListView.as_view(), name='gallery_moderation'),
+    path('moderation/<int:pk>/approve/', views.approve_gallery_item, name='gallery_approve'),
+    path('moderation/<int:pk>/delete/', views.delete_gallery_item, name='gallery_delete'),
 ]

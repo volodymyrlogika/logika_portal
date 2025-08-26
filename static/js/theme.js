@@ -16,12 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function setTheme(theme) {
         root.setAttribute("data-theme", theme);
         if (theme === "dark") {
-            themeIcon.classList.remove("bi-moon");
-            themeIcon.classList.add("bi-sun");
+            themeIcon.className = "bi bi-sun";
             themeText.textContent = "Світла";
         } else {
-            themeIcon.classList.remove("bi-sun");
-            themeIcon.classList.add("bi-moon");
+            themeIcon.className = "bi bi-moon";
             themeText.textContent = "Темна";
         }
     }
