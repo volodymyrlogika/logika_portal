@@ -17,7 +17,7 @@ class Category(models.Model):
 
 
 class Thread(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="branches")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="threads")
 
 
 class Post(models.Model):
