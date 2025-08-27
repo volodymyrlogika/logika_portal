@@ -1,14 +1,23 @@
 from django.urls import path
-from . import views
+from .views import (
+    ThemeListView, ThemeDetailView,
+    ThemeCreateView, ThemeUpdateView, ThemeDeleteView,
+     set_theme
+)
 
-app_name = 'themes'
+app_name = "themes"
 
 urlpatterns = [
-    # головна сторінка тем
-    path('', views.ThemeListView.as_view(), name='home'),
+    # список усіх тем
+    path("", ThemeListView.as_view(), name="list"),
+    path("new/", ThemeCreateView.as_view(), name="create"),
 
-    # Themes CRUD
-    path('new/', views.ThemeCreateView.as_view(), name='theme_create'),
-    path('<int:pk>/edit/', views.ThemeUpdateView.as_view(), name='theme_edit'),
-    path('<int:pk>/delete/', views.ThemeDeleteView.as_view(), name='theme_delete'),
+    # деталі теми
+    path("<int:pk>/", ThemeDetailView.as_view(), name="detail"),
+    path("<int:pk>/edit/", ThemeUpdateView.as_view(), name="update"),
+    path("<int:pk>/delete/", ThemeDeleteView.as_view(), name="delete"),
+
+    # застосування теми
+    path("<int:theme_id>/set/", set_theme, name="set"),
+    path("<int:theme_id>/apply/", set_theme, name="apply"),
 ]

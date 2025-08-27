@@ -1,50 +1,76 @@
 {% extends "base.html" %}
 
-{% block title %}{% if object %}Редагувати тему{% else %}Нова тема{% endif %}{% endblock %}
-
 {% block content %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg rounded-4">
-        <div class="card-body">
-          <h2 class="fw-bold mb-4">
-            <i class="bi bi-palette text-warning"></i>
-            {% if object %} Редагувати тему {% else %} Нова тема {% endif %}
-          </h2>
+<div class="container mt-4">
+    <div class="card bg-dark text-light shadow-lg p-4 rounded">
+        <h2 class="mb-4"><i class="bi bi-palette"></i> Нова тема</h2>
 
-          <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             <div class="mb-3">
-              <label for="id_name" class="form-label">Назва</label>
-              <input type="text" name="name" class="form-control" id="id_name" value="{{ form.name.value|default:'' }}">
-              {% if form.name.errors %}
-                <div class="text-danger small">{{ form.name.errors }}</div>
-              {% endif %}
+                <label for="id_name" class="form-label">Назва:</label>
+                <input type="text" name="name" id="id_name" class="form-control" required>
             </div>
 
             <div class="mb-3">
-              <label for="id_description" class="form-label">Опис</label>
-              <textarea name="description" class="form-control" id="id_description" rows="4">{{ form.description.value|default:'' }}</textarea>
-              {% if form.description.errors %}
-                <div class="text-danger small">{{ form.description.errors }}</div>
-              {% endif %}
+                <label for="id_description" class="form-label">Опис:</label>
+                <textarea name="description" id="id_description" rows="5" class="form-control"></textarea>
             </div>
 
-            <div class="mt-3">
-              <button type="submit" class="btn btn-success">
-                <i class="bi bi-check2-circle"></i> Зберегти
-              </button>
-              <a href="{% url 'themes:home' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Назад
-              </a>
+            <div class="mb-3">
+                <label for="id_image" class="form-label">Обкладинка:</label>
+                <input type="file" name="image" id="id_image" class="form-control" accept="image/*">
             </div>
-          </form>
 
-        </div>
-      </div>
+            <div class="mb-3">
+                <label for="id_tags" class="form-label">Теги:</label>
+                <input type="text" name="tags" id="id_tags" class="form-control" placeholder="напр.: дизайн, python, школа">
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <button type="submit" name="action" value="publish" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Опублікувати
+                </button>
+                <button type="submit" name="action" value="draft" class="btn btn-warning">
+                    <i class="bi bi-file-earmark-text"></i> Зберегти як чернетку
+                </button>
+                <button type="reset" class="btn btn-danger">
+                    <i class="bi bi-x-circle"></i> Очистити
+                </button>
+                <button type="button" onclick="showPreview()" class="btn btn-info text-white">
+                    <i class="bi bi-eye"></i> Попередній перегляд
+                </button>
+                <a href="{% url 'themes:home' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+            </div>
+        </form>
     </div>
-  </div>
 </div>
+
+<!-- Прев’ю -->
+<div id="previewModal" class="modal" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content p-3">
+            <h3 id="previewTitle"></h3>
+            <p id="previewDescription"></p>
+            <button class="btn btn-outline-dark" onclick="closePreview()">
+                <i class="bi bi-x-lg"></i> Закрити
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function showPreview() {
+    document.getElementById("previewTitle").innerText = document.getElementById("id_name").value;
+    document.getElementById("previewDescription").innerText = document.getElementById("id_description").value;
+    document.getElementById("previewModal").style.display = "block";
+}
+function closePreview() {
+    document.getElementById("previewModal").style.display = "none";
+}
+</script>
 {% endblock %}

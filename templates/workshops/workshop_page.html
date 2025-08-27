@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4"><i class="bi bi-easel text-primary"></i> Воркшоп (Теми)</h1>
+
+  {% if themes %}
+    <div class="row">
+      {% for theme in themes %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{ theme.title }}</h5>
+              <p class="card-text">{{ theme.description|default:"Без опису" }}</p>
+            </div>
+            <div class="card-footer text-end">
+              <a href="{% url 'themes:detail' theme.id %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-arrow-right-circle"></i> Переглянути
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">Немає доступних тем</p>
+  {% endif %}
+</div>
+{% endblock %}

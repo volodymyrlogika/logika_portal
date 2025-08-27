@@ -1,22 +1,42 @@
-/* 🌙 Темна тема */
-body {
-  background-color: #121212;
-  color: #f8f9fa;
+/* ==== Базові змінні (за замовчуванням) ==== */
+:root {
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #212529;
+  --bs-card-bg: #f8f9fa;
+  --bs-card-color: #212529;
 }
 
-.navbar, footer {
-  background-color: #212529 !important;
-  color: #f8f9fa;
+/* ==== Світла тема ==== */
+[data-theme="light"] {
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #212529;
+  --bs-card-bg: #f8f9fa;
+  --bs-card-color: #212529;
+}
+
+/* ==== Темна тема ==== */
+[data-theme="dark"] {
+  --bs-body-bg: #121212;
+  --bs-body-color: #f8f9fa;
+  --bs-card-bg: #1e1e1e;
+  --bs-card-color: #f8f9fa;
+}
+
+/* ==== Кольорова тема (приклад) ==== */
+[data-theme="blue"] {
+  --bs-body-bg: #001f3f;
+  --bs-body-color: #ffffff;
+  --bs-card-bg: #003366;
+  --bs-card-color: #ffffff;
+}
+
+/* ==== Використання змінних ==== */
+body {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
 }
 
 .card {
-  background-color: #1e1e1e;
-  border: 1px solid #333;
-}
-
-a {
-  color: #66b2ff;
-}
-a:hover {
-  color: #3399ff;
+  background-color: var(--bs-card-bg);
+  color: var(--bs-card-color);
 }

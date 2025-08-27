@@ -14,7 +14,9 @@ class WorkshopForm(forms.ModelForm):
 class GalleryItemForm(forms.ModelForm):
     class Meta:
         model = GalleryItem
-        fields = ['title', 'description', 'file', 'media_type', 'workshop', 'theme']
+        fields = ['title', 'caption', 'file']
+
+
 
     def clean_file(self):
         f = self.cleaned_data.get('file')

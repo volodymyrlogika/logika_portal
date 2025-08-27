@@ -72,6 +72,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'themes.context_processors.themes_context',
+                "main.context_processors.themes_context",
+                
             ],
         },
     },
@@ -109,7 +112,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # === MEDIA FILES ===
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / "media"
 
 # === LOGIN SETTINGS ===
 LOGIN_URL = '/login/'

@@ -19,7 +19,7 @@
               <p class="card-text text-muted small">
                 {{ theme.description|default:"(без опису)" }}
               </p>
-              <a href="{% url 'themes:theme_detail' theme.pk %}" class="btn btn-outline-primary btn-sm">
+              <a href="{% url 'themes:detail' theme.pk %}" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-eye"></i> Переглянути
               </a>
             </div>
@@ -38,7 +38,7 @@
   {% endif %}
 
   <div class="text-center mt-4">
-    <a href="{% url 'themes:theme_create' %}" class="btn btn-success">
+    <a href="{% url 'themes:create' %}" class="btn btn-success">
       <i class="bi bi-plus-circle"></i> Додати тему
     </a>
   </div>

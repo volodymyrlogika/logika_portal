@@ -1,51 +1,169 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="uk" data-theme="light">
+<html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} Сайт {% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Логіка Портал{% endblock %}</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <!-- Theme CSS -->
+  {% if active_theme and active_theme.css_file %}
+    <link id="theme-stylesheet" rel="stylesheet" href="{{ active_theme.css_file.url }}?v={{ active_theme.updated_at|default:active_theme.created_at|date:'U' }}">
+  {% else %}
+    <link id="theme-stylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
+  {% endif %}
 
-    {% load static %}
-    <!-- Єдиний CSS -->
-    <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-      #konami-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.9);
-        color: white;
-        font-size: 2rem;
-        text-align: center;
-        padding-top: 20%;
-        z-index: 9999;
-      }
-    </style>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Базові стилі -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
-<body>
-    {% include 'menu.html' %}
-    {% include 'alerts.html' %}
+<body class="d-flex flex-column min-vh-100">
+  <!-- Навбар -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="{% url 'main:home' %}">
+        <i class="bi bi-lightning-charge-fill text-warning"></i> Логіка Портал
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <main class="container my-4">
-      {% block content %}{% endblock %}
-    </main>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'workshops:page' %}">
+                <i class="bi bi-easel"></i> Воркшопи
+            </a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'gallery:home' %}">
+                <i class="bi bi-images"></i> Галерея
+            </a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'themes:list' %}">
+                <i class="bi bi-palette"></i> Теми
+            </a>
+            </li>
 
-    {% include 'footer.html' %}
+          <!-- Dropdown для вибору теми -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-brush"></i> Тема
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              {% for theme in themes_list %}
+                <li>
+                  <a class="dropdown-item {% if active_theme and theme.id == active_theme.id %}active{% endif %}"
+                     href="{% url 'themes:set' theme.id %}"
+                     data-slug="{{ theme.slug }}">
+                    {{ theme.name }}
+                  </a>
+                </li>
+              {% empty %}
+                <li><span class="dropdown-item text-muted">Немає тем</span></li>
+              {% endfor %}
+            </ul>
+          </li>
 
-    <!-- Overlay -->
-    <div id="konami-overlay">
-      <i class="bi bi-stars"></i> Секретний режим активовано! <i class="bi bi-stars"></i> <br>
-      <button class="btn btn-light mt-3" onclick="document.getElementById('konami-overlay').style.display='none'">Закрити</button>
+          <!-- Авторизація -->
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'accounts:profile' %}">
+                <i class="bi bi-person-circle"></i> {{ user.username }}
+              </a>
+            </li>
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="nav-link btn btn-link p-0">
+                    <i class="bi bi-box-arrow-right"></i> Вийти
+                </button>
+                </form>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">
+                <i class="bi bi-box-arrow-in-right"></i> Увійти
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
+  </nav>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/theme.js' %}"></script>
-    <script src="{% static 'js/script.js' %}"></script>
+  <!-- Контент -->
+  <main class="container my-4 flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-light text-center py-3 mt-auto">
+    <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Theme switcher -->
+  <script>
+  // --- CSRF ---
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie("csrftoken");
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const link = document.getElementById("theme-stylesheet");
+
+    function applyTheme(css_url) {
+      if (css_url && link) {
+        link.href = css_url + "?v=" + Date.now();
+      }
+    }
+
+    document.querySelectorAll(".dropdown-item[data-slug]").forEach(item => {
+      item.addEventListener("click", function(e) {
+        e.preventDefault();
+        const url = this.getAttribute("href");
+
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrftoken,
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            applyTheme(data.css_url);
+
+            // підсвічуємо активну
+            document.querySelectorAll(".dropdown-item").forEach(el => el.classList.remove("active"));
+            this.classList.add("active");
+          }
+        })
+        .catch(err => console.error("Помилка перемикання теми:", err));
+      });
+    });
+  });
+  </script>
 </body>
 </html>
