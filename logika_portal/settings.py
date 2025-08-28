@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
+    "taggit",
     # сторонні
     "widget_tweaks",
 
@@ -74,7 +74,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'themes.context_processors.themes_context',
                 "main.context_processors.themes_context",
-                
+                "themes.context_processors.active_theme",
             ],
         },
     },

@@ -13,3 +13,7 @@ def themes_context(request):
         "themes_list": themes,
         "active_theme": active_theme
     }
+def active_theme(request):
+    slug = request.session.get("active_theme", "light")
+    theme = Theme.objects.filter(slug=slug).first()
+    return {"active_theme": theme}

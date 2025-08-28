@@ -4,6 +4,9 @@ from django.urls import reverse_lazy
 from .models import GalleryItem
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import GalleryItem, Tag
+from django import forms
+from .forms import GalleryItemForm
 
 class GalleryListView(ListView):
     model = GalleryItem
@@ -12,12 +15,12 @@ class GalleryListView(ListView):
     paginate_by = 12
 
 
+
 class GalleryCreateView(LoginRequiredMixin, CreateView):
     model = GalleryItem
-    fields = ["title", "caption", "file"]
+    form_class = GalleryItemForm
     template_name = "gallery/upload.html"
     success_url = reverse_lazy("gallery:home")
-    login_url = reverse_lazy("login")   # редірект на сторінку логіну
 
     def form_valid(self, form):
         form.instance.uploader = self.request.user

@@ -1,4 +1,5 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'css/themes/' %}{{ request.session.theme|default:'light' }}.css">
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -8,7 +9,8 @@
 
   <!-- Theme CSS -->
   {% if active_theme and active_theme.css_file %}
-    <link id="theme-stylesheet" rel="stylesheet" href="{{ active_theme.css_file.url }}?v={{ active_theme.updated_at|default:active_theme.created_at|date:'U' }}">
+    <link id="theme-stylesheet" rel="stylesheet"
+          href="{{ active_theme.css_file.url }}?v={{ active_theme.updated_at|default:active_theme.created_at|date:'U' }}">
   {% else %}
     <link id="theme-stylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
   {% endif %}
@@ -19,7 +21,7 @@
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- Базові стилі -->
+  <!-- Base styles -->
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -37,37 +39,56 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'workshops:page' %}">
-                <i class="bi bi-easel"></i> Воркшопи
+              <i class="bi bi-easel"></i> Воркшопи
             </a>
-            </li>
-            <li class="nav-item">
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'gallery:home' %}">
-                <i class="bi bi-images"></i> Галерея
+              <i class="bi bi-images"></i> Галерея
             </a>
-            </li>
-            <li class="nav-item">
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'themes:list' %}">
-                <i class="bi bi-palette"></i> Теми
+              <i class="bi bi-palette"></i> Теми
             </a>
-            </li>
+          </li>
 
           <!-- Dropdown для вибору теми -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              <i class="bi bi-brush"></i> Тема
+            <a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-palette"></i> Тема
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              {% for theme in themes_list %}
-                <li>
-                  <a class="dropdown-item {% if active_theme and theme.id == active_theme.id %}active{% endif %}"
-                     href="{% url 'themes:set' theme.id %}"
-                     data-slug="{{ theme.slug }}">
-                    {{ theme.name }}
-                  </a>
-                </li>
-              {% empty %}
-                <li><span class="dropdown-item text-muted">Немає тем</span></li>
-              {% endfor %}
+              <li>
+                <a class="dropdown-item {% if active_theme and active_theme.slug == 'light' %}active{% endif %}"
+                   href="{% url 'themes:switch' 'light' %}" data-slug="light">
+                  <i class="bi bi-sun"></i> Світла
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if active_theme and active_theme.slug == 'dark' %}active{% endif %}"
+                   href="{% url 'themes:switch' 'dark' %}" data-slug="dark">
+                  <i class="bi bi-moon-stars"></i> Темна
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if active_theme and active_theme.slug == 'blue' %}active{% endif %}"
+                   href="{% url 'themes:switch' 'blue' %}" data-slug="blue">
+                  <i class="bi bi-droplet"></i> Синя
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if active_theme and active_theme.slug == 'green' %}active{% endif %}"
+                   href="{% url 'themes:switch' 'green' %}" data-slug="green">
+                  <i class="bi bi-leaf"></i> Зелена
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if active_theme and active_theme.slug == 'custom' %}active{% endif %}"
+                   href="{% url 'themes:switch' 'custom' %}" data-slug="custom">
+                  <i class="bi bi-brush"></i> Користувацька
+                </a>
+              </li>
             </ul>
           </li>
 
@@ -78,12 +99,13 @@
                 <i class="bi bi-person-circle"></i> {{ user.username }}
               </a>
             </li>
-                <form action="{% url 'logout' %}" method="post" class="d-inline">
+            <li class="nav-item">
+              <form action="{% url 'logout' %}" method="post" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="nav-link btn btn-link p-0">
-                    <i class="bi bi-box-arrow-right"></i> Вийти
+                  <i class="bi bi-box-arrow-right"></i> Вийти
                 </button>
-                </form>
+              </form>
             </li>
           {% else %}
             <li class="nav-item">
@@ -112,7 +134,7 @@
 
   <!-- Theme switcher -->
   <script>
-  // --- CSRF ---
+  // CSRF helper
   function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -154,8 +176,6 @@
         .then(data => {
           if (data.success) {
             applyTheme(data.css_url);
-
-            // підсвічуємо активну
             document.querySelectorAll(".dropdown-item").forEach(el => el.classList.remove("active"));
             this.classList.add("active");
           }

@@ -7,13 +7,34 @@
       <div class="bg-dark p-2 rounded h-100 d-flex flex-column">
         <div class="mb-2">
           {% if item.is_image %}
-            <img src="{{ item.file.url }}" alt="{{ item.title }}" class="img-fluid rounded">
+            <img src="{{ item.file.url }}" class="img-fluid rounded">
+          {% elif item.is_gif %}
+            <img src="{{ item.file.url }}" class="img-fluid rounded" autoplay loop>
           {% elif item.is_video %}
             <video src="{{ item.file.url }}" controls class="w-100 rounded"></video>
+          {% elif item.is_audio %}
+            <audio controls class="w-100">
+              <source src="{{ item.file.url }}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
           {% else %}
-            (Немає прев’ю)
+            <p>(Немає прев’ю)</p>
           {% endif %}
         </div>
+
+        <div class="small mt-auto">
+          {{ item.title }} — {{ item.uploader }}
+          <br>
+          <strong>Age:</strong> {{ item.get_age_rating_display }}
+          <br>
+          <strong>Теги:</strong>
+          {% for tag in item.tags.all %}
+            <span class="badge bg-info text-dark">{{ tag.name }}</span>
+          {% empty %}
+            <span class="text-muted">Без тегів</span>
+          {% endfor %}
+        </div>
+
 
         </div>
         <div class="small mt-auto">{{ item.title }} — {{ item.uploader }}</div>

@@ -1,11 +1,7 @@
 from django.contrib import admin
-from themes.models import Theme
 from .models import Workshop
 
-@admin.register(Theme)
-class ThemeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_by', 'created_at')
-    search_fields = ('name',)
+
 
 @admin.register(Workshop)
 class WorkshopAdmin(admin.ModelAdmin):

@@ -1,23 +1,22 @@
+# themes/urls.py
 from django.urls import path
 from .views import (
     ThemeListView, ThemeDetailView,
     ThemeCreateView, ThemeUpdateView, ThemeDeleteView,
-     set_theme
+    switch_theme
 )
-
+from . import views
 app_name = "themes"
 
 urlpatterns = [
-    # список усіх тем
+    # список і CRUD
     path("", ThemeListView.as_view(), name="list"),
-    path("new/", ThemeCreateView.as_view(), name="create"),
+    path("create/", ThemeCreateView.as_view(), name="create"),
+    path("<slug:slug>/", ThemeDetailView.as_view(), name="detail"),
+    path("<slug:slug>/update/", ThemeUpdateView.as_view(), name="update"),
+    path("<slug:slug>/delete/", ThemeDeleteView.as_view(), name="delete"),
 
-    # деталі теми
-    path("<int:pk>/", ThemeDetailView.as_view(), name="detail"),
-    path("<int:pk>/edit/", ThemeUpdateView.as_view(), name="update"),
-    path("<int:pk>/delete/", ThemeDeleteView.as_view(), name="delete"),
+    # перемикання теми (POST)
+    path("switch/<slug:slug>/", views.switch_theme, name="switch"),
 
-    # застосування теми
-    path("<int:theme_id>/set/", set_theme, name="set"),
-    path("<int:theme_id>/apply/", set_theme, name="apply"),
 ]

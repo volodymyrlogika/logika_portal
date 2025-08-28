@@ -28,7 +28,8 @@ urlpatterns = [
     path("gallery/", include(("gallery.urls", "gallery"), namespace="gallery")),
 
     # теми
-    path("themes/", include(("themes.urls", "themes"), namespace="themes")),
+    
+    path("themes/", include("themes.urls")),
 
     # логін / логаут
     path("login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
