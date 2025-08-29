@@ -12,17 +12,16 @@ def set_theme(request, slug):
     request.session["active_theme"] = theme.slug
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
-def switch_theme(request, slug):   # <-- тут змінено на slug
+def switch_theme(request, slug):
     theme = get_object_or_404(Theme, slug=slug)
     request.session["theme"] = theme.slug
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return JsonResponse({
             "success": True,
-            "css_url": theme.css_file.url if theme.css_file else "/static/css/themes/light.css"
+            "css_url": theme.css_file.url if theme.css_file else f"/static/css/themes/{theme.slug}.css"
         })
-
-    return redirect("main:home")
+    return redirect("themes:list")
 # --- Список тем ---
 class ThemeListView(ListView):
     model = Theme

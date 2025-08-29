@@ -1,19 +1,10 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/themes/' %}{{ request.session.theme|default:'light' }}.css">
 <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Логіка Портал{% endblock %}</title>
-
-  <!-- Theme CSS -->
-  {% if active_theme and active_theme.css_file %}
-    <link id="theme-stylesheet" rel="stylesheet"
-          href="{{ active_theme.css_file.url }}?v={{ active_theme.updated_at|default:active_theme.created_at|date:'U' }}">
-  {% else %}
-    <link id="theme-stylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
-  {% endif %}
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,6 +16,7 @@
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
+
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
@@ -37,82 +29,25 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'workshops:page' %}">
-              <i class="bi bi-easel"></i> Воркшопи
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'gallery:home' %}">
-              <i class="bi bi-images"></i> Галерея
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'themes:list' %}">
-              <i class="bi bi-palette"></i> Теми
-            </a>
-          </li>
-
-          <!-- Dropdown для вибору теми -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button" data-bs-toggle="dropdown">
-              <i class="bi bi-palette"></i> Тема
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item {% if active_theme and active_theme.slug == 'light' %}active{% endif %}"
-                   href="{% url 'themes:switch' 'light' %}" data-slug="light">
-                  <i class="bi bi-sun"></i> Світла
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {% if active_theme and active_theme.slug == 'dark' %}active{% endif %}"
-                   href="{% url 'themes:switch' 'dark' %}" data-slug="dark">
-                  <i class="bi bi-moon-stars"></i> Темна
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {% if active_theme and active_theme.slug == 'blue' %}active{% endif %}"
-                   href="{% url 'themes:switch' 'blue' %}" data-slug="blue">
-                  <i class="bi bi-droplet"></i> Синя
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {% if active_theme and active_theme.slug == 'green' %}active{% endif %}"
-                   href="{% url 'themes:switch' 'green' %}" data-slug="green">
-                  <i class="bi bi-leaf"></i> Зелена
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {% if active_theme and active_theme.slug == 'custom' %}active{% endif %}"
-                   href="{% url 'themes:switch' 'custom' %}" data-slug="custom">
-                  <i class="bi bi-brush"></i> Користувацька
-                </a>
-              </li>
-            </ul>
-          </li>
-
+          <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'themes:list' %}"><i class="bi bi-palette"></i> Теми</a></li>
+            <li class="nav-item">
+    <a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}">
+        <i class="bi bi-dice-5-fill"></i> 🎰 Казіно
+    </a>
+    </li>
           <!-- Авторизація -->
           {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'accounts:profile' %}">
-                <i class="bi bi-person-circle"></i> {{ user.username }}
-              </a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> {{ user.username }}</a></li>
             <li class="nav-item">
               <form action="{% url 'logout' %}" method="post" class="d-inline">
                 {% csrf_token %}
-                <button type="submit" class="nav-link btn btn-link p-0">
-                  <i class="bi bi-box-arrow-right"></i> Вийти
-                </button>
+                <button type="submit" class="nav-link btn btn-link p-0"><i class="bi bi-box-arrow-right"></i> Вийти</button>
               </form>
             </li>
           {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">
-                <i class="bi bi-box-arrow-in-right"></i> Увійти
-              </a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Увійти</a></li>
           {% endif %}
         </ul>
       </div>
@@ -129,61 +64,47 @@
     <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
   </footer>
 
+  <!-- KONAMI OVERLAY -->
+  <div id="konamiOverlay" role="dialog" aria-modal="true" aria-hidden="true" 
+       style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; 
+              background:rgba(0,0,0,0.85); z-index:2000; 
+              flex-direction:column; align-items:center; justify-content:center;">
+      
+      <iframe id="konamiVideo" width="560" height="315" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <button class="btn btn-danger mt-3" onclick="hideKonami()" aria-label="Закрити відео">✖️ Закрити</button>
+  </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Theme switcher -->
+  <!-- Konami JS -->
   <script>
-  // CSRF helper
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
+      const overlay = document.getElementById('konamiOverlay');
+      const iframe = document.getElementById('konamiVideo');
+      const konamiCode = [
+          'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+          'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'
+      ];
+      let buffer = [];
+
+      function showKonami() {
+          overlay.style.display = 'flex';
+          overlay.setAttribute('aria-hidden', 'false');
+          iframe.src = "https://www.youtube.com/embed/RV0VJNvcBFU?autoplay=1&controls=1&loop=1&playlist=RV0VJNvcBFU";
       }
-    }
-    return cookieValue;
-  }
-  const csrftoken = getCookie("csrftoken");
-
-  document.addEventListener("DOMContentLoaded", function() {
-    const link = document.getElementById("theme-stylesheet");
-
-    function applyTheme(css_url) {
-      if (css_url && link) {
-        link.href = css_url + "?v=" + Date.now();
+      function hideKonami() {
+          overlay.style.display = 'none';
+          overlay.setAttribute('aria-hidden', 'true');
+          iframe.src = "";
       }
-    }
-
-    document.querySelectorAll(".dropdown-item[data-slug]").forEach(item => {
-      item.addEventListener("click", function(e) {
-        e.preventDefault();
-        const url = this.getAttribute("href");
-
-        fetch(url, {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": csrftoken,
-            "X-Requested-With": "XMLHttpRequest"
+      document.addEventListener('keydown', (e) => {
+          buffer.push(e.code);
+          if (buffer.length > konamiCode.length) buffer.shift();
+          if (JSON.stringify(buffer) === JSON.stringify(konamiCode)) {
+              showKonami();
+              buffer = [];
           }
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.success) {
-            applyTheme(data.css_url);
-            document.querySelectorAll(".dropdown-item").forEach(el => el.classList.remove("active"));
-            this.classList.add("active");
-          }
-        })
-        .catch(err => console.error("Помилка перемикання теми:", err));
       });
-    });
-  });
   </script>
 </body>
 </html>
