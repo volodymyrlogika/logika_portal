@@ -4,8 +4,35 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
-
+from django.shortcuts import redirect
 from accounts.forms import LoginForm, RegisterForm
+from .forms import ProfileForm
+from .models import Profile
+from django.http import JsonResponse
+@login_required
+def profile_view(request):
+    return render(request, "accounts/profile.html")
+
+@login_required
+def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect("accounts:profile")
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, "accounts/edit_profile.html", {"form": form})
+@login_required
+def set_theme(request):
+    theme = request.GET.get("theme", "light")
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    profile.theme = theme
+    profile.save()
+    return JsonResponse({"status": "ok", "theme": profile.theme})
 
 
 @login_required

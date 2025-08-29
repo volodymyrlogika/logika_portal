@@ -5,7 +5,8 @@ from .views import (
     ThemeCreateView, ThemeUpdateView, ThemeDeleteView,
     switch_theme
 )
-from . import views
+
+from .views import set_theme
 app_name = "themes"
 
 urlpatterns = [
@@ -17,6 +18,6 @@ urlpatterns = [
     path("<slug:slug>/delete/", ThemeDeleteView.as_view(), name="delete"),
 
     # перемикання теми (POST)
-    path("switch/<slug:slug>/", views.switch_theme, name="switch"),
+    path("set-theme/", set_theme, name="set_theme"),
 
 ]

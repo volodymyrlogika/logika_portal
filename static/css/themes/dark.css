@@ -1,42 +1,16 @@
-/* ==== Базові змінні (за замовчуванням) ==== */
-:root {
-  --bs-body-bg: #ffffff;
-  --bs-body-color: #212529;
-  --bs-card-bg: #f8f9fa;
-  --bs-card-color: #212529;
-}
-
-/* ==== Світла тема ==== */
-[data-theme="light"] {
-  --bs-body-bg: #ffffff;
-  --bs-body-color: #212529;
-  --bs-card-bg: #f8f9fa;
-  --bs-card-color: #212529;
-}
-
-/* ==== Темна тема ==== */
-[data-theme="dark"] {
-  --bs-body-bg: #121212;
-  --bs-body-color: #f8f9fa;
-  --bs-card-bg: #1e1e1e;
-  --bs-card-color: #f8f9fa;
-}
-
-/* ==== Кольорова тема (приклад) ==== */
-[data-theme="blue"] {
-  --bs-body-bg: #001f3f;
-  --bs-body-color: #ffffff;
-  --bs-card-bg: #003366;
-  --bs-card-color: #ffffff;
-}
-
-/* ==== Використання змінних ==== */
+/* Dark Theme */
 body {
-  background-color: var(--bs-body-bg);
-  color: var(--bs-body-color);
+  background-color: #121212;
+  color: #f1f1f1;
 }
 
-.card {
-  background-color: var(--bs-card-bg);
-  color: var(--bs-card-color);
+/* Navbar + footer */
+.navbar, footer {
+  background-color: #1f1f1f !important;
+  color: #f1f1f1 !important;
+}
+
+.navbar .nav-link,
+footer p {
+  color: #f1f1f1 !important;
 }

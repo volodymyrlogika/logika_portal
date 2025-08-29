@@ -12,13 +12,16 @@
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- Base styles -->
-  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <!-- Custom theme styles -->
+  <link id="themeStylesheet" rel="stylesheet"
+        href="{% static 'css/themes/' %}{{ user.profile.theme|default:'light' }}.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100"
+      data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
 
   <!-- Навбар -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+  <nav class="navbar navbar-expand-lg shadow-sm"
+       data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="{% url 'main:home' %}">
         <i class="bi bi-lightning-charge-fill text-warning"></i> Логіка Портал
@@ -29,15 +32,21 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
+          <!-- Кнопка перемикання теми -->
+          <li class="nav-item">
+            <button id="themeToggle" class="btn nav-link">
+              <i id="themeIcon" class="bi"></i>
+            </button>
+          </li>
+
           <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'themes:list' %}"><i class="bi bi-palette"></i> Теми</a></li>
-            <li class="nav-item">
-    <a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}">
-        <i class="bi bi-dice-5-fill"></i> 🎰 Казіно
-    </a>
-    </li>
-          <!-- Авторизація -->
+          <li class="nav-item">
+            <a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}">
+              <i class="bi bi-dice-5-fill"></i> 🎰 Казіно
+            </a>
+          </li>
           {% if user.is_authenticated %}
             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> {{ user.username }}</a></li>
             <li class="nav-item">
@@ -60,18 +69,21 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-light text-center py-3 mt-auto">
+  <footer class="text-center py-3 mt-auto"
+          data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
     <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
   </footer>
 
   <!-- KONAMI OVERLAY -->
-  <div id="konamiOverlay" role="dialog" aria-modal="true" aria-hidden="true" 
-       style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; 
-              background:rgba(0,0,0,0.85); z-index:2000; 
+  <div id="konamiOverlay" role="dialog" aria-modal="true" aria-hidden="true"
+       style="display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+              background:rgba(0,0,0,0.85); z-index:2000;
               flex-direction:column; align-items:center; justify-content:center;">
-      
-      <iframe id="konamiVideo" width="560" height="315" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      <button class="btn btn-danger mt-3" onclick="hideKonami()" aria-label="Закрити відео">✖️ Закрити</button>
+      <iframe id="konamiVideo" width="560" height="315" src=""
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <button class="btn btn-danger mt-3" onclick="hideKonami()" aria-label="Закрити відео">
+        <i class="bi bi-x-lg"></i> Закрити
+      </button>
   </div>
 
   <!-- Bootstrap JS -->
@@ -106,5 +118,27 @@
           }
       });
   </script>
+
+  <!-- Theme Toggle JS -->
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("themeToggle");
+    const icon = document.getElementById("themeIcon");
+    const body = document.body;
+
+    // Завантажуємо збережену тему або тему з Django
+    let theme = localStorage.getItem("theme") || body.getAttribute("data-bs-theme") || "light";
+    body.setAttribute("data-bs-theme", theme);
+    icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+
+    toggleBtn.addEventListener("click", function () {
+      theme = (body.getAttribute("data-bs-theme") === "light") ? "dark" : "light";
+      body.setAttribute("data-bs-theme", theme);
+      localStorage.setItem("theme", theme);
+      icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+    });
+  });
+  </script>
+
 </body>
 </html>

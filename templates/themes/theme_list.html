@@ -19,9 +19,16 @@
               <p class="card-text text-muted small">
                 {{ theme.description|default:"(без опису)" }}
               </p>
-              <a href="{% url 'themes:detail' theme.pk %}" class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-eye"></i> Переглянути
-              </a>
+              <div class="d-flex justify-content-center gap-2 mt-3">
+                <a href="{% url 'themes:detail' theme.pk %}" class="btn btn-outline-primary btn-sm">
+                  <i class="bi bi-eye"></i> Переглянути
+                </a>
+                <!-- кнопка застосування -->
+                <button class="btn btn-outline-success btn-sm theme-switch"
+                        data-slug="{{ theme.slug }}">
+                  <i class="bi bi-check2-circle"></i> Застосувати
+                </button>
+              </div>
             </div>
             <div class="card-footer text-muted small">
               <i class="bi bi-person-circle"></i> {{ theme.created_by.username }}<br>

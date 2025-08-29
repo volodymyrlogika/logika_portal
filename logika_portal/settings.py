@@ -19,17 +19,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
-    # сторонні
-    "widget_tweaks",
-    'taggit',
-    # свої
+
+    # наші
+    "accounts.apps.AccountsConfig",
     "main",
-    "accounts",
     "gallery",
     "workshops",
     "themes",
-    'casino',
+    "casino",
+
+    # сторонні
+    "widget_tweaks",
+    "taggit",
 ]
 
 

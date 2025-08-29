@@ -1,3 +1,4 @@
+import json
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
@@ -5,16 +6,23 @@ from django.http import JsonResponse
 from .models import Theme
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+
+
 # --- API для застосування теми ---
-def set_theme(request, slug):
-    """Змінює активну тему через redirect"""
-    theme = get_object_or_404(Theme, slug=slug)
-    request.session["active_theme"] = theme.slug
-    return redirect(request.META.get("HTTP_REFERER", "/"))
+@csrf_exempt
+def set_theme(request):
+    if request.user.is_authenticated and request.method == "POST":
+        data = json.loads(request.body)
+        theme = data.get("theme", "light")
+        request.user.profile.theme = theme
+        request.user.profile.save()
+        return JsonResponse({"status": "ok", "theme": theme})
+    return JsonResponse({"status": "error"}, status=400)
+
 
 def switch_theme(request, slug):
     theme = get_object_or_404(Theme, slug=slug)
-    request.session["theme"] = theme.slug
+    request.session["theme"] = theme.slug  # зберігаємо у session
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return JsonResponse({
@@ -22,6 +30,8 @@ def switch_theme(request, slug):
             "css_url": theme.css_file.url if theme.css_file else f"/static/css/themes/{theme.slug}.css"
         })
     return redirect("themes:list")
+
+
 # --- Список тем ---
 class ThemeListView(ListView):
     model = Theme
@@ -30,7 +40,7 @@ class ThemeListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        active_slug = self.request.session.get("active_theme")
+        active_slug = self.request.session.get("theme")  # уніфіковано
         if active_slug:
             context["active_theme"] = Theme.objects.filter(slug=active_slug).first()
         else:
@@ -46,7 +56,7 @@ class ThemeDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        active_slug = self.request.session.get("active_theme")
+        active_slug = self.request.session.get("theme")  # тепер теж "theme"
         if active_slug:
             context["active_theme"] = Theme.objects.filter(slug=active_slug).first()
         else:

@@ -3,5 +3,11 @@
 <div class="container py-5">
   <h1>Профіль користувача: {{ user.username }}</h1>
   <p>Email: {{ user.email }}</p>
+  <p>Тема: {{ user.profile.get_theme_display }}</p>
+
+<a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary mt-3">
+  Змінити тему
+</a>
+
 </div>
 {% endblock %}

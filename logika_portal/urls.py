@@ -31,6 +31,7 @@ urlpatterns = [
     
     path("themes/", include("themes.urls")),
     path('casino/', include('casino.urls')),
+    
     # логін / логаут
     path("login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="main:home"), name="logout"),

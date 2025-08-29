@@ -1,0 +1,11 @@
+/* Світла */
+body.theme-light {
+  background: #ffffff;
+  color: #000;
+}
+
+/* Темна */
+body.theme-dark {
+  background: #121212;
+  color: #f1f1f1;
+}
