@@ -12,41 +12,17 @@ ALLOWED_HOSTS = ["*"]
 
 # === APPS ===
 INSTALLED_APPS = [
-    # Django
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'main',
+    'accounts',
 
-    # наші
-    "accounts.apps.AccountsConfig",
-    "main",
-    "gallery",
-    "workshops",
-    "themes",
-    "casino",
-
-    # сторонні
-    "widget_tweaks",
-    "taggit",
 ]
 
-
-WSGI_APPLICATION = "logika_portal.wsgi.application"
-
-
-
-
-
-
-
-
-
-
-
-# === MIDDLEWARE ===
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -110,11 +86,10 @@ USE_TZ = True
 # === STATIC FILES ===
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# === MEDIA FILES ===
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+# Media files
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # === LOGIN SETTINGS ===
 LOGIN_URL = '/login/'

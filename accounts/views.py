@@ -1,17 +1,20 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
 from accounts.forms import LoginForm, RegisterForm
 from .forms import ProfileForm
 from .models import Profile
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from material.models import Material
+
+
 @login_required
 def profile_view(request):
     return render(request, "accounts/profile.html")
+
 
 @login_required
 def edit_profile(request):
@@ -26,6 +29,8 @@ def edit_profile(request):
         form = ProfileForm(instance=profile)
 
     return render(request, "accounts/edit_profile.html", {"form": form})
+
+
 @login_required
 def set_theme(request):
     theme = request.GET.get("theme", "light")
@@ -33,11 +38,6 @@ def set_theme(request):
     profile.theme = theme
     profile.save()
     return JsonResponse({"status": "ok", "theme": profile.theme})
-
-
-@login_required
-def profile_view(request):
-    return render(request, "accounts/profile.html")
 
 
 class CustomLoginView(LoginView):
@@ -55,3 +55,8 @@ class RegisterView(CreateView):
     template_name = 'accounts/register.html'
     form_class = RegisterForm
     success_url = reverse_lazy('accounts:login')
+
+
+def material(request):
+    materials = Material.objects.all()
+    return render(request, 'material/material.html', {'materials': materials})
