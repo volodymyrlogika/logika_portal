@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 
 from accounts.forms import LoginForm, RegisterForm
+from material.models import Material
 
 
 class CustomLoginView(LoginView):
@@ -23,5 +24,7 @@ class RegisterView(CreateView):
     form_class = RegisterForm
     success_url = reverse_lazy('login')
 
-def home(request):
-    return render(request, 'material/material.html')
+def material(request):
+    materials = Material.objects.all()
+
+    return render(request, 'material/material.html', {'materials': materials})
