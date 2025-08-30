@@ -1,9 +1,9 @@
-/* Автоматично створений CSS для теми: Light Theme */
+/* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CSS пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ: Light Theme */
             body {
-                background-color: #fff;
-                color: #000;
-                font-family: Arial, sans-serif;
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
             }
+
             .navbar {
                 background-color: #f8f9fa;
             }

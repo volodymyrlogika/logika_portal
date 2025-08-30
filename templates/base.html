@@ -13,8 +13,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Custom theme styles -->
-  <link id="themeStylesheet" rel="stylesheet"
-        href="{% static 'css/themes/' %}{{ user.profile.theme|default:'light' }}.css">
+
 </head>
 <body class="d-flex flex-column min-vh-100"
       data-bs-theme="{{ request.user.profile.theme|default:'light' }}">

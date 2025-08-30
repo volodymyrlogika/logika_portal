@@ -1,9 +1,9 @@
-/* Автоматично створений CSS для теми: Dark Theme */
+/* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CSS пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ: Dark Theme */
             body {
-                background-color: #121212;
-                color: #eee;
-                font-family: Arial, sans-serif;
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
             }
+
             .navbar {
                 background-color: #1f1f1f;
             }
