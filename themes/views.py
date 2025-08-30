@@ -6,8 +6,12 @@ from django.http import JsonResponse
 from .models import Theme
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from .forms import ThemeForm
 
-
+class ThemeListView(ListView):
+    model = Theme
+    template_name = "themes/theme_list.html"
+    context_object_name = "themes"
 # --- API для застосування теми ---
 @csrf_exempt
 def set_theme(request):
@@ -67,8 +71,8 @@ class ThemeDetailView(DetailView):
 # --- CRUD ---
 class ThemeCreateView(CreateView):
     model = Theme
+    form_class = ThemeForm
     template_name = "themes/theme_form.html"
-    fields = ["name", "description", "image", "tags"]
     success_url = reverse_lazy("themes:list")
 
     def form_valid(self, form):
@@ -79,8 +83,8 @@ class ThemeCreateView(CreateView):
 
 class ThemeUpdateView(UpdateView):
     model = Theme
+    form_class = ThemeForm
     template_name = "themes/theme_form.html"
-    fields = ["name", "description", "image", "tags"]
     success_url = reverse_lazy("themes:list")
 
 

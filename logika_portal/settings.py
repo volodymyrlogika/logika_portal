@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'material',
     "gallery",
     "casino",
+    "widget_tweaks",
     
 
 ]

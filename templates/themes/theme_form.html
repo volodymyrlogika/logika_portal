@@ -1,85 +1,133 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Створити тему{% endblock %}
 
 {% block content %}
-{% load widget_tweaks %}
-<div class="container mt-4">
-    <div class="card bg-dark text-light shadow-lg p-4 rounded">
-        <h2 class="mb-4"><i class="bi bi-palette"></i> Нова тема</h2>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg rounded-4">
+        <div class="card-body">
+          <h2 class="fw-bold mb-4">Створити тему</h2>
 
-        <form method="post" enctype="multipart/form-data">
+          <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {{ form.non_field_errors }}
-
-            <div class="mb-3">
-                <label for="{{ form.name.id_for_label }}" class="form-label">Назва:</label>
+            <!-- Назва -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Назва теми:</label>
+              <div class="col-sm-9">
                 {{ form.name|add_class:"form-control" }}
+              </div>
             </div>
 
-            <div class="mb-3">
-                <label for="{{ form.description.id_for_label }}" class="form-label">Опис:</label>
-                {{ form.description|add_class:"form-control" }}
+            <!-- Фон -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Колір фону:</label>
+              <div class="col-sm-9 d-flex align-items-center">
+                {{ form.background_color|add_class:"form-control form-control-color me-2" }}
+                <span id="bgColorValue">{{ form.background_color.value }}</span>
+              </div>
             </div>
 
-            <div class="mb-3">
-                <label for="{{ form.image.id_for_label }}" class="form-label">Обкладинка:</label>
-                {{ form.image|add_class:"form-control" }}
+            <!-- Колір тексту -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Колір тексту:</label>
+              <div class="col-sm-9 d-flex align-items-center">
+                {{ form.text_color|add_class:"form-control form-control-color me-2" }}
+                <span id="textColorValue">{{ form.text_color.value }}</span>
+              </div>
             </div>
 
-            <div class="mb-3">
-                <label for="{{ form.tags.id_for_label }}" class="form-label">Теги:</label>
-                {{ form.tags|add_class:"form-control" }}
+            <!-- Фонове зображення -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Фонове зображення:</label>
+              <div class="col-sm-9">
+                {{ form.background_image|add_class:"form-control" }}
+              </div>
+            </div>
+
+            <!-- Шрифти -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Шрифт:</label>
+              <div class="col-sm-9">
+                <select name="font_family" id="id_font_family" class="form-select">
+                  <option value="">(За замовчуванням)</option>
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Tahoma">Tahoma</option>
+                  <option value="Roboto">Roboto</option>
+                  <option value="Open Sans">Open Sans</option>
+                  <option value="Lato">Lato</option>
+                  <option value="Montserrat">Montserrat</option>
+                  <option value="Monospace">Monospace</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Кастомний CSS -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Додатковий CSS:</label>
+              <div class="col-sm-9">
+                {{ form.custom_css|add_class:"form-control" }}
+              </div>
+            </div>
+
+            <!-- Попередній перегляд -->
+            <div class="mb-4">
+              <label class="form-label">Попередній перегляд:</label>
+              <div id="themePreview" class="p-3 rounded border">
+                Це приклад тексту у вибраній темі.
+              </div>
             </div>
 
             <!-- Кнопки -->
-            <div class="d-flex flex-wrap gap-2 mt-3">
-                <button type="submit" name="action" value="publish" class="btn btn-success">
-                    <i class="bi bi-check-circle"></i> Опублікувати
-                </button>
-                <button type="submit" name="action" value="draft" class="btn btn-warning">
-                    <i class="bi bi-file-earmark-text"></i> Чернетка
-                </button>
-                <button type="reset" class="btn btn-danger">
-                    <i class="bi bi-x-circle"></i> Очистити
-                </button>
-                <button type="button" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#previewModal">
-                    <i class="bi bi-eye"></i> Попередній перегляд
-                </button>
-                <a href="{% url 'themes:list' %}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Назад
-                </a>
+            <div class="d-flex justify-content-start gap-2">
+              <button type="submit" class="btn btn-primary">💾 Зберегти</button>
+              <a href="{% url 'themes:theme_list' %}" class="btn btn-secondary">⬅ Назад</a>
             </div>
-        </form>
-    </div>
-</div>
 
-<!-- Bootstrap Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content p-3">
-      <div class="modal-header">
-        <h5 class="modal-title" id="previewTitle"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
-      </div>
-      <div class="modal-body">
-        <p id="previewDescription"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
-            <i class="bi bi-x-lg"></i> Закрити
-        </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- JS для оновлення HEX і прев'ю -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const previewBtn = document.querySelector('[data-bs-target="#previewModal"]');
-    previewBtn.addEventListener("click", () => {
-        document.getElementById("previewTitle").innerText = document.getElementById("id_name").value;
-        document.getElementById("previewDescription").innerText = document.getElementById("id_description").value;
-    });
+document.addEventListener("DOMContentLoaded", function() {
+  const bgPicker = document.querySelector("#id_background_color");
+  const textPicker = document.querySelector("#id_text_color");
+  const fontSelect = document.querySelector("#id_font_family");
+  const bgValue = document.querySelector("#bgColorValue");
+  const textValue = document.querySelector("#textColorValue");
+  const preview = document.querySelector("#themePreview");
+
+  function updatePreview() {
+    if (bgPicker) {
+      preview.style.backgroundColor = bgPicker.value;
+      bgValue.textContent = bgPicker.value;
+    }
+    if (textPicker) {
+      preview.style.color = textPicker.value;
+      textValue.textContent = textPicker.value;
+    }
+    if (fontSelect) {
+      preview.style.fontFamily = fontSelect.value || "inherit";
+    }
+  }
+
+  if (bgPicker) bgPicker.addEventListener("input", updatePreview);
+  if (textPicker) textPicker.addEventListener("input", updatePreview);
+  if (fontSelect) fontSelect.addEventListener("change", updatePreview);
+
+  updatePreview(); // стартове застосування
 });
 </script>
 {% endblock %}

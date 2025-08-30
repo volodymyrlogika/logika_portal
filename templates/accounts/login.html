@@ -6,6 +6,6 @@
     {% csrf_token %}
     {{form.as_div}}
     <button type="submit" class="btn btn-primary">Увійти</button>
-    <a href="{% url 'register' %}" class="btn btn-link">Зареєструватися</a>
+    <a href="{% url 'accounts:register' %}" class="btn btn-link">Зареєструватися</a>
 </form>
 {% endblock %}

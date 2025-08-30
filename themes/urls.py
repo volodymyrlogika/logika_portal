@@ -3,21 +3,21 @@ from django.urls import path
 from .views import (
     ThemeListView, ThemeDetailView,
     ThemeCreateView, ThemeUpdateView, ThemeDeleteView,
-    switch_theme
+    switch_theme, set_theme
 )
-
-from .views import set_theme
+from . import views
 app_name = "themes"
 
 urlpatterns = [
-    # список і CRUD
-    path("", ThemeListView.as_view(), name="list"),
-    path("create/", ThemeCreateView.as_view(), name="create"),
-    path("<slug:slug>/", ThemeDetailView.as_view(), name="detail"),
-    path("<slug:slug>/update/", ThemeUpdateView.as_view(), name="update"),
-    path("<slug:slug>/delete/", ThemeDeleteView.as_view(), name="delete"),
-
-    # перемикання теми (POST)
+    # список
+    path("", ThemeListView.as_view(), name="theme_list"),
+ 
+    
+    # CRUD (порядок важливий!)
+    path("create/", ThemeCreateView.as_view(), name="theme_create"),
+    path("<slug:slug>/update/", ThemeUpdateView.as_view(), name="theme_update"),
+    path("<slug:slug>/delete/", ThemeDeleteView.as_view(), name="theme_delete"),
+    path("<slug:slug>/", ThemeDetailView.as_view(), name="theme_detail"),
+    # перемикання теми
     path("set-theme/", set_theme, name="set_theme"),
-
 ]

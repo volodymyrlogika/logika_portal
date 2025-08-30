@@ -1,12 +1,92 @@
 {% extends "base.html" %}
-{% block title %}Створювач тем{% endblock %}
+{% load widget_tweaks %}
 {% block content %}
-<h1><i class="bi bi-palette"></i> Створювач тем</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">
-        <i class="bi bi-check-circle"></i> Створити
-    </button>
-</form>
+<div class="container mt-4">
+  <div class="card shadow rounded">
+    <div class="card-body">
+      <h2 class="mb-4 fw-bold">Створити тему</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <!-- Назва -->
+        <div class="mb-3 row">
+          <label class="col-sm-3 col-form-label">Name:</label>
+          <div class="col-sm-9">
+            {{ form.name|add_class:"form-control" }}
+          </div>
+        </div>
+
+        <!-- Фон -->
+        <div class="mb-3 row align-items-center">
+          <label class="col-sm-3 col-form-label">Background color:</label>
+          <div class="col-sm-9 d-flex align-items-center gap-2">
+            {{ form.background_color|add_class:"form-control form-control-color" }}
+            <span id="bg-preview" class="border rounded px-3 py-2"></span>
+          </div>
+        </div>
+
+        <!-- Колір тексту -->
+        <div class="mb-3 row align-items-center">
+          <label class="col-sm-3 col-form-label">Text color:</label>
+          <div class="col-sm-9 d-flex align-items-center gap-2">
+            {{ form.text_color|add_class:"form-control form-control-color" }}
+            <span id="text-preview" class="border rounded px-3 py-2">Aa</span>
+          </div>
+        </div>
+
+        <!-- Фонове зображення -->
+        <div class="mb-3 row">
+          <label class="col-sm-3 col-form-label">Background image:</label>
+          <div class="col-sm-9">
+            {{ form.background_image|add_class:"form-control" }}
+          </div>
+        </div>
+
+        <!-- Шрифт -->
+        <div class="mb-3 row">
+          <label class="col-sm-3 col-form-label">Font family:</label>
+          <div class="col-sm-9">
+            {{ form.font_family|add_class:"form-control" }}
+          </div>
+        </div>
+
+        <!-- Custom CSS -->
+        <div class="mb-3 row">
+          <label class="col-sm-3 col-form-label">Custom css:</label>
+          <div class="col-sm-9">
+            {{ form.custom_css|add_class:"form-control" }}
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Зберегти</button>
+          <a href="{% url 'themes:theme_list' %}" class="btn btn-secondary">Назад</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Прев’ю кольору
+  const bgInput = document.querySelector('input[name="background_color"]');
+  const textInput = document.querySelector('input[name="text_color"]');
+  const bgPreview = document.getElementById('bg-preview');
+  const textPreview = document.getElementById('text-preview');
+
+  if (bgInput && bgPreview) {
+    bgPreview.style.backgroundColor = bgInput.value;
+    bgInput.addEventListener('input', () => {
+      bgPreview.style.backgroundColor = bgInput.value;
+    });
+  }
+
+  if (textInput && textPreview) {
+    textPreview.style.color = textInput.value;
+    textInput.addEventListener('input', () => {
+      textPreview.style.color = textInput.value;
+    });
+  }
+</script>
 {% endblock %}

@@ -18,11 +18,14 @@ class CustomLogoutView(LogoutView):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('', include('accounts.urls')),
     path("gallery/", include("gallery.urls")),
     path("workshops/", include("workshops.urls")),
-    path("themes/", include("themes.urls")),
     path("casino/", include("casino.urls")),
-    path("accounts/", include("accounts.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+    # accounts
+    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+
+    # themes
+    path("themes/", include(("themes.urls", "themes"), namespace="themes")),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

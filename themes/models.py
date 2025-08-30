@@ -6,46 +6,60 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# ==============================
+# ТЕМИ
+# ==============================
 class Theme(models.Model):
-    css_file = models.FileField(upload_to="themes/css/", blank=True, null=True)
-    name = models.CharField("Назва", max_length=120, unique=True)
-    slug = models.SlugField("Слаг", max_length=140, unique=True, blank=True, null=True)
-    description = models.TextField("Опис", blank=True)
-    tags = models.CharField(max_length=255, blank=True)
-    image = models.ImageField("Обкладинка", upload_to="themes/images/", blank=True, null=True)
-    is_draft = models.BooleanField("Чернетка", default=False)
-    publish_date = models.DateTimeField("Дата публікації", null=True, blank=True)
-    priority = models.PositiveIntegerField("Пріоритет", default=1)
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="themes",
-        null=True,
-        blank=True
+    name = models.CharField(max_length=100, verbose_name="Назва теми")
+    slug = models.SlugField(unique=True, blank=True, default="")
+
+    description = models.TextField(blank=True, verbose_name="Опис")
+
+    # Основні стилі
+    background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
+    text_color = models.CharField("Колір тексту", max_length=7, default="#000000")
+    background_image = models.ImageField(
+        "Фонове зображення", upload_to="themes/backgrounds/", blank=True, null=True
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=False)
+    font_family = models.CharField(
+        "Шрифт",
+        max_length=100,
+        choices=[
+            ("Arial", "Arial"),
+            ("Verdana", "Verdana"),
+            ("Times New Roman", "Times New Roman"),
+            ("Courier New", "Courier New"),
+        ],
+        default="Arial",
+    )
+    custom_css = models.TextField("Кастомний CSS", blank=True)
+
+    # Додаткові поля
+    is_active = models.BooleanField(default=False, verbose_name="Активна тема")
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="themes"
+    )
+    css_file = models.FileField(upload_to="themes/css/", blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Якщо не заданий автор → ставимо суперкористувача
+        # Автор за замовчуванням → перший суперкористувач
         if not self.created_by_id:
             self.created_by = User.objects.filter(is_superuser=True).first()
 
-        # Генеруємо slug
+        # Автоматичний slug
         if not self.slug:
             self.slug = slugify(self.name)
 
-        # Зберігаємо базовий запис
         super().save(*args, **kwargs)
 
-        # Якщо css_file ще не створений → генеруємо
+        # Генерація CSS при першому збереженні
         if not self.css_file:
             css_content = f"""
             /* Автоматично створений CSS для теми: {self.name} */
             body {{
                 background-color: {"#fff" if "light" in self.name.lower() else "#121212"};
                 color: {"#000" if "light" in self.name.lower() else "#eee"};
-                font-family: Arial, sans-serif;
+                font-family: {self.font_family}, sans-serif;
             }}
             .navbar {{
                 background-color: {"#f8f9fa" if "light" in self.name.lower() else "#1f1f1f"};
@@ -61,36 +75,59 @@ class Theme(models.Model):
         return self.name
 
 
+# ==============================
+# ГАЛЕРЕЯ
+# ==============================
 class GalleryItem(models.Model):
     MEDIA_CHOICES = (
         ('image', 'Зображення'),
         ('video', 'Відео'),
         ('file', 'Файл'),
     )
+
     title = models.CharField('Заголовок', max_length=200)
     description = models.TextField('Опис', blank=True)
     file = models.FileField('Файл', upload_to="gallery/")
-    media_type = models.CharField('Тип медіа', max_length=10, choices=MEDIA_CHOICES, default='image')
-    uploader = models.ForeignKey(User, on_delete=models.CASCADE, related_name="gallery_items")
-    workshop = models.ForeignKey("Workshop", on_delete=models.SET_NULL, null=True, blank=True, related_name="gallery_items")
-    theme = models.ForeignKey("Theme", on_delete=models.SET_NULL, null=True, blank=True, related_name="gallery_items")
-    approved = models.BooleanField(default=False)
+    media_type = models.CharField(
+        'Тип медіа', max_length=10, choices=MEDIA_CHOICES, default='image'
+    )
+
+    uploader = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="gallery_items"
+    )
+    workshop = models.ForeignKey(
+        "Workshop", on_delete=models.SET_NULL, null=True, blank=True, related_name="gallery_items"
+    )
+    theme = models.ForeignKey(
+        "Theme", on_delete=models.SET_NULL, null=True, blank=True, related_name="gallery_items"
+    )
+
+    approved = models.BooleanField(default=False, verbose_name="Схвалено")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
 
+# ==============================
+# ВОРКШОПИ
+# ==============================
 class Workshop(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-    start_at = models.DateTimeField(null=True, blank=True)
-    end_at = models.DateTimeField(null=True, blank=True)
-    location = models.CharField(max_length=200, blank=True)
-    capacity = models.PositiveIntegerField(null=True, blank=True)
-    theme = models.ForeignKey(Theme, on_delete=models.SET_NULL, null=True, blank=True, related_name='workshops')
-    is_published = models.BooleanField(default=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="workshops")
+    title = models.CharField(max_length=200, verbose_name="Назва")
+    description = models.TextField(blank=True, verbose_name="Опис")
+    start_at = models.DateTimeField(null=True, blank=True, verbose_name="Початок")
+    end_at = models.DateTimeField(null=True, blank=True, verbose_name="Кінець")
+    location = models.CharField(max_length=200, blank=True, verbose_name="Локація")
+    capacity = models.PositiveIntegerField(null=True, blank=True, verbose_name="Місткість")
+
+    theme = models.ForeignKey(
+        Theme, on_delete=models.SET_NULL, null=True, blank=True, related_name='workshops'
+    )
+    is_published = models.BooleanField(default=True, verbose_name="Опубліковано")
+
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="workshops"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
