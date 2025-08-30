@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% for thread in threads %}
+
+<p>тема {{ thread.theme }}</p>
+{% endfor %}
+
+{% for category in categories %}
+<p>категорія {{ category.name }} {{ category.description }} {{ category.type }}</p>
+{% endfor %}
+
+{% endblock content %}

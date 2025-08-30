@@ -22,7 +22,7 @@ class Thread(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="threads")
     theme = models.CharField(max_length=300, verbose_name="тема обговорення")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, verbose_name="опис")
     date_start = models.DateTimeField(auto_now_add=True)
     is_closed = models.BooleanField(default=False)
     image = models.ImageField(upload_to="Thread", null=True, blank=True)
