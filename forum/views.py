@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Post, Thread, Category
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ForumHomeView():
     pass
