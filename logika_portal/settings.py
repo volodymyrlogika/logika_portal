@@ -20,6 +20,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'accounts',
+    "voting_system",
+    "workshops",
+    "themes",
+    'material',
+    "gallery",
+    "casino",
+    
 
 ]
 

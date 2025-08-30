@@ -49,11 +49,12 @@
           {% if user.is_authenticated %}
             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> {{ user.username }}</a></li>
             <li class="nav-item">
-              <form action="{% url 'logout' %}" method="post" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="nav-link btn btn-link p-0"><i class="bi bi-box-arrow-right"></i> Вийти</button>
+              <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="nav-link btn btn-link p-0">
+                      <i class="bi bi-box-arrow-right"></i> Вийти
+                  </button>
               </form>
-            </li>
           {% else %}
             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Увійти</a></li>
           {% endif %}
