@@ -36,3 +36,4 @@ class Post(models.Model):
     content_text = models.TextField(null=False, verbose_name="текст контенту")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")
     files = models.FileField(upload_to="posts/", null=True, blank=True)
+

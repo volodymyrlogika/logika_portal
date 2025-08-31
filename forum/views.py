@@ -44,14 +44,17 @@ class ThreadListView(ListView):
         return super().get_queryset()
     
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context['category_id'] = self.kwargs['category_id']
+        return context
 
-class PostLits(ListView):
+class PostList(ListView):
     model = models.Post
     context_object_name = "posts"
     template_name = "forum/post_list.html"
 
-    def get_context_data(self,*args, **kwargs):
-        context = super().get_context_data(**kwargs):
-        context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_id'] = self.kwargs['category_id']
+        context['thread_id'] = self.kwargs['thread_id']
         return context

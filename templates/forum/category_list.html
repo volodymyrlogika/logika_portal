@@ -1,6 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<h2>Категорії</h2>
+<ul>
+    {% for cat in categories %}
+        <li>
+            <a href="{% url 'forum:thread-list' category_id=cat.id %}">
+                {{ cat.name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+
+
     {% for category in categories %}
         <p>категорії {{ category.name }} {{ category.description }} {{ category.type }}</p>
     {% endfor %}

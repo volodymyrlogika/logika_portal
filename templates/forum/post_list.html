@@ -1,4 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
+<h2>Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
+<ul>
+    {% for post in posts %}
+        <li>
+            <b>{{ post.author }}</b>: {{ post.content_text }}
+        </li>
+    {% empty %}
+        <li>Поки немає постів</li>
+    {% endfor %}
+</ul>
 
 {% endblock content %}
