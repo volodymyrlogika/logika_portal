@@ -1,18 +1,37 @@
-{% extends "base.html" %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg rounded-4">
+        <div class="card-body text-center">
 
-{% block content %}
-<div class="container py-5">
-  <h2 class="mb-4">Редагувати профіль</h2>
+          <!-- Аватар -->
+          <img src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}"
+               class="rounded-circle shadow mb-3"
+               style="width:120px; height:120px; object-fit:cover;" alt="avatar">
 
-  <form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-      <label for="id_theme" class="form-label">Тема</label>
-      {{ form.theme }}
+          <h3 class="fw-bold mb-0">{{ user.username }}</h3>
+          <p class="text-muted">{{ user.profile.bio|default:"(немає біо)" }}</p>
+
+          <hr>
+
+          <p><strong>Емейл:</strong> {{ user.email }}</p>
+          <p><strong>Дата приєднання:</strong> {{ user.date_joined|date:"d.m.Y H:i" }}</p>
+          <p><strong>Останній вхід:</strong> {{ user.last_login|date:"d.m.Y H:i" }}</p>
+
+          <div class="mt-3">
+            <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary me-2">
+              <i class="bi bi-pencil"></i> Редагувати
+            </a>
+            <a href="{% url 'password_change' %}" class="btn btn-warning me-2">
+              <i class="bi bi-key"></i> Змінити пароль
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger">
+              <i class="bi bi-box-arrow-right"></i> Вийти
+            </a>
+          </div>
+
+        </div>
+      </div>
     </div>
-
-    <button type="submit" class="btn btn-success">Зберегти</button>
-    <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">Скасувати</a>
-  </form>
+  </div>
 </div>
-{% endblock %}

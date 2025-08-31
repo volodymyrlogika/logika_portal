@@ -6,7 +6,16 @@ from .models import Profile
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ["theme"]
+        fields = ["theme", "bio", "avatar"]  # ✅ додаємо біо та аватар
+        widgets = {
+            "bio": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Розкажіть трохи про себе..."
+            }),
+            "theme": forms.Select(attrs={"class": "form-select"}),
+        }
+
 
 class LoginForm(AuthenticationForm):
     class Meta:

@@ -1,0 +1,126 @@
+<!-- 🎰 Слоти -->
+<div class="slot-machine">
+  <div class="reel"><div class="symbols" id="reel1"></div></div>
+  <div class="reel"><div class="symbols" id="reel2"></div></div>
+  <div class="reel"><div class="symbols" id="reel3"></div></div>
+</div>
+
+<button class="btn-spin" onclick="spin()">🎰 SPIN</button>
+
+<style>
+.slot-machine {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #222;
+  padding: 20px;
+  border: 5px solid red;
+  border-radius: 15px;
+  width: 300px;
+  margin: auto;
+}
+
+.reel {
+  width: 80px;
+  height: 120px;
+  margin: 0 5px;
+  overflow: hidden;
+  border: 2px solid gold;
+  border-radius: 10px;
+  background: black;
+  text-align: center;
+  font-size: 3rem;
+  color: white;
+}
+
+.symbols {
+  display: flex;
+  flex-direction: column;
+}
+
+.symbol {
+  height: 120px;
+  line-height: 120px;
+}
+
+/* Спін з blur */
+.reel-spin {
+  animation: reel-spin 0.15s linear infinite;
+  filter: blur(3px);
+}
+@keyframes reel-spin {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-120px); }
+}
+
+/* Анімація відскоку */
+.reel-stop {
+  animation: bounce-stop 0.4s ease-out;
+}
+@keyframes bounce-stop {
+  0%   { transform: translateY(-20px); }
+  50%  { transform: translateY(10px); }
+  70%  { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+.btn-spin {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  background: gold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+</style>
+
+<script>
+const symbols = ["🍒", "🍋", "🍊", "⭐", "7️⃣"];
+
+function fillReel(id) {
+  const reel = document.getElementById(id);
+  reel.innerHTML = "";
+  for (let i = 0; i < 20; i++) {
+    let sym = symbols[Math.floor(Math.random() * symbols.length)];
+    let div = document.createElement("div");
+    div.className = "symbol";
+    div.innerText = sym;
+    reel.appendChild(div);
+  }
+}
+
+function stopReel(id) {
+  const reel = document.getElementById(id);
+  reel.classList.remove("reel-spin");
+  reel.style.filter = "none";
+
+  // фінальний символ
+  reel.innerHTML = "";
+  let sym = symbols[Math.floor(Math.random() * symbols.length)];
+  let div = document.createElement("div");
+  div.className = "symbol";
+  div.innerText = sym;
+  reel.appendChild(div);
+
+  // 👇 додаємо bounce ефект
+  reel.classList.add("reel-stop");
+  setTimeout(() => reel.classList.remove("reel-stop"), 400);
+}
+
+function spin() {
+  fillReel("reel1");
+  fillReel("reel2");
+  fillReel("reel3");
+
+  document.getElementById("reel1").classList.add("reel-spin");
+  document.getElementById("reel2").classList.add("reel-spin");
+  document.getElementById("reel3").classList.add("reel-spin");
+
+  setTimeout(() => stopReel("reel1"), 2000);
+  setTimeout(() => stopReel("reel2"), 3000);
+  setTimeout(() => stopReel("reel3"), 4000);
+}
+</script>

@@ -18,8 +18,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # твої апки
     'main',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     "voting_system",
     "workshops",
     "themes",
@@ -27,9 +29,8 @@ INSTALLED_APPS = [
     "gallery",
     "casino",
     "widget_tweaks",
-    
-
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

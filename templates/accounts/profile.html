@@ -1,13 +1,79 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container py-5">
-  <h1>Профіль користувача: {{ user.username }}</h1>
-  <p>Email: {{ user.email }}</p>
-  <p>Тема: {{ user.profile.get_theme_display }}</p>
+  <h1 class="mb-4"><i class="bi bi-person"></i> Профіль користувача: {{ user.username }}</h1>
 
-<a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary mt-3">
-  Змінити тему
-</a>
+  <!-- Основна інформація -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <p><strong>Емейл:</strong> {{ user.email }}</p>
+      <p><strong>Тема:</strong> {{ user.profile.get_theme_display }}</p>
+      <p><strong>Дата приєднання:</strong> {{ user.date_joined|date:"d.m.Y H:i" }}</p>
+      <p><strong>Останній вхід:</strong> {{ user.last_login|date:"d.m.Y H:i" }}</p>
+    </div>
+  </div>
+
+  <!-- Аватар -->
+  {% if user.profile.avatar %}
+    <div class="mb-4">
+      <img src="{{ user.profile.avatar.url }}" 
+           alt="Аватар" 
+           class="rounded-circle shadow-sm" 
+           width="150" height="150">
+    </div>
+  {% endif %}
+
+  <!-- Кнопки дій -->
+  <div class="mb-4">
+    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary me-2">
+      <i class="bi bi-pencil"></i> Редагувати профіль
+    </a>
+    <a href="{% url 'accounts:change_password' %}" class="btn btn-warning me-2">
+      <i class="bi bi-key"></i> Змінити пароль
+    </a>
+    <a href="{% url 'logout' %}" class="btn btn-danger">
+      <i class="bi bi-door-closed"></i> Вийти
+    </a>
+  </div>
+
+  <!-- Список воркшопів -->
+  <h3 class="mt-5"><i class="bi bi-book"></i> Мої воркшопи</h3>
+  {% if workshops %}
+    <ul class="list-group">
+      {% for workshop in workshops %}
+        <li class="list-group-item d-flex justify-content-between">
+          {{ workshop.title }}
+          <span class="badge bg-{{ workshop.is_published|yesno:'success,danger' }}">
+            {{ workshop.is_published|yesno:"Опубліковано,Приховано" }}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">Немає створених воркшопів.</p>
+  {% endif %}
+
+  <!-- Галерея / матеріали -->
+  <h3 class="mt-5"><i class="bi bi-image"></i> Мої медіа</h3>
+  {% if materials %}
+    <div class="row">
+      {% for item in materials %}
+        <div class="col-md-3 mb-3">
+          <div class="card">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+            {% else %}
+              <div class="card-body">
+                <p>{{ item.name }}</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">Немає завантажених матеріалів.</p>
+  {% endif %}
 
 </div>
 {% endblock %}

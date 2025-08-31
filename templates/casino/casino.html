@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Казіно{% endblock %}
+
+{% block content %}
+<div class="text-center">
+  <h1 class="fw-bold text-danger mb-4">🎰 Казино</h1>
+
+  <!-- Меню ігор -->
+  <div class="mb-4">
+    <button class="btn btn-outline-danger mx-2" onclick="showGame('slots')">🎰 Слоти</button>
+    <button class="btn btn-outline-primary mx-2" onclick="showGame('rps')">✊ Камінь-Ножиці-Папір</button>
+    <button class="btn btn-outline-success mx-2" onclick="showGame('dice')">🎲 Кубик</button>
+  </div>
+
+  <!-- Ігри -->
+  <div id="slots" class="game">
+    {% include "casino/slots.html" %}
+  </div>
+
+  <div id="rps" class="game d-none">
+    {% include "casino/rps.html" %}
+  </div>
+
+  <div id="dice" class="game d-none">
+    {% include "casino/dice.html" %}
+  </div>
+</div>
+
+<script>
+function showGame(id) {
+  document.querySelectorAll(".game").forEach(el => el.classList.add("d-none"));
+  document.getElementById(id).classList.remove("d-none");
+}
+</script>
+{% endblock %}

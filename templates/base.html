@@ -43,22 +43,34 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'themes:theme_list' %}"><i class="bi bi-palette"></i> Теми</a></li>
           <li class="nav-item">
             <a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}">
-              <i class="bi bi-dice-5-fill"></i> 🎰 Казіно
+              <i class="bi bi-dice-5-fill"></i> <i class="bi bi-slot"></i> Казіно
             </a>
           </li>
-          {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> {{ user.username }}</a></li>
-            <li class="nav-item">
-              <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
-                  {% csrf_token %}
-                  <button type="submit" class="nav-link btn btn-link p-0">
-                      <i class="bi bi-box-arrow-right"></i> Вийти
-                  </button>
-              </form>
-          {% else %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Увійти</a></li>
-          {% endif %}
-        </ul>
+
+<!-- Navbar праворуч -->
+<ul class="navbar-nav ms-auto">
+  {% if user.is_authenticated %}
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <!-- Аватарка -->
+        <img src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}"
+             alt="Avatar"
+             class="rounded-circle me-2"
+             style="width:32px; height:32px; object-fit:cover;">
+        {{ user.username }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
+        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
+        <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Редагувати профіль</a></li>
+        <li><a class="dropdown-item" href="{% url 'password_change' %}">Змінити пароль</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Вийти</a></li>
+      </ul>
+    </li>
+  {% else %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
+  {% endif %}
+</ul>
       </div>
     </div>
   </nav>
@@ -88,6 +100,16 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Init Tooltips -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    });
+  </script>
 
   <!-- Konami JS -->
   <script>
@@ -126,7 +148,6 @@
     const icon = document.getElementById("themeIcon");
     const body = document.body;
 
-    // Завантажуємо збережену тему або тему з Django
     let theme = localStorage.getItem("theme") || body.getAttribute("data-bs-theme") || "light";
     body.setAttribute("data-bs-theme", theme);
     icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
