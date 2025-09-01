@@ -18,6 +18,7 @@ class AllThreadListView(ListView):
     context_object_name = "threds"
     template_name = "forum/all_thread_list.html"
 
+
 class ThreadMixin:
     def get_threads(self):
         return Thread.objects.all()

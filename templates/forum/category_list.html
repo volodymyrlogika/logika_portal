@@ -1,20 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>Категорії</h2>
+<h2>всі Категорії</h2>
 <ul>
-    {% for cat in categories %}
+    {% for category in categories %}
         <li>
-            <a href="{% url 'forum:thread-list' category_id=cat.id %}">
-                {{ cat.name }}
+            <a href="{% url 'forum:thread-list' category_id=category.id %}">
+                <p> назва:{{ category.name }} опис {{ category.description }} тип {{ category.type }}</p>
             </a>
         </li>
     {% endfor %}
 </ul>
 
-
-    {% for category in categories %}
-        <p>категорії {{ category.name }} {{ category.description }} {{ category.type }}</p>
-    {% endfor %}
     
 {% endblock content %}
