@@ -16,7 +16,7 @@ class Category(models.Model):
     type = models.CharField(max_length=35, choices=CATEGORY_TYPE_CHOICES)
     image = models.ImageField(upload_to="categories/", null=True, blank=True)
     def __str__(self):
-        return self.name
+        return f"{self.name}  — {self.description[:10]}"
 
 class Thread(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="threads")

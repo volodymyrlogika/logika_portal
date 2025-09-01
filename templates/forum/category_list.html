@@ -6,7 +6,7 @@
     {% for category in categories %}
         <li>
             <a href="{% url 'forum:thread-list' category_id=category.id %}">
-                <p> назва:{{ category.name }} опис {{ category.description }} тип {{ category.type }}</p>
+                <p> назва:{{ category.name }} опис {{ category.description|truncatechars:30 }} тип {{ category.type }}</p>
             </a>
         </li>
     {% endfor %}
