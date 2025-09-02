@@ -18,3 +18,13 @@ def active_theme(request):
     slug = request.session.get("active_theme", "light")
     theme = Theme.objects.filter(slug=slug).first()
     return {"active_theme": theme}
+def themes_dropdown(request):
+    return {
+        "all_themes": Theme.objects.all()
+    }
+
+def themes_list(request):
+    return {
+        "themes_list": Theme.objects.all(),
+        "active_theme_slug": request.session.get("active_theme")
+    }

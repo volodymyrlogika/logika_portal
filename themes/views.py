@@ -7,6 +7,21 @@ from .models import Theme
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ThemeForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+@csrf_exempt
+def apply_theme(request, pk):
+    if request.method == "POST":
+        try:
+            theme = Theme.objects.get(pk=pk)
+            profile = request.user.profile
+            profile.theme = theme.slug if hasattr(theme, "slug") else "light"
+            profile.save()
+            return JsonResponse({"success": True, "theme": profile.theme})
+        except Theme.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Theme not found"}, status=404)
+    return JsonResponse({"success": False, "error": "Invalid method"}, status=400)
 
 class ThemeListView(ListView):
     model = Theme
@@ -73,22 +88,27 @@ class ThemeCreateView(CreateView):
     model = Theme
     form_class = ThemeForm
     template_name = "themes/theme_form.html"
-    success_url = reverse_lazy("themes:list")
+    success_url = reverse_lazy("themes:theme_list")
 
     def form_valid(self, form):
         if self.request.user.is_authenticated:
             form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        # друкуємо помилки у консолі для дебагу
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
+
+
 
 class ThemeUpdateView(UpdateView):
     model = Theme
     form_class = ThemeForm
     template_name = "themes/theme_form.html"
-    success_url = reverse_lazy("themes:list")
-
+    success_url = reverse_lazy("themes:theme_list")
 
 class ThemeDeleteView(DeleteView):
     model = Theme
     template_name = "themes/theme_confirm_delete.html"
-    success_url = reverse_lazy("themes:list")
+    success_url = reverse_lazy("themes:theme_list")

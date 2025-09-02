@@ -19,6 +19,9 @@
               <label class="col-sm-3 col-form-label">Назва теми:</label>
               <div class="col-sm-9">
                 {{ form.name|add_class:"form-control" }}
+                {% if form.name.errors %}
+                  <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -28,6 +31,9 @@
               <div class="col-sm-9 d-flex align-items-center">
                 {{ form.background_color|add_class:"form-control form-control-color me-2" }}
                 <span id="bgColorValue">{{ form.background_color.value }}</span>
+                {% if form.background_color.errors %}
+                  <div class="text-danger small mt-1">{{ form.background_color.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -37,6 +43,9 @@
               <div class="col-sm-9 d-flex align-items-center">
                 {{ form.text_color|add_class:"form-control form-control-color me-2" }}
                 <span id="textColorValue">{{ form.text_color.value }}</span>
+                {% if form.text_color.errors %}
+                  <div class="text-danger small mt-1">{{ form.text_color.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -45,6 +54,9 @@
               <label class="col-sm-3 col-form-label">Фонове зображення:</label>
               <div class="col-sm-9">
                 {{ form.background_image|add_class:"form-control" }}
+                {% if form.background_image.errors %}
+                  <div class="text-danger small mt-1">{{ form.background_image.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -67,6 +79,9 @@
                   <option value="Montserrat">Montserrat</option>
                   <option value="Monospace">Monospace</option>
                 </select>
+                {% if form.font_family.errors %}
+                  <div class="text-danger small mt-1">{{ form.font_family.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -75,6 +90,9 @@
               <label class="col-sm-3 col-form-label">Додатковий CSS:</label>
               <div class="col-sm-9">
                 {{ form.custom_css|add_class:"form-control" }}
+                {% if form.custom_css.errors %}
+                  <div class="text-danger small mt-1">{{ form.custom_css.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -99,12 +117,13 @@
   </div>
 </div>
 
-<!-- JS для оновлення HEX і прев'ю -->
+<!-- JS для оновлення прев'ю -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const bgPicker = document.querySelector("#id_background_color");
   const textPicker = document.querySelector("#id_text_color");
   const fontSelect = document.querySelector("#id_font_family");
+  const customCSS = document.querySelector("#id_custom_css");
   const bgValue = document.querySelector("#bgColorValue");
   const textValue = document.querySelector("#textColorValue");
   const preview = document.querySelector("#themePreview");
@@ -121,11 +140,22 @@ document.addEventListener("DOMContentLoaded", function() {
     if (fontSelect) {
       preview.style.fontFamily = fontSelect.value || "inherit";
     }
+    if (customCSS) {
+      preview.style.cssText += customCSS.value;
+    }
   }
 
   if (bgPicker) bgPicker.addEventListener("input", updatePreview);
   if (textPicker) textPicker.addEventListener("input", updatePreview);
   if (fontSelect) fontSelect.addEventListener("change", updatePreview);
+  if (customCSS) customCSS.addEventListener("input", () => {
+    preview.style.cssText = `
+      background-color: ${bgPicker.value};
+      color: ${textPicker.value};
+      font-family: ${fontSelect.value || "inherit"};
+      ${customCSS.value}
+    `;
+  });
 
   updatePreview(); // стартове застосування
 });

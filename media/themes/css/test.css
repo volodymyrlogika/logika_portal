@@ -1,0 +1,12 @@
+/* Автоматично створений CSS для теми: test */
+            body {
+                background-color: #121212;
+                color: #eee;
+                font-family: Courier New, sans-serif;
+            }
+            .navbar {
+                background-color: #1f1f1f;
+            }
+            a {
+                color: #66b2ff;
+            }

@@ -26,32 +26,47 @@
             <i class="bi bi-image me-1"></i> Галерея
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'themes:home' %}">
+
+        <!-- Дропменю Теми -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="themesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-palette me-1"></i> Теми
           </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="themesDropdown">
+            <li><a class="dropdown-item" href="{% url 'themes:theme_list' %}"><i class="bi bi-list"></i> Всі теми</a></li>
+            <li><a class="dropdown-item" href="{% url 'themes:theme_create' %}"><i class="bi bi-plus-circle"></i> Додати тему</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'themes:set_theme' %}"><i class="bi bi-magic"></i> Перемкнути тему</a></li>
+          </ul>
         </li>
       </ul>
 
       <!-- Права частина -->
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <button id="themeToggle" class="btn btn-sm btn-outline-light me-2">
-            <i id="themeIcon" class="bi bi-moon"></i>
-            <span id="themeText">Темна</span>
-          </button>
-        </li>
+<!-- Дропменю перемикання тем -->
+<li class="nav-item dropdown">
+  <button class="btn nav-link dropdown-toggle d-flex align-items-center" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i id="themeIcon" class="bi bi-palette me-1"></i> Тема
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+    {% for theme in themes_list %}
+      <li>
+        <a class="dropdown-item {% if theme.slug == active_theme_slug %}active{% endif %}" href="#" data-theme="{{ theme.slug }}">
+          <i class="bi bi-palette"></i> {{ theme.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</li>
 
         {% if user.is_authenticated %}
-          <li class="nav-item d-flex align-items-center me-2">
-            <span class="nav-link">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-person-circle me-1"></i> {{ user.username }}
-            </span>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-sm btn-outline-danger" href="{% url 'logout' %}">
-              <i class="bi bi-box-arrow-right"></i> Вийти
             </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Профіль</a></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a></li>
+            </ul>
           </li>
         {% else %}
           <li class="nav-item">

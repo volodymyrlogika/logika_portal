@@ -12,7 +12,7 @@ urlpatterns = [
     # список
     path("", ThemeListView.as_view(), name="theme_list"),
  
-    
+    path("<int:pk>/apply/", views.apply_theme, name="apply"),
     # CRUD (порядок важливий!)
     path("create/", ThemeCreateView.as_view(), name="theme_create"),
     path("<slug:slug>/update/", ThemeUpdateView.as_view(), name="theme_update"),

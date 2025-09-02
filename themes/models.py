@@ -4,16 +4,23 @@ from django.core.files.base import ContentFile
 from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 
 # ==============================
 # ТЕМИ
 # ==============================
-class Theme(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Назва теми")
-    slug = models.SlugField(unique=True, blank=True, default="")
+from django.utils.text import slugify
 
-    description = models.TextField(blank=True, verbose_name="Опис")
+class Theme(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+    background_color = models.CharField(max_length=7, default="#ffffff")
+    text_color = models.CharField(max_length=7, default="#000000")
+    background_image = models.ImageField(upload_to="themes/backgrounds/", blank=True, null=True)
+    font_family = models.CharField(max_length=50, blank=True)
+    custom_css = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True, default="")
 
     # Основні стилі
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
@@ -42,10 +49,10 @@ class Theme(models.Model):
     css_file = models.FileField(upload_to="themes/css/", blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Автор за замовчуванням → перший суперкористувач
-        if not self.created_by_id:
-            self.created_by = User.objects.filter(is_superuser=True).first()
+        if not self.slug:
+            self.slug = slugify(self.name)
 
+        super().save(*args, **kwargs)
         # Автоматичний slug
         if not self.slug:
             self.slug = slugify(self.name)
@@ -106,7 +113,7 @@ class GalleryItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 # ==============================

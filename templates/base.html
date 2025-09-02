@@ -16,7 +16,8 @@
 
 </head>
 <body class="d-flex flex-column min-vh-100"
-      data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
+      data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
+
 
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg shadow-sm"
@@ -59,13 +60,33 @@
              style="width:32px; height:32px; object-fit:cover;">
         {{ user.username }}
       </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
-        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
-        <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Редагувати профіль</a></li>
-        <li><a class="dropdown-item" href="{% url 'password_change' %}">Змінити пароль</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Вийти</a></li>
-      </ul>
+<ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="navbarUser" style="min-width: 250px;">
+    <!-- Біо -->
+    <li class="mb-2">
+      <div class="card shadow-sm">
+        <div class="card-body p-2">
+          <p class="mb-0"><strong>Біо:</strong></p>
+          <p class="mb-0 text-truncate" title="{{ user.profile.bio }}">{{ user.profile.bio|default:"(немає біо)" }}</p>
+        </div>
+      </div>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+
+    <!-- Посилання -->
+    <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
+    <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Редагувати профіль</a></li>
+    <li><a class="dropdown-item" href="{% url 'password_change' %}">Змінити пароль</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="dropdown-item text-danger">
+          <i class="bi bi-box-arrow-right"></i> Вийти
+        </button>
+      </form>
+    </li>
+</ul>
+
     </li>
   {% else %}
     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
@@ -82,7 +103,8 @@
 
   <!-- Footer -->
   <footer class="text-center py-3 mt-auto"
-          data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
+          data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}"
+
     <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
   </footer>
 
@@ -142,24 +164,32 @@
   </script>
 
   <!-- Theme Toggle JS -->
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("themeToggle");
-    const icon = document.getElementById("themeIcon");
-    const body = document.body;
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleBtn = document.getElementById("themeToggle");
+  const icon = document.getElementById("themeIcon");
+  const body = document.body;
 
-    let theme = localStorage.getItem("theme") || body.getAttribute("data-bs-theme") || "light";
+  let theme = body.getAttribute("data-bs-theme") || "light";
+  icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+
+  toggleBtn.addEventListener("click", function () {
+    theme = (theme === "light") ? "dark" : "light";
     body.setAttribute("data-bs-theme", theme);
     icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
 
-    toggleBtn.addEventListener("click", function () {
-      theme = (body.getAttribute("data-bs-theme") === "light") ? "dark" : "light";
-      body.setAttribute("data-bs-theme", theme);
-      localStorage.setItem("theme", theme);
-      icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+    // Відправляємо на сервер
+    fetch("{% url 'accounts:set_theme' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ theme: theme })
     });
   });
-  </script>
+});
+</script>
 
 </body>
-</html>
+</html>a

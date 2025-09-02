@@ -2,9 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+import uuid
+import os
 def user_avatar_path(instance, filename):
-    return f'avatars/user_{instance.user.id}/{filename}'
+    ext = filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{ext}"  # унікальне ім'я
+    return os.path.join('avatars', f'user_{instance.user.id}', filename)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -19,6 +22,13 @@ class Profile(models.Model):
         blank=True,
         null=True,
         verbose_name="Аватар"
+    )
+    custom_theme = models.ForeignKey(
+        "themes.Theme",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="profiles"
     )
 
     def __str__(self):

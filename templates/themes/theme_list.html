@@ -20,7 +20,7 @@
                 {{ theme.description|default:"(без опису)" }}
               </p>
               <div class="d-flex justify-content-center gap-2 mt-3">
-                <a href="{% url 'themes:detail' theme.pk %}" class="btn btn-outline-primary btn-sm">
+                <a href="{% url 'themes:theme_detail' theme.slug %}" class="btn btn-outline-primary btn-sm">
                   <i class="bi bi-eye"></i> Переглянути
                 </a>
                 <!-- кнопка застосування -->

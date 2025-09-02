@@ -26,23 +26,29 @@
         {% endif %}
 
         {# Текстова частина під медіа #}
-        <div class="small mt-2">
-          <div class="fw-bold text-truncate text-white">
-            {{ item.title|default:item.file.name|default:"Без назви" }}
-          </div>
+<div class="small mt-2">
+  <div class="fw-bold text-truncate text-white">
+    {{ item.title|default:item.file.name|default:"Без назви" }}
+  </div>
 
-          {% if item.tags.exists %}
-            <div class="text-light mb-1">
-              {% for tag in item.tags.all %}
-                #{{ tag.name }}
-              {% endfor %}
-            </div>
-          {% endif %}
+  {% if item.tags.exists %}
+    <div class="text-light mb-1">
+      {% for tag in item.tags.all %}
+        #{{ tag.name }}
+      {% endfor %}
+    </div>
+  {% endif %}
 
-          {% if item.age_rating %}
-            <span class="badge bg-secondary">{{ item.get_age_rating_display }}</span>
-          {% endif %}
-        </div>
+  {% if item.age_rating %}
+    <span class="badge bg-secondary">{{ item.get_age_rating_display }}</span>
+  {% endif %}
+
+  {# Бейдж "Не перевірено" для адміна після вікового рейтингу #}
+  {% if request.user.is_staff and item.status != 'approved' %}
+    <div class="badge bg-warning text-dark mt-1">Не перевірено</div>
+  {% endif %}
+</div>
+
 
       </div>
     </div>

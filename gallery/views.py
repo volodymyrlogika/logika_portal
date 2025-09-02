@@ -14,6 +14,11 @@ class GalleryListView(ListView):
     context_object_name = "items"
     paginate_by = 12
 
+    def get_queryset(self):
+        # Звичайні користувачі бачать тільки approved
+        if self.request.user.is_staff:
+            return GalleryItem.objects.all().order_by('-created_at')
+        return GalleryItem.objects.filter(status="approved").order_by('-created_at')
 
 
 class GalleryCreateView(LoginRequiredMixin, CreateView):

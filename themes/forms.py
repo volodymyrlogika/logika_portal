@@ -14,9 +14,17 @@ class ThemeForm(forms.ModelForm):
             "font_family": forms.Select(
                 choices=[
                     ("Arial", "Arial"),
-                    ("Verdana", "Verdana"),
+                    ("Helvetica", "Helvetica"),
                     ("Times New Roman", "Times New Roman"),
+                    ("Georgia", "Georgia"),
                     ("Courier New", "Courier New"),
+                    ("Verdana", "Verdana"),
+                    ("Tahoma", "Tahoma"),
+                    ("Roboto", "Roboto"),
+                    ("Open Sans", "Open Sans"),
+                    ("Lato", "Lato"),
+                    ("Montserrat", "Montserrat"),
+                    ("Monospace", "Monospace"),
                 ],
                 attrs={"class": "form-select"}
             ),

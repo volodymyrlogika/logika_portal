@@ -16,8 +16,8 @@
       <form method="post">
         {% csrf_token %}
         <div class="d-flex justify-content-center gap-3 mt-4">
-          <a href="{% url 'themes:home' %}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Скасувати
+          <a href="{% url 'themes:theme_list' %}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left"></i> Скасувати
           </a>
           <button type="submit" class="btn btn-danger">
             <i class="bi bi-trash"></i> Видалити

@@ -23,18 +23,19 @@
       <hr class="border-light">
 
       <div class="d-flex gap-2 flex-wrap">
-        <a href="{% url 'themes:list' %}" class="btn btn-outline-light">
-          <i class="bi bi-arrow-left"></i> Назад
-        </a>
-        <a href="{% url 'themes:create' %}" class="btn btn-success">
-          <i class="bi bi-plus-circle"></i> Додати нову тему
-        </a>
-        <a href="{% url 'themes:update' theme.pk %}" class="btn btn-warning">
-          <i class="bi bi-pencil-square"></i> Редагувати
-        </a>
-        <a href="{% url 'themes:delete' theme.pk %}" class="btn btn-danger">
-          <i class="bi bi-trash"></i> Видалити
-        </a>
+            <a href="{% url 'themes:theme_list' %}" class="btn btn-outline-light">
+              <i class="bi bi-arrow-left"></i> Назад
+            </a>
+            <a href="{% url 'themes:theme_create' %}" class="btn btn-success">
+              <i class="bi bi-plus-circle"></i> Додати нову тему
+            </a>
+            <a href="{% url 'themes:theme_update' theme.slug %}" class="btn btn-warning">
+              <i class="bi bi-pencil-square"></i> Редагувати
+            </a>
+            <a href="{% url 'themes:theme_delete' theme.slug %}" class="btn btn-danger">
+              <i class="bi bi-trash"></i> Видалити
+            </a>
+
 
         {% if active_theme and active_theme.id != theme.id %}
           <button id="apply-theme-btn" class="btn btn-primary">
@@ -71,7 +72,7 @@
       <script>
       // одна кнопка
       document.getElementById("apply-theme-btn")?.addEventListener("click", function () {
-    fetch("{% url 'themes:apply' theme.pk %}", {
+    fetch("{% url 'themes:set_theme' %}", {
         method: "POST",
         headers: {
             "X-CSRFToken": "{{ csrf_token }}",

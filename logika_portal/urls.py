@@ -22,6 +22,7 @@ urlpatterns = [
     # accounts
     path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
+    path('logout/', CustomLogoutView.as_view(next_page='main:home'), name='logout'),
 
     # themes
     path("themes/", include(("themes.urls", "themes"), namespace="themes")),
