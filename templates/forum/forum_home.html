@@ -5,6 +5,8 @@
 
 <p>тема {{ thread.theme }}</p>
 {% endfor %}
+
+<div class = "room_list d-flex flex-wrap gap-3">
 {% for category in categories %}
 
 <div class="card" style="width: 18rem;">
@@ -22,5 +24,6 @@
     </div>
   </div>
 
-{% endfor %}
+
+{% endfor %}  </div>
 {% endblock content %}

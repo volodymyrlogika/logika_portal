@@ -32,6 +32,7 @@ def __str__(self):
 
 class Post(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content_text = models.TextField(null=False, verbose_name="текст контенту")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")

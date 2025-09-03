@@ -42,7 +42,7 @@ class ThreadListView(ListView):
     template_name = "thread_list.html"
 
     def get_queryset(self):
-        return super().get_queryset()
+        return Thread.objects.filter(category_id=self.kwargs['category_id'])
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -58,4 +58,10 @@ class PostList(ListView):
         context = super().get_context_data(**kwargs)
         context['category_id'] = self.kwargs['category_id']
         context['thread_id'] = self.kwargs['thread_id']
+        return context
+    
+    def get_queryset(self):
+        context = Post.objects.filter(
+            thread__category_id=self.kwargs['category_id'],
+            thread_id=self.kwargs['thread_id'])
         return context
