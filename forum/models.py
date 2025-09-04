@@ -38,3 +38,5 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")
     files = models.FileField(upload_to="posts/", null=True, blank=True)
 
+    url_thread_id = models.IntegerField(null=True, blank=True)
+    url_category_id = models.IntegerField(null=True, blank=True)
