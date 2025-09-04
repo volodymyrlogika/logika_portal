@@ -1,0 +1,16 @@
+<h1>Оголошення</h1>
+
+<ul>
+  {% for ann in announcements %}
+    <li>
+      <a href="{% url 'announcement_detail' ann.pk %}">{{ ann.title }}</a>
+      <small>{{ ann.created_at|date:"d.m.Y H:i" }}</small>
+    </li>
+  {% empty %}
+    <li>Немає оголошень</li>
+  {% endfor %}
+</ul>
+
+{% if user.is_authenticated and (user.is_staff or user.groups.filter(name="Moderators").exists) %}
+  <a href="{% url 'announcement_create' %}">➕ Створити оголошення</a>
+{% endif %}
