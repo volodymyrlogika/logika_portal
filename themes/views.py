@@ -3,11 +3,12 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.http import JsonResponse
-from .models import Theme
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from .forms import ThemeForm
 from django.contrib.auth.decorators import login_required
+from .models import Theme
+from .forms import ThemeForm
+from .utils import create_theme_css
 
 @login_required
 @csrf_exempt
@@ -23,35 +24,47 @@ def apply_theme(request, pk):
             return JsonResponse({"success": False, "error": "Theme not found"}, status=404)
     return JsonResponse({"success": False, "error": "Invalid method"}, status=400)
 
+
 class ThemeListView(ListView):
     model = Theme
     template_name = "themes/theme_list.html"
     context_object_name = "themes"
-# --- API для застосування теми ---
-@csrf_exempt
+
+
+@login_required
+@require_POST
 def set_theme(request):
-    if request.user.is_authenticated and request.method == "POST":
-        data = json.loads(request.body)
-        theme = data.get("theme", "light")
-        request.user.profile.theme = theme
-        request.user.profile.save()
-        return JsonResponse({"status": "ok", "theme": theme})
-    return JsonResponse({"status": "error"}, status=400)
+    """Встановлюємо тему для користувача"""
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "error": "Invalid JSON"}, status=400)
+
+    theme = data.get("theme")
+    if not theme:
+        return JsonResponse({"status": "error", "error": "No theme provided"}, status=400)
+
+    # ⚠️ НЕ викликаємо create_theme_css тут!
+    request.session["theme"] = theme
+    profile = request.user.profile
+    profile.theme = theme
+    profile.save()
+
+    return JsonResponse({"status": "ok", "theme": theme})
 
 
 def switch_theme(request, slug):
     theme = get_object_or_404(Theme, slug=slug)
-    request.session["theme"] = theme.slug  # зберігаємо у session
+    request.session["theme"] = theme.slug
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return JsonResponse({
             "success": True,
             "css_url": theme.css_file.url if theme.css_file else f"/static/css/themes/{theme.slug}.css"
         })
-    return redirect("themes:list")
+    return redirect("themes:theme_list")
 
 
-# --- Список тем ---
 class ThemeListView(ListView):
     model = Theme
     template_name = "themes/theme_list.html"
@@ -59,7 +72,7 @@ class ThemeListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        active_slug = self.request.session.get("theme")  # уніфіковано
+        active_slug = self.request.session.get("theme")
         if active_slug:
             context["active_theme"] = Theme.objects.filter(slug=active_slug).first()
         else:
@@ -67,7 +80,6 @@ class ThemeListView(ListView):
         return context
 
 
-# --- Деталі теми ---
 class ThemeDetailView(DetailView):
     model = Theme
     template_name = "themes/theme_detail.html"
@@ -75,7 +87,7 @@ class ThemeDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        active_slug = self.request.session.get("theme")  # тепер теж "theme"
+        active_slug = self.request.session.get("theme")
         if active_slug:
             context["active_theme"] = Theme.objects.filter(slug=active_slug).first()
         else:
@@ -83,7 +95,6 @@ class ThemeDetailView(DetailView):
         return context
 
 
-# --- CRUD ---
 class ThemeCreateView(CreateView):
     model = Theme
     form_class = ThemeForm
@@ -91,15 +102,25 @@ class ThemeCreateView(CreateView):
     success_url = reverse_lazy("themes:theme_list")
 
     def form_valid(self, form):
+        """Створення теми та генерація CSS"""
         if self.request.user.is_authenticated:
             form.instance.created_by = self.request.user
-        return super().form_valid(form)
+
+        response = super().form_valid(form)
+
+        # Генеруємо CSS тільки тут!
+        create_theme_css(
+            theme_name=form.instance.name,
+            bg_color=form.instance.background_color,
+            text_color=form.instance.text_color,
+            extra_css=form.instance.custom_css or ""
+        )
+
+        return response
 
     def form_invalid(self, form):
-        # друкуємо помилки у консолі для дебагу
         print("Form errors:", form.errors)
         return super().form_invalid(form)
-
 
 
 class ThemeUpdateView(UpdateView):
@@ -107,6 +128,7 @@ class ThemeUpdateView(UpdateView):
     form_class = ThemeForm
     template_name = "themes/theme_form.html"
     success_url = reverse_lazy("themes:theme_list")
+
 
 class ThemeDeleteView(DeleteView):
     model = Theme

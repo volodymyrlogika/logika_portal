@@ -1,53 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
 <div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm rounded-3 p-4">
-        <h3 class="card-title mb-4 text-center">Редагувати профіль</h3>
+  <h1 class="mb-4"><i class="bi bi-person"></i> Профіль користувача: {{ user.username }}</h1>
 
-        <form method="POST" enctype="multipart/form-data">
-          {% csrf_token %}
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="post" action="{% url 'accounts:edit_profile' %}" enctype="multipart/form-data">
+        {% csrf_token %}
 
-          <!-- Аватар -->
-          <div class="mb-3 text-center">
-            <img src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}"
-                 class="rounded-circle mb-2"
-                 style="width:100px; height:100px; object-fit:cover;" alt="avatar">
-            <input type="file" name="avatar" class="form-control mt-2">
+        <!-- Емейл -->
+        <div class="mb-3">
+          <label class="form-label"><strong>Емейл:</strong></label>
+          <input type="email" class="form-control" name="email" value="{{ user.email }}">
+        </div>
+
+        <!-- Біо -->
+        <div class="mb-3">
+          <label class="form-label"><strong>Біо:</strong></label>
+          <textarea class="form-control" name="bio" rows="3">{{ user.profile.bio }}</textarea>
+        </div>
+
+        <!-- Тема -->
+        <div class="mb-3">
+          <label class="form-label"><strong>Тема:</strong></label>
+          <select class="form-select" name="theme">
+            <option value="light" {% if user.profile.theme == "light" %}selected{% endif %}>Світла</option>
+            <option value="dark" {% if user.profile.theme == "dark" %}selected{% endif %}>Темна</option>
+          </select>
+        </div>
+
+        <!-- Аватар -->
+        <div class="mb-3">
+          <label class="form-label"><strong>Аватар:</strong></label>
+          <div class="mb-2">
+            <img id="avatarPreview"
+                 src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}"
+                 class="rounded-circle shadow-sm"
+                 style="width:200px; height:200px; object-fit:cover;">
           </div>
+          <input type="file" class="form-control mt-2" name="avatar" id="avatarInput" accept="image/*">
+          <input type="hidden" name="avatar_cropped" id="avatarCropped">
+        </div>
 
-          <!-- Ім'я користувача -->
-          <div class="mb-3">
-            <label for="username" class="form-label">Ім'я користувача</label>
-            <input type="text" class="form-control" id="username" name="username"
-                   value="{{ user.username }}">
-          </div>
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-check-lg"></i> Зберегти зміни
+        </button>
+      </form>
 
-          <!-- Біо -->
-          <div class="mb-3">
-            <label for="bio" class="form-label">Біо</label>
-            <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.profile.bio }}</textarea>
-          </div>
-
-          <!-- Email -->
-          <div class="mb-3">
-            <label for="email" class="form-label">Емейл</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
-          </div>
-
-          <!-- Кнопки Bootstrap -->
-          <div class="d-flex justify-content-between mt-4">
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-save me-1"></i> Зберегти
-            </button>
-            <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">
-              <i class="bi bi-x-circle me-1"></i> Скасувати
-            </a>
-            <a href="{% url 'password_change' %}" class="btn btn-warning">
-              <i class="bi bi-key me-1"></i> Змінити пароль
-            </a>
-          </div>
-        </form>
-      </div>
+      <hr>
+      <p><strong>Дата приєднання:</strong> {{ user.date_joined|date:"d.m.Y H:i" }}</p>
+      <p><strong>Останній вхід:</strong> {{ user.last_login|date:"d.m.Y H:i" }}</p>
     </div>
   </div>
+
+  <!-- Список воркшопів -->
+  <h3 class="mt-5"><i class="bi bi-book"></i> Мої воркшопи</h3>
+  {% if workshops %}
+    <ul class="list-group">
+      {% for workshop in workshops %}
+        <li class="list-group-item d-flex justify-content-between">
+          {{ workshop.title }}
+          <span class="badge bg-{{ workshop.is_published|yesno:'success,danger' }}">
+            {{ workshop.is_published|yesno:"Опубліковано,Приховано" }}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">Немає створених воркшопів.</p>
+  {% endif %}
+
+  <!-- Галерея / матеріали -->
+  <h3 class="mt-5"><i class="bi bi-image"></i> Мої медіа</h3>
+  {% if materials %}
+    <div class="row">
+      {% for item in materials %}
+        <div class="col-md-3 mb-3">
+          <div class="card">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+            {% else %}
+              <div class="card-body">
+                <p>{{ item.name }}</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">Немає завантажених матеріалів.</p>
+  {% endif %}
 </div>
+
+<!-- Cropper.js -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<script>
+let cropper;
+const avatarInput = document.getElementById('avatarInput');
+const avatarPreview = document.getElementById('avatarPreview');
+const avatarCropped = document.getElementById('avatarCropped');
+
+avatarInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        avatarPreview.src = reader.result;
+
+        // Ініціалізація Cropper.js
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(avatarPreview, {
+            aspectRatio: 1, // квадрат
+            viewMode: 1,
+            autoCropArea: 1,
+            movable: true,
+            zoomable: true,
+            rotatable: false,
+            scalable: false,
+        });
+    };
+    reader.readAsDataURL(file);
+});
+
+// Перед відправкою форми
+document.querySelector('form').addEventListener('submit', (e) => {
+    if (cropper) {
+        e.preventDefault();
+        cropper.getCroppedCanvas({
+            width: 400,
+            height: 400
+        }).toBlob((blob) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                avatarCropped.value = reader.result; // base64
+                e.target.submit(); // тепер відправляємо форму
+            };
+            reader.readAsDataURL(blob);
+        });
+    }
+});
+</script>
+{% endblock %}
