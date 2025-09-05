@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Список голосувань</h2>
+
+  {% if votes %}
+    <div class="list-group">
+      {% for vote in votes %}
+            <a href="{% url 'voting-detail' vote.id %}" class="list-group-item list-group-item-action">
+          <h5 class="mb-1">{{ vote.name }}</h5>
+          <small class="text-muted">
+            Створено: {{ vote.created_at|date:"d.m.Y H:i" }}
+          </small>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center">Поки що немає голосувань.</p>
+  {% endif %}
+</div>
+{% endblock %}
