@@ -15,7 +15,7 @@ class VoteListView(LoginRequiredMixin, ListView):
 class VoteDetailView(LoginRequiredMixin, DetailView):
     model = Voting
     context_object_name = 'vote'
-    template_name = 'voting_detail.html'
+    template_name = 'voting_system/voting_detail.html'
 
 
 class VoteCreateViwe(LoginRequiredMixin, CreateView):
