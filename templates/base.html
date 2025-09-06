@@ -5,12 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Логіка Портал{% endblock %}</title>
-
+  
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Cropper.js -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <!-- Bootstrap JS (щоб працював modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Custom Theme CSS -->
 <link id="themeStylesheet" rel="stylesheet"
@@ -64,7 +71,31 @@
 
           <!-- Акаунт -->
           {% if user.is_authenticated %}
-            <a class="nav-link" href="{% url 'profiles:profile' %}"><i class="bi bi-person"></i> Профіль</a>
+<li class="nav-item">
+  <a class="nav-link d-flex align-items-center" href="{% url 'profiles:profile' %}">
+    {% if user.is_authenticated and user.profile.avatar %}
+      <img src="{{ user.profile.avatar.url }}" alt="Avatar"
+           class="rounded-circle me-2"
+           width="32" height="32"
+           data-bs-toggle="popover"
+           data-bs-trigger="hover focus"
+           data-bs-html="true"
+           title="<strong>{{ user.username }}</strong>"
+           data-bs-content="
+             <div class='card shadow-sm border-0' style='width: 220px;'>
+               <div class='card-body p-2'>
+                 <p class='mb-1'><small>{{ user.profile.bio|default:'(без біо)' }}</small></p>
+               </div>
+             </div>
+           ">
+    {% else %}
+      <i class="bi bi-person me-2"></i>
+    {% endif %}
+    Профіль
+  </a>
+</li>
+
+
             <a class="nav-link" href="{% url 'profiles:settings' %}"><i class="bi bi-gear"></i> Налаштування</a>
 
             <li class="nav-item d-flex align-items-center">
@@ -152,54 +183,68 @@
   </script>
 
   <!-- Theme Toggle JS -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const buttons = document.querySelectorAll(".theme-switch");
-      const body = document.body;
-      const icon = document.getElementById("themeIcon");
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // === Theme Switch ===
+    const buttons = document.querySelectorAll(".theme-switch");
+    const body = document.body;
+    const icon = document.getElementById("themeIcon");
 
-      let theme = body.getAttribute("data-bs-theme") || "light";
-      icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+    let theme = body.getAttribute("data-bs-theme") || "light";
+    icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
 
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-            }
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
           }
         }
-        return cookieValue;
       }
-      const csrfToken = getCookie('csrftoken');
+      return cookieValue;
+    }
+    const csrfToken = getCookie('csrftoken');
 
-      buttons.forEach(btn => {
-        btn.addEventListener("click", function () {
-          const slug = this.dataset.slug;
-          fetch("{% url 'themes:theme_switch' %}", {
-            method: "POST",
-            headers: {
-              "X-CSRFToken": csrfToken,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ theme: slug })
-          })
-          .then(r => r.json())
-          .then(data => {
-            if (data.status === "ok") {
-              window.location.reload();
-            } else {
-              console.error("Theme switch error:", data.error);
-            }
-          });
+    buttons.forEach(btn => {
+      btn.addEventListener("click", function () {
+        const slug = this.dataset.slug;
+        fetch("{% url 'themes:theme_switch' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ theme: slug })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === "ok") {
+            window.location.reload();
+          } else {
+            console.error("Theme switch error:", data.error);
+          }
         });
       });
     });
-  </script>
+
+    // === Init Tooltips ===
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // === Init Popovers (для біо) ===
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    });
+  });
+</script>
+
 
 </body>
 </html>

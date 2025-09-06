@@ -6,26 +6,116 @@
   <div class="card-body">
     <h2 class="card-title"><i class="bi bi-gear"></i> Налаштування профілю</h2>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
+
+      <h5>Дані користувача</h5>
+      {{ user_form.as_p }}
+
+      <h5>Профіль</h5>
       <div class="mb-3">
-        <label for="id_first_name" class="form-label">Ім’я</label>
-        {{ form.first_name }}
+        <label class="form-label">Аватар</label><br>
+        {% if request.user.profile.avatar %}
+          <img id="avatarPreview" src="{{ request.user.profile.avatar.url }}" 
+               class="rounded-circle mb-2 border" width="120" height="120">
+        {% else %}
+          <img id="avatarPreview" src="https://via.placeholder.com/120" 
+               class="rounded-circle mb-2 border" width="120" height="120">
+        {% endif %}
+        {{ profile_form.avatar }}
       </div>
+
       <div class="mb-3">
-        <label for="id_last_name" class="form-label">Прізвище</label>
-        {{ form.last_name }}
+        <label class="form-label">Про себе (Bio)</label>
+        {{ profile_form.bio }}
       </div>
-      <div class="mb-3">
-        <label for="id_email" class="form-label">Email</label>
-        {{ form.email }}
-      </div>
-      <div class="mb-3">
-        <label for="id_theme" class="form-label">Тема сайту</label>
-        {{ form.theme }}
-      </div>
+
       <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Зберегти</button>
     </form>
   </div>
 </div>
+
+<!-- Modal для кропу -->
+<div class="modal fade" id="avatarCropModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Обрізати аватар</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="cropperImage" style="max-width: 100%; display: block;" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="chooseNew" class="btn btn-secondary">+ Вибрати новий</button>
+        <button type="button" id="saveCrop" class="btn btn-primary">Готово</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cropper.js -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<script>
+  let cropper;
+  const input = document.getElementById('id_avatar');
+  const modal = new bootstrap.Modal(document.getElementById('avatarCropModal'));
+  const img = document.getElementById('cropperImage');
+  const saveBtn = document.getElementById('saveCrop');
+  const chooseNew = document.getElementById('chooseNew');
+  const preview = document.getElementById('avatarPreview');
+  const navbarAvatar = document.querySelector('#navbarAvatar'); // 👈 для хедера
+
+  input.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        img.src = event.target.result;
+        modal.show();
+        setTimeout(() => {
+          cropper = new Cropper(img, {
+            aspectRatio: 1,
+            viewMode: 1,
+            minContainerHeight: 400
+          });
+        }, 100);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  chooseNew.addEventListener("click", function () {
+    if (cropper) cropper.destroy();
+    input.value = "";
+    modal.hide();
+    input.click();
+  });
+
+  saveBtn.addEventListener("click", function () {
+    if (!cropper) return;
+    const canvas = cropper.getCroppedCanvas({ width: 300, height: 300 });
+    canvas.toBlob(function (blob) {
+      const file = new File([blob], "avatar.png", { type: "image/png" });
+
+      // створюємо новий FileList для input
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+
+      // міняємо прев’ю в формі
+      preview.src = URL.createObjectURL(file);
+
+      // міняємо прев’ю в навбарі
+      if (navbarAvatar) {
+        navbarAvatar.src = URL.createObjectURL(file);
+      }
+
+      modal.hide();
+      cropper.destroy();
+    });
+  });
+</script>
 {% endblock %}

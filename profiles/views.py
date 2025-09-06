@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm
+from .forms import UserForm, ProfileForm
 
 @login_required
 def profile_view(request):
@@ -9,16 +9,18 @@ def profile_view(request):
 @login_required
 def settings_view(request):
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            user = form.save()
-            # збереження теми
-            theme = form.cleaned_data.get("theme")
-            if theme:
-                request.user.profile.theme = theme.slug
-                request.user.profile.save()
-                request.session["theme"] = theme.slug
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
             return redirect("profiles:profile")
     else:
-        form = ProfileForm(instance=request.user)
-    return render(request, "profiles/settings.html", {"form": form})
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+
+    return render(request, "profiles/settings.html", {
+        "user_form": user_form,
+        "profile_form": profile_form,
+    })
