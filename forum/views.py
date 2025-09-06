@@ -13,4 +13,4 @@ class CategoryListView(ListView):
 
 class ThreadListView(ListView):
     pass
-    
+
