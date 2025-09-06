@@ -15,7 +15,7 @@ class Question(models.Model):
     page_number = models.PositiveIntegerField(default=1, verbose_name="Сторінка питання")
 
     def __str__(self):
-        return f"{self.survey.title} - {self.text}"
+        return f"{self.question.name} - {self.text}"
     
 class AnswerOption(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="options", verbose_name="Запитання")

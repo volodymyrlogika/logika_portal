@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Результати: {{ quiz.title }}</h1>
+
+<ul>
+{% for answer in answers %}
+    <li>
+        <b>{{ answer.question.text }}</b><br>
+        {% if answer.selected_option %}
+            Вибрано: {{ answer.selected_option.text }}
+        {% elif answer.text_answer %}
+            Відповідь: {{ answer.text_answer }}
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'take_quiz' quiz.id %}">Пройти ще раз</a>
+{% endblock %}
