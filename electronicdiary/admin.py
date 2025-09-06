@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Lesson,Logik
 
-# Register your models here.
+admin.site.register(Lesson)
+admin.site.register(Logik)
+
