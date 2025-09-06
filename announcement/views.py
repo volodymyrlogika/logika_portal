@@ -7,7 +7,7 @@ from .models import Announcement
 # Міксин: доступ тільки для адмінів і модераторів
 class ModeratorRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_staff or self.request.user.groups.filter(name="Moderators").exists()
+        return self.request.user.is_staff or self.request.user.groups.filter(name="модератор").exists()
 
 # Список оголошень
 class AnnouncementListView(ListView):

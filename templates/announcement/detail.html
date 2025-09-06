@@ -1,0 +1,8 @@
+<h2>{{ announcement.title }}</h2>
+<p>{{ announcement.content }}</p>
+<p><small>Автор: {{ announcement.author.username }} | {{ announcement.created_at|date:"d.m.Y H:i" }}</small></p>
+
+{% if user.is_authenticated and (user.is_staff or user.groups.filter(name="Moderators").exists) %}
+  <a href="{% url 'announcement_edit' announcement.pk %}">✏️ Редагувати</a> |
+  <a href="{% url 'announcement_delete' announcement.pk %}">🗑 Видалити</a>
+{% endif %}

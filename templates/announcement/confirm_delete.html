@@ -1,0 +1,7 @@
+<h2>Видалити оголошення?</h2>
+<p>Ви впевнені, що хочете видалити: <b>{{ announcement.title }}</b>?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">✅ Так, видалити</button>
+  <a href="{% url 'announcement_list' %}">❌ Скасувати</a>
+</form>
