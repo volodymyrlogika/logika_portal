@@ -64,6 +64,9 @@
 
           <!-- Акаунт -->
           {% if user.is_authenticated %}
+            <a class="nav-link" href="{% url 'profiles:profile' %}"><i class="bi bi-person"></i> Профіль</a>
+            <a class="nav-link" href="{% url 'profiles:settings' %}"><i class="bi bi-gear"></i> Налаштування</a>
+
             <li class="nav-item d-flex align-items-center">
               <span class="nav-link">{{ user.username }}</span>
               <form action="{% url 'logout' %}" method="post" class="ms-2">

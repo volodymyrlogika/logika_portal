@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "gallery",
     "casino",
     "widget_tweaks",
+    "profiles",
 ]
 
 

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Профіль{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title"><i class="bi bi-person-circle"></i> {{ user.username }}</h2>
+    <p class="text-muted mb-1"><i class="bi bi-envelope"></i> {{ user.email|default:"(немає email)" }}</p>
+    <p class="text-muted"><i class="bi bi-calendar3"></i> Зареєстрований: {{ user.date_joined|date:"d.m.Y" }}</p>
+    <a href="{% url 'profiles:settings' %}" class="btn btn-primary">
+      <i class="bi bi-gear"></i> Налаштування
+    </a>
+  </div>
+</div>
+{% endblock %}
