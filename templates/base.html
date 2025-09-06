@@ -5,19 +5,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Логіка Портал{% endblock %}</title>
-  <meta name="csrf-token" content="{{ csrf_token }}">
-  <link rel="stylesheet" href="{% static 'css/themes/' %}{{ theme }}.css">
+
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Custom Theme CSS -->
+  <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/' %}{{ user.profile.theme|default:request.session.theme|default:'light' }}.css">
+
 </head>
 <body class="d-flex flex-column min-vh-100"
       data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
 
+
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg shadow-sm"
-       data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
+       data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="{% url 'main:home' %}">
         <i class="bi bi-lightning-charge-fill text-warning"></i> Логіка Портал
@@ -28,19 +33,17 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          
-          <!-- Dropdown вибору тем -->
+          <!-- Кнопка перемикання теми -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i id="themeIcon" class="bi {% if user.is_authenticated and user.profile.theme == 'dark' %}bi-moon{% else %}bi-sun{% endif %}"></i>
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i id="themeIcon" class="bi"></i> Тема
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
-              <li><button class="dropdown-item theme-switch" data-slug="light"><i class="bi bi-sun me-2"></i> Світла</button></li>
-              <li><button class="dropdown-item theme-switch" data-slug="dark"><i class="bi bi-moon me-2"></i> Темна</button></li>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+              <li><button class="dropdown-item theme-switch" data-slug="light"><i class="bi bi-sun"></i> Світла</button></li>
+              <li><button class="dropdown-item theme-switch" data-slug="dark"><i class="bi bi-moon"></i> Темна</button></li>
             </ul>
           </li>
 
-          <!-- Посилання -->
           <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'themes:theme_list' %}"><i class="bi bi-palette"></i> Теми</a></li>
@@ -49,44 +52,38 @@
               <i class="bi bi-dice-5-fill"></i> <i class="bi bi-slot"></i> Казіно
             </a>
           </li>
+        </ul>
 
-          <!-- Dropdown користувача -->
+        <!-- Navbar праворуч -->
+        <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}" alt="Avatar" class="rounded-circle me-2" style="width:32px; height:32px; object-fit:cover;">
-              {{ user.username }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="navbarUser" style="min-width: 250px;">
-              <!-- Біо -->
-              <li class="mb-2">
-                <div class="card shadow-sm">
-                  <div class="card-body p-2">
-                    <p class="mb-0"><strong>Біо:</strong></p>
-                    <p class="mb-0 text-truncate" title="{{ user.profile.bio }}">{{ user.profile.bio|default:"(немає біо)" }}</p>
-                  </div>
-                </div>
-              </li>
-              <li><hr class="dropdown-divider"></li>
-              <!-- Посилання -->
-              <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
-              <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Редагувати профіль</a></li>
-              <li><a class="dropdown-item" href="{% url 'password_change' %}">Змінити пароль</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li>
-                <form method="post" action="{% url 'accounts:logout' %}">
-                  {% csrf_token %}
-                  <button type="submit" class="dropdown-item text-danger">
-                    <i class="bi bi-box-arrow-right"></i> Вийти
-                  </button>
-                </form>
-              </li>
-            </ul>
-          </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <!-- Аватарка -->
+                <img src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}"
+                     alt="Avatar"
+                     class="rounded-circle me-2"
+                     style="width:32px; height:32px; object-fit:cover;">
+                {{ user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
+                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Редагувати профіль</a></li>
+                <li><a class="dropdown-item" href="{% url 'password_change' %}">Змінити пароль</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item text-danger">
+                      <i class="bi bi-box-arrow-right"></i> Вийти
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </li>
           {% else %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
           {% endif %}
-
         </ul>
       </div>
     </div>
@@ -99,7 +96,7 @@
 
   <!-- Footer -->
   <footer class="text-center py-3 mt-auto"
-          data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
+          data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
     <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
   </footer>
 
@@ -158,10 +155,16 @@
       });
   </script>
 
-  <!-- Theme Switch JS -->
+<!-- Theme Toggle JS -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const buttons = document.querySelectorAll(".theme-switch");
+  const body = document.body;
+  const icon = document.getElementById("themeIcon");
+
+  // Встановлюємо іконку при завантаженні
+  let theme = body.getAttribute("data-bs-theme") || "light";
+  icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
 
   function getCookie(name) {
     let cookieValue = null;
@@ -177,11 +180,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return cookieValue;
   }
-
   const csrfToken = getCookie('csrftoken');
 
   buttons.forEach(btn => {
-    btn.addEventListener("click", function() {
+    btn.addEventListener("click", function () {
       const slug = this.dataset.slug;
 
       fetch("{% url 'accounts:set_theme' %}", {
@@ -194,20 +196,10 @@ document.addEventListener("DOMContentLoaded", function() {
       })
       .then(r => r.json())
       .then(data => {
-if (data.status === "ok") {
-  document.body.setAttribute("data-bs-theme", data.theme);
-
-  // міняємо іконку в навбарі
-  const themeIcon = document.getElementById("themeIcon");
-  if (data.theme === "dark") {
-    themeIcon.classList.remove("bi-sun");
-    themeIcon.classList.add("bi-moon");
-  } else {
-    themeIcon.classList.remove("bi-moon");
-    themeIcon.classList.add("bi-sun");
-  }
-}
-else {
+        if (data.status === "ok") {
+          // Перезавантажуємо сторінку після збереження теми
+          window.location.reload();
+        } else {
           console.error("Theme switch error:", data.error);
         }
       });
@@ -215,5 +207,6 @@ else {
   });
 });
 </script>
+
 </body>
 </html>

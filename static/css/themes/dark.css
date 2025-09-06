@@ -1,16 +1,49 @@
-/* Dark Theme */
+/* ===== Dark Theme Styles ===== */
+
 body {
-  background-color: #121212;
-  color: #f1f1f1;
+  background-color: #121212 !important;
+  color: #f1f1f1 !important;
 }
 
-/* Navbar + footer */
-.navbar, footer {
+/* Navbar */
+body[data-bs-theme="dark"] .navbar {
   background-color: #1f1f1f !important;
   color: #f1f1f1 !important;
 }
 
-.navbar .nav-link,
-footer p {
+/* Footer */
+body[data-bs-theme="dark"] footer {
+  background-color: #1f1f1f !important;
   color: #f1f1f1 !important;
+}
+
+/* Cards */
+body[data-bs-theme="dark"] .card {
+  background-color: #1e1e1e !important;
+  color: #f1f1f1 !important;
+  border-color: #2c2c2c !important;
+}
+
+body[data-bs-theme="dark"] .card .card-title,
+body[data-bs-theme="dark"] .card .card-text {
+  color: #f1f1f1 !important;
+}
+
+/* Buttons */
+body[data-bs-theme="dark"] .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+
+body[data-bs-theme="dark"] .btn-success {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+
+body[data-bs-theme="dark"] .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
 }
