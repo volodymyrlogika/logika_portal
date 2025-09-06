@@ -7,11 +7,15 @@
       <h2 class="card-title text-center mb-4">{{ vote.name }}</h2>
 
 
-        <h5 class="mb-3 text-secondary">Виберіть варіант:</h5>
+
+        {% if not user_voted %}
         <form method="post">
+          <h5 class="mb-3 text-secondary">Виберіть варіант:</h5>
           {% csrf_token %}
+
           {% for option in vote.options.all %}
             <div class="form-check mb-2">
+
               <input class="form-check-input" type="radio"
                      name="choice" value="{{ option.id }}" id="option{{ option.id }}">
               <label class="form-check-label" for="option{{ option.id }}">
@@ -19,11 +23,27 @@
               </label>
             </div>
           {% endfor %}
+
           <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
             Проголосувати
           </button>
         </form>
+      {% else %}
+        {% for option in vote.options.all %}
+          {% if user_voted.option_vote == option %}
+          <h5 class="mb-3 text-secondary">Ваш голос:</h5>
+          <div class="form-check mb-2">
 
+                <input class="form-check-input" type="radio"
+                       name="choice" value="{{ option.id }}" id="option{{ option.id }}">
+                <label class="form-check-label" for="option{{ option.id }}">
+                  {{ option.name }}
+                </label>
+              </div>
+
+          {% endif %}
+        {% endfor %}
+      {% endif %}
       <div class="mt-4 text-center">
 
         </a>
