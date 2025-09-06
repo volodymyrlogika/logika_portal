@@ -85,13 +85,11 @@ class PostList(ListView):
             # thread_id = get_object_or_404(Thread, pk=thread_id)
 
             thread = get_object_or_404(Thread, pk=thread_id) 
-            ######################
-            post.thread = thread#############ці 2 рядка мені допоміг gpt бо я не міг зрозмуіти чому помилка потім розберусь 
-            post.url_thread_id = thread.id###
-            ########################3#
+            
+            post.thread = thread
             
             post.url_category_id = category_id
-            post.url_thread_id = thread_id
+            post.url_thread_id = thread.id
 
             
             post.save()

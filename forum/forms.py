@@ -7,12 +7,13 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
 
-        fields = ["content_text"]
+        fields = ["content_text", "files"]
         widgets = {
             'content_text': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'пост',
                 }),
-
+                
+                'files': forms.FileInput()
                 }
                 
