@@ -1,13 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load custom_tags %}
+
 <h2>Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
 <ul>
     {% for post in posts %}
         <li>
-            <b>{{ post.author }}</b>: {{ post.content_text }}
-        </li>
-    {% empty %}
-        <li>Поки немає постів</li>
+            <p>{{ post.author }}</p>: {{ post.content_text }}
+        </li>   
+
+        {% if post.files %}
+        {% if post.files.url|endswith:"jpg" or post.files.url|endswith:"png" or post.files.url|endswith:".jpeg" %}
+            <img src="{{ post.files.url }}" alt="files" class="img-fluid rounded mb-2" style="max-width:480px;">
+            {% elif comment.files.url|endswith:".mp4" %}
+            <video controls class="w-100 rouded mb-2" style="max-width:480px;">
+                <source src="{{ post.files.url }}" type="video/mp4">ваш браузер не підтримує відео
+            </video>
+        {% else %}
+            <a href="{{ post.files }}" class="d-line-block mb-2">завантажити файл</a>
+            {% endif %}
+            {% endif %}
+    
     {% endfor %}
 </ul>
 
@@ -16,6 +29,6 @@
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-sucess" > зберегти коментар</button>
+    <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
 </form>
 {% endblock content %}
