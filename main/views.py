@@ -5,7 +5,9 @@ def home(request):
     return render(request, "base.html")
 
 def index(request):
-    themes = Theme.objects.all()  # тепер без is_draft
-    return render(request, "index.html", {"themes": themes})
+    if request.user.is_authenticated and hasattr(request.user, "profile"):
+        theme = getattr(request.user.profile, "theme", None)
+    else:
+        theme = request.session.get("theme", "light")
 
-
+    return render(request, "index.html", {"theme": theme})

@@ -3,7 +3,7 @@
     <h3>🎲 Кубик</h3>
 
     <div class="dice-wrapper">
-      <div id="diceResult" class="dice">⚀</div>
+      <i id="diceResult" class="bi bi-dice-1 dice"></i>
     </div>
 
     <button class="btn btn-primary mt-3" onclick="rollDice()">
@@ -27,22 +27,9 @@
   display: inline-block;
 }
 
-.dice.spin {
-  animation: rollDiceAnim 0.6s linear infinite;
-}
 
-@keyframes rollDiceAnim {
-  0%   { transform: rotate(0deg) scale(1); }
-  25%  { transform: rotate(90deg) scale(1.2); }
-  50%  { transform: rotate(180deg) scale(0.8); }
-  75%  { transform: rotate(270deg) scale(1.2); }
-  100% { transform: rotate(360deg) scale(1); }
-}
 
-/* 👇 відскок у кінці */
-.dice.bounce {
-  animation: bounceAnim 0.4s ease;
-}
+
 
 @keyframes bounceAnim {
   0%   { transform: scale(1); }
@@ -53,28 +40,32 @@
 </style>
 
 <script>
-const diceFaces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+const diceFaces = [
+  "bi-dice-1",
+  "bi-dice-2",
+  "bi-dice-3",
+  "bi-dice-4",
+  "bi-dice-5",
+  "bi-dice-6"
+];
 
 function rollDice() {
   const diceEl = document.getElementById("diceResult");
 
   diceEl.classList.add("spin");
 
-  // Крутиться випадковими гранями
   let interval = setInterval(() => {
     let rand = diceFaces[Math.floor(Math.random() * 6)];
-    diceEl.innerText = rand;
+    diceEl.className = "bi " + rand + " dice";
   }, 100);
 
-  // Зупинка
   setTimeout(() => {
     clearInterval(interval);
     diceEl.classList.remove("spin");
 
     let result = diceFaces[Math.floor(Math.random() * 6)];
-    diceEl.innerText = result;
+    diceEl.className = "bi " + result + " dice";
 
-    // 👇 додаємо bounce у фіналі
     diceEl.classList.add("bounce");
     setTimeout(() => diceEl.classList.remove("bounce"), 400);
 

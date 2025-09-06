@@ -1,11 +1,20 @@
-<!-- 🎰 Слоти -->
-<div class="slot-machine">
-  <div class="reel"><div class="symbols" id="reel1"></div></div>
-  <div class="reel"><div class="symbols" id="reel2"></div></div>
-  <div class="reel"><div class="symbols" id="reel3"></div></div>
-</div>
+<div class="card shadow-lg mb-4">
+  <div class="card-body text-center">
+    <h3>🎰 Слоти</h3>
 
-<button class="btn-spin" onclick="spin()">🎰 SPIN</button>
+    <div class="slot-machine my-3">
+      <div class="reel"><div class="symbols" id="reel1"></div></div>
+      <div class="reel"><div class="symbols" id="reel2"></div></div>
+      <div class="reel"><div class="symbols" id="reel3"></div></div>
+    </div>
+
+    <button class="btn btn-warning btn-spin" onclick="spin()">
+      <i class="bi bi-arrow-repeat"></i> SPIN
+    </button>
+
+    <p id="slotMessage" class="mt-3 fw-bold fs-5"></p>
+  </div>
+</div>
 
 <style>
 .slot-machine {
@@ -43,7 +52,6 @@
   line-height: 120px;
 }
 
-/* Спін з blur */
 .reel-spin {
   animation: reel-spin 0.15s linear infinite;
   filter: blur(3px);
@@ -53,7 +61,6 @@
   100% { transform: translateY(-120px); }
 }
 
-/* Анімація відскоку */
 .reel-stop {
   animation: bounce-stop 0.4s ease-out;
 }
@@ -69,7 +76,6 @@
   margin: 20px auto;
   padding: 10px 20px;
   font-size: 1.5rem;
-  background: gold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -78,16 +84,16 @@
 </style>
 
 <script>
-const symbols = ["🍒", "🍋", "🍊", "⭐", "7️⃣"];
+const symbols = ["bi-suit-heart-fill", "bi-suit-diamond-fill", "bi-suit-club-fill", "bi-suit-spade-fill", "bi-star-fill"];
 
 function fillReel(id) {
   const reel = document.getElementById(id);
   reel.innerHTML = "";
   for (let i = 0; i < 20; i++) {
-    let sym = symbols[Math.floor(Math.random() * symbols.length)];
-    let div = document.createElement("div");
+    const sym = symbols[Math.floor(Math.random() * symbols.length)];
+    const div = document.createElement("div");
     div.className = "symbol";
-    div.innerText = sym;
+    div.innerHTML = `<i class="bi ${sym}"></i>`;
     reel.appendChild(div);
   }
 }
@@ -97,30 +103,51 @@ function stopReel(id) {
   reel.classList.remove("reel-spin");
   reel.style.filter = "none";
 
-  // фінальний символ
+  const sym = symbols[Math.floor(Math.random() * symbols.length)];
   reel.innerHTML = "";
-  let sym = symbols[Math.floor(Math.random() * symbols.length)];
-  let div = document.createElement("div");
+  const div = document.createElement("div");
   div.className = "symbol";
-  div.innerText = sym;
+  div.innerHTML = `<i class="bi ${sym}"></i>`;
   reel.appendChild(div);
 
-  // 👇 додаємо bounce ефект
   reel.classList.add("reel-stop");
   setTimeout(() => reel.classList.remove("reel-stop"), 400);
+
+  return sym;
 }
 
 function spin() {
+  document.getElementById("slotMessage").innerHTML = "";
+
   fillReel("reel1");
   fillReel("reel2");
   fillReel("reel3");
 
-  document.getElementById("reel1").classList.add("reel-spin");
-  document.getElementById("reel2").classList.add("reel-spin");
-  document.getElementById("reel3").classList.add("reel-spin");
+  const reel1 = document.getElementById("reel1");
+  const reel2 = document.getElementById("reel2");
+  const reel3 = document.getElementById("reel3");
 
-  setTimeout(() => stopReel("reel1"), 2000);
-  setTimeout(() => stopReel("reel2"), 3000);
-  setTimeout(() => stopReel("reel3"), 4000);
+  reel1.classList.add("reel-spin");
+  reel2.classList.add("reel-spin");
+  reel3.classList.add("reel-spin");
+
+  setTimeout(() => {
+    const r1 = stopReel("reel1");
+
+    setTimeout(() => {
+      const r2 = stopReel("reel2");
+
+      setTimeout(() => {
+        const r3 = stopReel("reel3");
+
+        const messageEl = document.getElementById("slotMessage");
+        if (r1 === r2 && r2 === r3) {
+          messageEl.innerHTML = `<i class="bi bi-stars"></i> 🎉 Виграш!`;
+        } else {
+          messageEl.innerHTML = `<i class="bi bi-x-circle"></i> Спробуй ще!`;
+        }
+      }, 1000); // стоп третього слота
+    }, 1000); // стоп другого слота
+  }, 2000); // стоп першого слота
 }
 </script>

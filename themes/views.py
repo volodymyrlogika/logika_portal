@@ -53,16 +53,32 @@ def set_theme(request):
     return JsonResponse({"status": "ok", "theme": theme})
 
 
-def switch_theme(request, slug):
-    theme = get_object_or_404(Theme, slug=slug)
-    request.session["theme"] = theme.slug
+@csrf_exempt
+def theme_switch(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            theme = data.get("theme", "light")
+        except Exception:
+            return JsonResponse({"status": "error", "error": "Invalid JSON"}, status=400)
+    elif request.method == "GET":
+        theme = request.GET.get("theme", "light")
+    else:
+        return JsonResponse({"status": "error", "error": "Invalid request"}, status=405)
 
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return JsonResponse({
-            "success": True,
-            "css_url": theme.css_file.url if theme.css_file else f"/static/css/themes/{theme.slug}.css"
-        })
-    return redirect("themes:theme_list")
+    # зберігаємо
+    if request.user.is_authenticated:
+        profile = request.user.profile
+        profile.theme = theme
+        profile.save()
+    else:
+        request.session["theme"] = theme
+
+    # якщо GET → редірект назад
+    if request.method == "GET":
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    return JsonResponse({"status": "ok", "theme": theme})
 
 
 class ThemeListView(ListView):

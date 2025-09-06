@@ -13,12 +13,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Custom Theme CSS -->
-  <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/' %}{{ user.profile.theme|default:request.session.theme|default:'light' }}.css">
+<link id="themeStylesheet" rel="stylesheet"
+      href="{% static 'css/themes/' %}{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}.css">
 
 </head>
 <body class="d-flex flex-column min-vh-100"
       data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
-
 
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg shadow-sm"
@@ -34,55 +34,48 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <!-- Кнопка перемикання теми -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i id="themeIcon" class="bi"></i> Тема
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
-              <li><button class="dropdown-item theme-switch" data-slug="light"><i class="bi bi-sun"></i> Світла</button></li>
-              <li><button class="dropdown-item theme-switch" data-slug="dark"><i class="bi bi-moon"></i> Темна</button></li>
-            </ul>
-          </li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i id="themeIcon" class="bi"></i> Тема
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+    <li>
+      <a class="dropdown-item" href="{% url 'themes:theme_switch' %}?theme=light">
+        <i class="bi bi-sun"></i> Світла
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="{% url 'themes:theme_switch' %}?theme=dark">
+        <i class="bi bi-moon"></i> Темна
+      </a>
+    </li>
+  </ul>
+</li>
 
+          <!-- Меню -->
           <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'themes:theme_list' %}"><i class="bi bi-palette"></i> Теми</a></li>
           <li class="nav-item">
             <a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}">
-              <i class="bi bi-dice-5-fill"></i> <i class="bi bi-slot"></i> Казіно
+              <i class="bi bi-dice-5-fill"></i> Казино
             </a>
           </li>
-        </ul>
 
-        <!-- Navbar праворуч -->
-        <ul class="navbar-nav ms-auto">
+          <!-- Акаунт -->
           {% if user.is_authenticated %}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <!-- Аватарка -->
-                <img src="{{ user.profile.avatar.url|default:'/static/img/default-avatar.png' }}"
-                     alt="Avatar"
-                     class="rounded-circle me-2"
-                     style="width:32px; height:32px; object-fit:cover;">
-                {{ user.username }}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
-                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Мій профіль</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Редагувати профіль</a></li>
-                <li><a class="dropdown-item" href="{% url 'password_change' %}">Змінити пароль</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <form action="{% url 'logout' %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="dropdown-item text-danger">
-                      <i class="bi bi-box-arrow-right"></i> Вийти
-                    </button>
-                  </form>
-                </li>
-              </ul>
+            <li class="nav-item d-flex align-items-center">
+              <span class="nav-link">{{ user.username }}</span>
+              <form action="{% url 'logout' %}" method="post" class="ms-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link nav-link text-danger p-0">
+                  <i class="bi bi-box-arrow-right"></i> Вийти
+                </button>
+              </form>
             </li>
           {% else %}
             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Реєстрація</a></li>
           {% endif %}
         </ul>
       </div>
@@ -155,58 +148,55 @@
       });
   </script>
 
-<!-- Theme Toggle JS -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const buttons = document.querySelectorAll(".theme-switch");
-  const body = document.body;
-  const icon = document.getElementById("themeIcon");
+  <!-- Theme Toggle JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const buttons = document.querySelectorAll(".theme-switch");
+      const body = document.body;
+      const icon = document.getElementById("themeIcon");
 
-  // Встановлюємо іконку при завантаженні
-  let theme = body.getAttribute("data-bs-theme") || "light";
-  icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+      let theme = body.getAttribute("data-bs-theme") || "light";
+      icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
 
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
         }
+        return cookieValue;
       }
-    }
-    return cookieValue;
-  }
-  const csrfToken = getCookie('csrftoken');
+      const csrfToken = getCookie('csrftoken');
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", function () {
-      const slug = this.dataset.slug;
-
-      fetch("{% url 'accounts:set_theme' %}", {
-        method: "POST",
-        headers: {
-          "X-CSRFToken": csrfToken,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ theme: slug })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.status === "ok") {
-          // Перезавантажуємо сторінку після збереження теми
-          window.location.reload();
-        } else {
-          console.error("Theme switch error:", data.error);
-        }
+      buttons.forEach(btn => {
+        btn.addEventListener("click", function () {
+          const slug = this.dataset.slug;
+          fetch("{% url 'themes:theme_switch' %}", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": csrfToken,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ theme: slug })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (data.status === "ok") {
+              window.location.reload();
+            } else {
+              console.error("Theme switch error:", data.error);
+            }
+          });
+        });
       });
     });
-  });
-});
-</script>
+  </script>
 
 </body>
 </html>

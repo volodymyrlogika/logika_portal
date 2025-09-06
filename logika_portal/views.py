@@ -11,3 +11,4 @@ def workshop_view(request):
 
 def theme_creator_view(request):
     return render(request, "themes/themes_create.html")
+

@@ -3,15 +3,21 @@
     <h3>✊✋✌ Камінь-Ножиці-Папір</h3>
     
     <div class="d-flex justify-content-center align-items-center my-4">
-      <div id="playerHand" class="hand player">✊</div>
+      <i id="playerHand" class="bi bi-square-fill hand player"></i>
       <div class="vs-text">VS</div>
-      <div id="cpuHand" class="hand cpu">✊</div>
+      <i id="cpuHand" class="bi bi-square-fill hand cpu"></i>
     </div>
 
     <div class="btn-group">
-      <button class="btn btn-danger" onclick="playRPS('✊')">✊ Камінь</button>
-      <button class="btn btn-success" onclick="playRPS('✋')">✋ Папір</button>
-      <button class="btn btn-warning" onclick="playRPS('✌')">✌ Ножиці</button>
+      <button class="btn btn-danger" onclick="playRPS('rock')">
+        <i class="bi bi-square-fill"></i> Камінь
+      </button>
+      <button class="btn btn-success" onclick="playRPS('paper')">
+        <i class="bi bi-file-text"></i> Папір
+      </button>
+      <button class="btn btn-warning" onclick="playRPS('scissors')">
+        <i class="bi bi-scissors"></i> Ножиці
+      </button>
     </div>
 
     <p id="rpsMessage" class="mt-3 fw-bold"></p>
@@ -43,7 +49,12 @@
 
 <script>
 function playRPS(playerChoice) {
-  const choices = ["✊", "✋", "✌"];
+  const choices = ["rock", "paper", "scissors"];
+  const icons = {
+    rock: "bi-square-fill",
+    paper: "bi-file-text",
+    scissors: "bi-scissors"
+  };
   const cpuChoice = choices[Math.floor(Math.random() * choices.length)];
 
   const playerHand = document.getElementById("playerHand");
@@ -51,35 +62,34 @@ function playRPS(playerChoice) {
   const msgEl = document.getElementById("rpsMessage");
 
   // скидаємо
-  playerHand.innerText = "✊";
-  cpuHand.innerText = "✊";
+  playerHand.className = "bi bi-square-fill hand player";
+  cpuHand.className = "bi bi-square-fill hand cpu";
   msgEl.innerText = "";
 
-  // запускаємо "качання кулаків"
+  // качання
   playerHand.classList.add("shake");
   cpuHand.classList.add("shake");
 
   setTimeout(() => {
-    // зупиняємо руки
     playerHand.classList.remove("shake");
     cpuHand.classList.remove("shake");
 
     // показуємо вибір
-    playerHand.innerText = playerChoice;
-    cpuHand.innerText = cpuChoice;
+    playerHand.className = "bi " + icons[playerChoice] + " hand player";
+    cpuHand.className = "bi " + icons[cpuChoice] + " hand cpu";
 
     // визначаємо переможця
     if (playerChoice === cpuChoice) {
       msgEl.innerText = "🤝 Нічия!";
     } else if (
-      (playerChoice === "✊" && cpuChoice === "✌") ||
-      (playerChoice === "✋" && cpuChoice === "✊") ||
-      (playerChoice === "✌" && cpuChoice === "✋")
+      (playerChoice === "rock" && cpuChoice === "scissors") ||
+      (playerChoice === "paper" && cpuChoice === "rock") ||
+      (playerChoice === "scissors" && cpuChoice === "paper")
     ) {
       msgEl.innerText = "🎉 Ти виграв!";
     } else {
       msgEl.innerText = "💀 CPU виграв!";
     }
-  }, 2000); // 2 секунди "дуелі"
+  }, 2000);
 }
 </script>

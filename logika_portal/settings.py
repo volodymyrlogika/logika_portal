@@ -64,7 +64,7 @@ TEMPLATES = [
                 "themes.context_processors.active_theme",
                 "themes.context_processors.themes_dropdown",
                 "themes.context_processors.themes_list",
-                "accounts.context_processors.theme_processor",
+
             ],
         },
     },
