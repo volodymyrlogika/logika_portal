@@ -1,5 +1,4 @@
 from django.views.generic import ListView, CreateView
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from .models import GalleryItem
 from django.shortcuts import redirect, get_object_or_404
@@ -7,7 +6,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import GalleryItem, Tag
 from django import forms
 from .forms import GalleryItemForm
-
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 class GalleryListView(ListView):
     model = GalleryItem
     template_name = "gallery/gallery_list.html"
@@ -31,24 +32,30 @@ class GalleryCreateView(LoginRequiredMixin, CreateView):
         form.instance.uploader = self.request.user
         return super().form_valid(form)
 
-class GalleryModerationListView(ListView):
+class GalleryModerationListView(UserPassesTestMixin, ListView):
     model = GalleryItem
     template_name = "gallery/gallery_moderation.html"
     context_object_name = "items"
 
     def get_queryset(self):
-        return GalleryItem.objects.filter(status="pending")  # 👈 бо статус, а не approved
+        return GalleryItem.objects.filter(status="pending")
+
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 # --- функції для модерації ---
+@user_passes_test(lambda u: u.is_staff)
 def approve_gallery_item(request, pk):
     item = get_object_or_404(GalleryItem, pk=pk)
-    item.status = "approved"   # ✅ заміна is_approved
-    item.save()
-    return redirect("gallery:moderation")
+    item.status = 'approved'
+    item.save(update_fields=['status'])
+    messages.success(request, "Матеріал схвалено.")
+    return redirect('gallery:moderation')
 
-
+@user_passes_test(lambda u: u.is_staff)
 def delete_gallery_item(request, pk):
     item = get_object_or_404(GalleryItem, pk=pk)
     item.delete()
-    return redirect("gallery:moderation")
+    messages.success(request, "Матеріал видалено.")
+    return redirect('gallery:moderation')

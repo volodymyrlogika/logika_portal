@@ -11,8 +11,8 @@
 
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Cropper.js -->
 
+  <!-- Cropper.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
@@ -20,16 +20,14 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Custom Theme CSS -->
-<link id="themeStylesheet" rel="stylesheet"
-      href="{% static 'css/themes/' %}{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}.css">
-
+  <link id="themeStylesheet" rel="stylesheet"
+        href="{% static 'css/themes/' %}{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}.css">
 </head>
 <body class="d-flex flex-column min-vh-100"
       data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
 
   <!-- Навбар -->
-  <nav class="navbar navbar-expand-lg shadow-sm"
-       data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
+  <nav class="navbar navbar-expand-lg shadow-sm">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="{% url 'main:home' %}">
         <i class="bi bi-lightning-charge-fill text-warning"></i> Логіка Портал
@@ -41,23 +39,23 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <!-- Кнопка перемикання теми -->
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <i id="themeIcon" class="bi"></i> Тема
-  </a>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
-    <li>
-      <a class="dropdown-item" href="{% url 'themes:theme_switch' %}?theme=light">
-        <i class="bi bi-sun"></i> Світла
-      </a>
-    </li>
-    <li>
-      <a class="dropdown-item" href="{% url 'themes:theme_switch' %}?theme=dark">
-        <i class="bi bi-moon"></i> Темна
-      </a>
-    </li>
-  </ul>
-</li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i id="themeIcon" class="bi"></i> Тема
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+              <li>
+                <a class="dropdown-item theme-switch" data-slug="light" href="#">
+                  <i class="bi bi-sun"></i> Світла
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item theme-switch" data-slug="dark" href="#">
+                  <i class="bi bi-moon"></i> Темна
+                </a>
+              </li>
+            </ul>
+          </li>
 
           <!-- Меню -->
           <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
@@ -71,42 +69,39 @@
 
           <!-- Акаунт -->
           {% if user.is_authenticated %}
-<li class="nav-item">
-  <a class="nav-link d-flex align-items-center" href="{% url 'profiles:profile' %}">
-    {% if user.is_authenticated and user.profile.avatar %}
-      <img src="{{ user.profile.avatar.url }}" alt="Avatar"
-           class="rounded-circle me-2"
-           width="32" height="32"
-           data-bs-toggle="popover"
-           data-bs-trigger="hover focus"
-           data-bs-html="true"
-           title="<strong>{{ user.username }}</strong>"
-           data-bs-content="
-             <div class='card shadow-sm border-0' style='width: 220px;'>
-               <div class='card-body p-2'>
-                 <p class='mb-1'><small>{{ user.profile.bio|default:'(без біо)' }}</small></p>
-               </div>
-             </div>
-           ">
-    {% else %}
-      <i class="bi bi-person me-2"></i>
-    {% endif %}
-    Профіль
-  </a>
-</li>
-
-
-            <a class="nav-link" href="{% url 'profiles:settings' %}"><i class="bi bi-gear"></i> Налаштування</a>
-
-            <li class="nav-item d-flex align-items-center">
-              <span class="nav-link">{{ user.username }}</span>
-              <form action="{% url 'logout' %}" method="post" class="ms-2">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-link nav-link text-danger p-0">
-                  <i class="bi bi-box-arrow-right"></i> Вийти
-                </button>
-              </form>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="{% url 'profiles:profile' %}">
+              {% if user.is_authenticated and user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="Avatar"
+                     class="rounded-circle me-2"
+                     width="32" height="32"
+                     data-bs-toggle="popover"
+                     data-bs-trigger="hover focus"
+                     data-bs-html="true"
+                     title="<strong>{{ user.username }}</strong>"
+                     data-bs-content="
+                       <div class='card shadow-sm border-0' style='width: 220px;'>
+                         <div class='card-body p-2'>
+                           <p class='mb-1'><small>{{ user.profile.bio|default:'(без біо)' }}</small></p>
+                         </div>
+                       </div>
+                     ">
+              {% else %}
+                <i class="bi bi-person me-2"></i>
+              {% endif %}
+              Профіль
+            </a>
+          </li>
+          <a class="nav-link" href="{% url 'profiles:settings' %}"><i class="bi bi-gear"></i> Налаштування</a>
+          <li class="nav-item d-flex align-items-center">
+            <span class="nav-link">{{ user.username }}</span>
+            <form action="{% url 'logout' %}" method="post" class="ms-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link text-danger p-0">
+                <i class="bi bi-box-arrow-right"></i> Вийти
+              </button>
+            </form>
+          </li>
           {% else %}
             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Реєстрація</a></li>
@@ -122,8 +117,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="text-center py-3 mt-auto"
-          data-bs-theme="{{ request.user.profile.theme|default:'light' }}">
+  <footer class="text-center py-3 mt-auto">
     <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
   </footer>
 
@@ -138,19 +132,6 @@
         <i class="bi bi-x-lg"></i> Закрити
       </button>
   </div>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Init Tooltips -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-      })
-    });
-  </script>
 
   <!-- Konami JS -->
   <script>
@@ -182,16 +163,20 @@
       });
   </script>
 
-  <!-- Theme Toggle JS -->
-<script>
+  <!-- Theme + UI Init JS -->
+  <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // === Theme Switch ===
     const buttons = document.querySelectorAll(".theme-switch");
     const body = document.body;
     const icon = document.getElementById("themeIcon");
+    const themeStylesheet = document.getElementById("themeStylesheet");
 
     let theme = body.getAttribute("data-bs-theme") || "light";
-    icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+    updateIcon(theme);
+
+    function updateIcon(theme) {
+      icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+    }
 
     function getCookie(name) {
       let cookieValue = null;
@@ -210,8 +195,10 @@
     const csrfToken = getCookie('csrftoken');
 
     buttons.forEach(btn => {
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
         const slug = this.dataset.slug;
+
         fetch("{% url 'themes:theme_switch' %}", {
           method: "POST",
           headers: {
@@ -223,7 +210,10 @@
         .then(r => r.json())
         .then(data => {
           if (data.status === "ok") {
-            window.location.reload();
+            // Міняємо тему на льоту
+            body.setAttribute("data-bs-theme", slug);
+            themeStylesheet.setAttribute("href", "{% static 'css/themes/' %}" + slug + ".css");
+            updateIcon(slug);
           } else {
             console.error("Theme switch error:", data.error);
           }
@@ -231,20 +221,18 @@
       });
     });
 
-    // === Init Tooltips ===
+    // Init Tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl)
     });
 
-    // === Init Popovers (для біо) ===
+    // Init Popovers
     const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
     popoverTriggerList.map(function (popoverTriggerEl) {
       return new bootstrap.Popover(popoverTriggerEl)
     });
   });
-</script>
-
-
+  </script>
 </body>
 </html>
