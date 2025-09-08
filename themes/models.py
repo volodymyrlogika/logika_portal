@@ -12,8 +12,6 @@ from django.contrib.auth.models import User
 class Theme(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(unique=True, blank=True)
-
-    # Основні стилі
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
     text_color = models.CharField("Колір тексту", max_length=7, default="#000000")
     background_image = models.ImageField(
@@ -22,37 +20,29 @@ class Theme(models.Model):
     font_family = models.CharField(
         "Шрифт",
         max_length=100,
-        choices=[
-            ("Arial", "Arial"),
-            ("Verdana", "Verdana"),
-            ("Times New Roman", "Times New Roman"),
-            ("Courier New", "Courier New"),
-            ("Georgia", "Georgia"),
-            ("Tahoma", "Tahoma"),
-            ("Roboto", "Roboto"),
-            ("Open Sans", "Open Sans"),
-            ("Lato", "Lato"),
-            ("Montserrat", "Montserrat"),
-            ("Monospace", "Monospace"),
-        ],
+        choices=[("Arial", "Arial"), ("Verdana", "Verdana"), ("Times New Roman", "Times New Roman"),
+                 ("Courier New", "Courier New"), ("Georgia", "Georgia"), ("Tahoma", "Tahoma"),
+                 ("Roboto", "Roboto"), ("Open Sans", "Open Sans"), ("Lato", "Lato"),
+                 ("Montserrat", "Montserrat"), ("Monospace", "Monospace")],
         default="Arial",
     )
     custom_css = models.TextField("Кастомний CSS", blank=True)
 
-    # Додаткові поля
     is_active = models.BooleanField(default=False, verbose_name="Активна тема")
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name="themes"
     )
-    css_file = models.FileField(upload_to="themes/css/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        super().save(*args, **kwargs)  # потрібен ID
+        from .utils import create_theme_css
+        create_theme_css(self)  # генеруємо css у static/css/themes
 
-        super().save(*args, **kwargs)  # треба ID для filename
-
+    def __str__(self):
+        return self.name
         # Генеруємо CSS
         bg_image_css = ""
         if self.background_image:

@@ -16,21 +16,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-<!-- ✅ Theme CSS -->
-{% if active_theme and active_theme.css_file %}
-  <link id="themeStylesheet" rel="stylesheet" href="{{ active_theme.css_file.url }}">
+  <!-- ✅ Theme CSS -->
+{% if active_theme %}
+  <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/' %}{{ active_theme.slug }}.css?v={{ active_theme.created_at|date:'U' }}">
 {% else %}
   <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
 {% endif %}
+
+
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 {% if active_theme %}{{ active_theme.slug }}{% else %}light{% endif %}"
-      data-bs-theme="{{ active_theme.slug|default:'light' }}"
-      {% if active_theme and active_theme.background_image %}
-        style="background: url('{{ active_theme.background_image.url }}') no-repeat center center fixed; background-size: cover;"
-      {% endif %}>
+      data-bs-theme="{{ active_theme.slug|default:'light' }}">
 
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg shadow-sm">
@@ -154,57 +153,53 @@
 const themeStylesheet = document.getElementById("themeStylesheet");
 
 function updateTheme(data) {
+    console.log("updateTheme called:", data);
     themeStylesheet.href = data.css_url + "?v=" + Date.now();
     document.body.style.backgroundImage = data.background_url ? `url(${data.background_url})` : "";
     document.body.setAttribute("data-bs-theme", data.slug);
     document.body.className = document.body.className.replace(/\blight|dark\b/g, "") + " " + data.slug;
+}
 
-    const result = document.getElementById("apply-result");
-    if (result) {
-        result.style.display = "block";
-        result.innerText = `✅ Застосовано тему: ${data.slug}`;
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
     }
+    return cookieValue;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // кнопка "Застосувати тему"
+    // кнопки вибору теми
     document.querySelectorAll(".theme-switch").forEach(btn => {
         btn.addEventListener("click", e => {
             e.preventDefault();
             const slug = btn.dataset.slug;
-            fetch("{% url 'themes:set_theme' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ theme: slug })
-            })
-            .then(r => r.json())
-            .then(data => { if (data.status === "ok") updateTheme(data); });
-        });
-    });
 
-    // дропдаун
-    document.querySelectorAll(".apply-theme-link").forEach(link => {
-        link.addEventListener("click", e => {
-            e.preventDefault();
-            const themeId = link.dataset.themeId;
-            fetch("/themes/set/", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ theme_id: themeId })
-            })
+              fetch("/themes/set/", {
+                  method: "POST",
+                  headers: {
+                      "X-CSRFToken": getCookie("csrftoken"),
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({ theme: slug })
+              })
             .then(r => r.json())
-            .then(data => { if (data.status === "ok") updateTheme(data); });
+            .then(data => {
+                console.log("server response:", data);
+                if (data.status === "ok") updateTheme(data);
+            })
+            .catch(err => console.error("fetch error:", err));
         });
     });
 });
 </script>
-
 
 
 </body>

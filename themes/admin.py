@@ -8,4 +8,4 @@ class ThemeAdmin(admin.ModelAdmin):
     list_filter = ("is_active", "font_family")
     search_fields = ("name", "description")
     prepopulated_fields = {"slug": ("name",)}  # автозаповнення slug
-    readonly_fields = ("css_file",)  # показує згенерований css файл
+    

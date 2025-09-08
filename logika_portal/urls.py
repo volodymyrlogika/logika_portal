@@ -26,21 +26,19 @@ def register_view(request):
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('main.urls')),
+    path("admin/", admin.site.urls),
+    path("", include("main.urls")),
     path("gallery/", include("gallery.urls")),
     path("workshops/", include("workshops.urls")),
     path("casino/", include("casino.urls")),
 
     # accounts
-    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
-    path('logout/', CustomLogoutView.as_view(next_page='main:home'), name='logout'),
+    path("logout/", CustomLogoutView.as_view(next_page="main:home"), name="logout"),
     path("profiles/", include("profiles.urls")),
 
-
-
-    # themes
+    # ✅ themes (залишаємо тільки один include)
     path("themes/", include(("themes.urls", "themes"), namespace="themes")),
 
     # ✅ реєстрація

@@ -40,27 +40,33 @@ def apply_theme(request: HttpRequest, pk: int) -> JsonResponse:
 @csrf_exempt
 def set_theme(request):
     if request.method == "POST":
-        data = json.loads(request.body.decode("utf-8"))
-        slug = data.get("theme")
-        theme_id = data.get("theme_id")
+        try:
+            data = json.loads(request.body)
+            slug = data.get("theme")
+            if not slug:
+                return JsonResponse({"status": "error", "msg": "no theme provided"}, status=400)
 
-        theme = None
-        if slug:
+            # шукаємо тему в БД
             theme = Theme.objects.filter(slug=slug).first()
-        elif theme_id:
-            theme = Theme.objects.filter(id=theme_id).first()
+            if not theme:
+                return JsonResponse({"status": "error", "msg": f"theme {slug} not found"}, status=404)
 
-        if theme:
-            request.session["theme"] = theme.slug
+            # зберігаємо slug у сесії
+            request.session["active_theme"] = theme.slug
+
             return JsonResponse({
                 "status": "ok",
                 "slug": theme.slug,
-                "name": theme.name,
-                "css_url": theme.css_file.url if theme.css_file else "/static/css/themes/light.css",
-                "background_url": theme.background_image.url if theme.background_image else None
+                "css_url": f"/static/css/themes/{theme.slug}.css",
+                "background_url": theme.background.url if theme.background else ""
             })
-        return JsonResponse({"status": "error", "message": "Theme not found"})
-    return JsonResponse({"status": "error", "message": "Invalid request"})
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "msg": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "msg": "only POST allowed"}, status=405)
+
+
 # ==========================
 # Views
 # ==========================

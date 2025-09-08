@@ -1,0 +1,12 @@
+/* Світла тема (за замовчуванням) */
+body {
+  background: #ffffff;
+  color: #000000;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Темна тема */
+body.dark-theme {
+  background: #1e1e1e;
+  color: #ffffff;
+}
