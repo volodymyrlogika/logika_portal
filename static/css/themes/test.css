@@ -1,0 +1,49 @@
+/* ===== test Theme Styles ===== */
+
+body {
+  background-color: #bf3636 !important;
+  color: #ff0000 !important;
+}
+
+/* Navbar */
+body[data-bs-theme="test"] .navbar {
+  background-color: #bf3636 !important;
+  color: #ff0000 !important;
+}
+
+/* Footer */
+body[data-bs-theme="test"] footer {
+  background-color: #bf3636 !important;
+  color: #ff0000 !important;
+}
+
+/* Cards */
+body[data-bs-theme="test"] .card {
+  background-color: #bf3636 !important;
+  color: #ff0000 !important;
+  border-color: #2c2c2c !important;
+}
+
+body[data-bs-theme="test"] .card .card-title,
+body[data-bs-theme="test"] .card .card-text {
+  color: #ff0000 !important;
+}
+
+/* Buttons */
+body[data-bs-theme="test"] .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+
+body[data-bs-theme="test"] .btn-success {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+
+body[data-bs-theme="test"] .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}

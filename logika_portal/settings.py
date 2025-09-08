@@ -56,21 +56,14 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'themes.context_processors.themes_context',
-                "main.context_processors.themes_context",
-                "themes.context_processors.active_theme",
-                "themes.context_processors.themes_dropdown",
-                "themes.context_processors.themes_list",
-
+                'themes.context_processors.active_theme',  # цього достатньо
             ],
         },
     },
 ]
-
 # === WSGI ===
 WSGI_APPLICATION = "logika_portal.wsgi.application"
 

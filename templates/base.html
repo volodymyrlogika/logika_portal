@@ -16,15 +16,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-  <!-- Bootstrap JS (щоб працював modal) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- ✅ Theme CSS -->
+{% if active_theme and active_theme.css_file %}
+  <link id="themeStylesheet" rel="stylesheet" href="{{ active_theme.css_file.url }}">
+{% else %}
+  <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
+{% endif %}
 
-  <!-- Custom Theme CSS -->
-  <link id="themeStylesheet" rel="stylesheet"
-        href="{% static 'css/themes/' %}{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}.css">
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body class="d-flex flex-column min-vh-100"
-      data-bs-theme="{% if user.is_authenticated %}{{ user.profile.theme|default:'light' }}{% else %}{{ request.session.theme|default:'light' }}{% endif %}">
+<body class="d-flex flex-column min-vh-100 {% if active_theme %}{{ active_theme.slug }}{% else %}light{% endif %}"
+      data-bs-theme="{{ active_theme.slug|default:'light' }}"
+      {% if active_theme and active_theme.background_image %}
+        style="background: url('{{ active_theme.background_image.url }}') no-repeat center center fixed; background-size: cover;"
+      {% endif %}>
 
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg shadow-sm">
@@ -44,16 +50,11 @@
               <i id="themeIcon" class="bi"></i> Тема
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
-              <li>
-                <a class="dropdown-item theme-switch" data-slug="light" href="#">
-                  <i class="bi bi-sun"></i> Світла
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item theme-switch" data-slug="dark" href="#">
-                  <i class="bi bi-moon"></i> Темна
-                </a>
-              </li>
+              <li><a class="dropdown-item theme-switch" href="#" data-slug="light">Світла</a></li>
+              <li><a class="dropdown-item theme-switch" href="#" data-slug="dark">Темна</a></li>
+              {% for theme in all_themes %}
+                <li><a class="dropdown-item theme-switch" href="#" data-slug="{{ theme.slug }}">{{ theme.name }}</a></li>
+              {% endfor %}
             </ul>
           </li>
 
@@ -61,31 +62,19 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'themes:theme_list' %}"><i class="bi bi-palette"></i> Теми</a></li>
-          <li class="nav-item">
-            <a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}">
-              <i class="bi bi-dice-5-fill"></i> Казино
-            </a>
-          </li>
+          <li class="nav-item"><a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}"><i class="bi bi-dice-5-fill"></i> Казино</a></li>
 
           <!-- Акаунт -->
           {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link d-flex align-items-center" href="{% url 'profiles:profile' %}">
-              {% if user.is_authenticated and user.profile.avatar %}
+              {% if user.profile.avatar %}
                 <img src="{{ user.profile.avatar.url }}" alt="Avatar"
-                     class="rounded-circle me-2"
-                     width="32" height="32"
-                     data-bs-toggle="popover"
-                     data-bs-trigger="hover focus"
+                     class="rounded-circle me-2" width="32" height="32"
+                     data-bs-toggle="popover" data-bs-trigger="hover focus"
                      data-bs-html="true"
                      title="<strong>{{ user.username }}</strong>"
-                     data-bs-content="
-                       <div class='card shadow-sm border-0' style='width: 220px;'>
-                         <div class='card-body p-2'>
-                           <p class='mb-1'><small>{{ user.profile.bio|default:'(без біо)' }}</small></p>
-                         </div>
-                       </div>
-                     ">
+                     data-bs-content="<div class='card shadow-sm border-0' style='width: 220px;'><div class='card-body p-2'><p class='mb-1'><small>{{ user.profile.bio|default:'(без біо)' }}</small></p></div></div>">
               {% else %}
                 <i class="bi bi-person me-2"></i>
               {% endif %}
@@ -137,10 +126,7 @@
   <script>
       const overlay = document.getElementById('konamiOverlay');
       const iframe = document.getElementById('konamiVideo');
-      const konamiCode = [
-          'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
-          'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'
-      ];
+      const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'];
       let buffer = [];
 
       function showKonami() {
@@ -163,76 +149,63 @@
       });
   </script>
 
-  <!-- Theme + UI Init JS -->
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".theme-switch");
-    const body = document.body;
-    const icon = document.getElementById("themeIcon");
-    const themeStylesheet = document.getElementById("themeStylesheet");
+  <!-- Theme Switch -->
+<script>
+const themeStylesheet = document.getElementById("themeStylesheet");
 
-    let theme = body.getAttribute("data-bs-theme") || "light";
-    updateIcon(theme);
+function updateTheme(data) {
+    themeStylesheet.href = data.css_url + "?v=" + Date.now();
+    document.body.style.backgroundImage = data.background_url ? `url(${data.background_url})` : "";
+    document.body.setAttribute("data-bs-theme", data.slug);
+    document.body.className = document.body.className.replace(/\blight|dark\b/g, "") + " " + data.slug;
 
-    function updateIcon(theme) {
-      icon.className = theme === "dark" ? "bi bi-moon" : "bi bi-sun";
+    const result = document.getElementById("apply-result");
+    if (result) {
+        result.style.display = "block";
+        result.innerText = `✅ Застосовано тему: ${data.slug}`;
     }
+}
 
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
-        }
-      }
-      return cookieValue;
-    }
-    const csrfToken = getCookie('csrftoken');
-
-    buttons.forEach(btn => {
-      btn.addEventListener("click", function (e) {
-        e.preventDefault();
-        const slug = this.dataset.slug;
-
-        fetch("{% url 'themes:theme_switch' %}", {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": csrfToken,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ theme: slug })
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.status === "ok") {
-            // Міняємо тему на льоту
-            body.setAttribute("data-bs-theme", slug);
-            themeStylesheet.setAttribute("href", "{% static 'css/themes/' %}" + slug + ".css");
-            updateIcon(slug);
-          } else {
-            console.error("Theme switch error:", data.error);
-          }
+document.addEventListener("DOMContentLoaded", () => {
+    // кнопка "Застосувати тему"
+    document.querySelectorAll(".theme-switch").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            const slug = btn.dataset.slug;
+            fetch("{% url 'themes:set_theme' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme: slug })
+            })
+            .then(r => r.json())
+            .then(data => { if (data.status === "ok") updateTheme(data); });
         });
-      });
     });
 
-    // Init Tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl)
+    // дропдаун
+    document.querySelectorAll(".apply-theme-link").forEach(link => {
+        link.addEventListener("click", e => {
+            e.preventDefault();
+            const themeId = link.dataset.themeId;
+            fetch("/themes/set/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme_id: themeId })
+            })
+            .then(r => r.json())
+            .then(data => { if (data.status === "ok") updateTheme(data); });
+        });
     });
+});
+</script>
 
-    // Init Popovers
-    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-    popoverTriggerList.map(function (popoverTriggerEl) {
-      return new bootstrap.Popover(popoverTriggerEl)
-    });
-  });
-  </script>
+
+
 </body>
 </html>

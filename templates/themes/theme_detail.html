@@ -37,15 +37,15 @@
             </a>
 
 
-        {% if active_theme and active_theme.id != theme.id %}
-          <button id="apply-theme-btn" class="btn btn-primary">
-            <i class="bi bi-palette-fill"></i> Застосувати тему
-          </button>
-        {% else %}
-          <span class="badge bg-success d-flex align-items-center">
-            <i class="bi bi-check-circle-fill me-1"></i> Активна тема
-          </span>
-        {% endif %}
+{% if active_theme and active_theme.id != theme.id %}
+  <a href="#" class="btn btn-primary theme-switch" data-slug="{{ theme.slug }}">
+    <i class="bi bi-palette-fill"></i> Застосувати тему
+  </a>
+{% else %}
+  <span class="badge bg-success d-flex align-items-center">
+    <i class="bi bi-check-circle-fill me-1"></i> Активна тема
+  </span>
+{% endif %}
 
 
         <!-- Дропдаун зі списком всіх тем -->
@@ -69,50 +69,61 @@
       <p id="apply-result" class="mt-3 text-success fw-bold" style="display:none;"></p>
 
       <!-- JS -->
-      <script>
-      // одна кнопка
-      document.getElementById("apply-theme-btn")?.addEventListener("click", function () {
-    fetch("{% url 'themes:set_theme' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({})
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            document.body.setAttribute("data-theme", data.active_theme_slug);
-        }
+<script>
+const themeStylesheet = document.getElementById("themeStylesheet");
+
+function updateTheme(data) {
+    themeStylesheet.href = data.css_url + "?v=" + Date.now();
+    document.body.style.backgroundImage = data.background_url ? `url(${data.background_url})` : "";
+    document.body.setAttribute("data-bs-theme", data.slug);
+    document.body.className = document.body.className.replace(/\blight|dark\b/g, "") + " " + data.slug;
+
+    const result = document.getElementById("apply-result");
+    if (result) {
+        result.style.display = "block";
+        result.innerText = `✅ Застосовано тему: ${data.slug}`;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // кнопка "Застосувати тему"
+    document.querySelectorAll(".theme-switch").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            const slug = btn.dataset.slug;
+            fetch("{% url 'themes:set_theme' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme: slug })
+            })
+            .then(r => r.json())
+            .then(data => { if (data.status === "ok") updateTheme(data); });
+        });
+    });
+
+    // дропдаун
+    document.querySelectorAll(".apply-theme-link").forEach(link => {
+        link.addEventListener("click", e => {
+            e.preventDefault();
+            const themeId = link.dataset.themeId;
+            fetch("/themes/set/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme_id: themeId })
+            })
+            .then(r => r.json())
+            .then(data => { if (data.status === "ok") updateTheme(data); });
+        });
     });
 });
+</script>
 
-      // дропдаун
-      document.querySelectorAll(".apply-theme-link").forEach(link => {
-          link.addEventListener("click", function (e) {
-              e.preventDefault();
-              let themeId = this.dataset.themeId;
-
-              fetch(`/themes/${themeId}/apply/`, {
-                  method: "POST",
-                  headers: {
-                      "X-CSRFToken": "{{ csrf_token }}",
-                      "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify({})
-              })
-              .then(r => r.json())
-              .then(data => {
-                  if (data.success) {
-                      document.getElementById("apply-result").innerText = "Тема '" + data.active_theme + "' застосована!";
-                      document.getElementById("apply-result").style.display = "block";
-                      document.body.setAttribute("data-theme", data.active_theme_slug);
-                  }
-              });
-          });
-      });
-      </script>
 
     </div>
   </div>

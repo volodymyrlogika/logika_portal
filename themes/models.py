@@ -1,4 +1,4 @@
-import os
+import time
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
@@ -11,14 +11,7 @@ from django.contrib.auth.models import User
 # ==============================
 class Theme(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(unique=True)
-    bg_color = models.CharField(max_length=20, default="#ffffff")
-    text_color = models.CharField(max_length=20, default="#000000")
-    extra_css = models.TextField(blank=True)
-    is_active = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
+    slug = models.SlugField(unique=True, blank=True)
 
     # Основні стилі
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
@@ -55,13 +48,23 @@ class Theme(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        # Автоматично генеруємо slug
         if not self.slug:
             self.slug = slugify(self.name)
 
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # треба ID для filename
 
-        # Генерація CSS
+        # Генеруємо CSS
+        bg_image_css = ""
+        if self.background_image:
+            bg_image_css = f"""
+            body {{
+                background-image: url('{settings.MEDIA_URL}{self.background_image.name}');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }}
+            """
+
         css_content = f"""
         /* Автоматично створений CSS для теми: {self.name} */
         body {{
@@ -75,13 +78,24 @@ class Theme(models.Model):
         a {{
             color: {self.text_color};
         }}
+        {bg_image_css}
         {self.custom_css}
         """
-        filename = f"{self.slug or self.id}.css"
-        self.css_file.save(filename, ContentFile(css_content.strip()), save=True)
+
+        # додаємо таймштамп щоб уникнути кешу
+        filename = f"{self.slug or self.id}_{int(time.time())}.css"
+
+        # видаляємо старий CSS якщо був
+        if self.css_file:
+            self.css_file.delete(save=False)
+
+        # зберігаємо у FileField (MEDIA)
+        self.css_file.save(filename, ContentFile(css_content.strip()), save=False)
+        super().save(update_fields=["css_file"])
 
     def __str__(self):
         return self.name
+
 
 # ==============================
 # ГАЛЕРЕЯ
@@ -114,7 +128,7 @@ class GalleryItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title   # 🔹 було self.name (помилка)
+        return self.title
 
 
 # ==============================
