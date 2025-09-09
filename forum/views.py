@@ -67,7 +67,7 @@ class ThreadCreateView(LoginRequiredMixin, CreateView):
     model = models.Thread
     template_name = "forum/thread_create.html"
     form_class = ThreadForm
-    success_url = ("all-threads")
+    success_url = ("http://127.0.0.1:8000/forum/home/")
 
     def form_valid(self, form):
         form.instance.author = self.request.user
