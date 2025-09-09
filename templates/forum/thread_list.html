@@ -11,8 +11,21 @@
                 {{ thread.theme }}
             </a>
         </li>
-    {% endfor %}
+        {% endfor %}
+
+    {% for thread in threads %}
+        {% if status == True %}
+    
+        <a href="{% url 'forum:thread-create' category_id=category_id %}">
+            <h3>додати як адміністратор</h3>
+        </a>
+        {% else %}
+        <p></p>
+        {% endif %}
+        
+        {% endfor %} 
+        
+        
 </ul>
 
 {% endblock content %}
-

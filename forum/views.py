@@ -3,9 +3,11 @@ from .models import Post, Thread, Category
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from forum import models
-from forum.forms import PostForm
+from forum.forms import PostForm, ThreadForm
+from django.urls import reverse_lazy
 
-class AllCategoryListView(ListView):
+
+class AllCategoryListView(LoginRequiredMixin,ListView):
     model = Category
     context_object_name = "categories"
     template_name = "forum/category_list.html"
@@ -14,7 +16,7 @@ class CategoryMixin:
     def get_categories(self):
         return Category.objects.all()
 
-class AllThreadListView(ListView):
+class AllThreadListView(LoginRequiredMixin,ListView):
     model = Thread
     context_object_name = "threds"
     template_name = "forum/all_thread_list.html"
@@ -24,7 +26,7 @@ class ThreadMixin:
     def get_threads(self):
         return Thread.objects.all()
 
-class ForumHomeView(ThreadMixin, CategoryMixin, TemplateView):
+class ForumHomeView(LoginRequiredMixin, ThreadMixin, CategoryMixin, TemplateView):
     template_name="forum/forum_home.html"
 
 
@@ -37,10 +39,10 @@ class ForumHomeView(ThreadMixin, CategoryMixin, TemplateView):
         return context
 #########################################
 
-class ThreadListView(ListView):
+class ThreadListView(LoginRequiredMixin, ListView):
     model = Thread
     context_object_name = "threads"
-    template_name = "thread_list.html"
+    template_name = "forum/thread_list.html"
 
     def get_queryset(self):
         return Thread.objects.filter(category_id=self.kwargs['category_id'])
@@ -48,13 +50,36 @@ class ThreadListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['category_id'] = self.kwargs['category_id']
+        context['status'] = self.create_thread_button()
         return context
+    
+    def create_thread_button(self):
+            user = self.request.user
+            if user.is_staff:
+                status = True
+            elif user.is_superuser:
+                status = True
+            else:
+                status = False
+            return status
+    
+class ThreadCreateView(CreateView):
+    model = models.Thread
+    template_name = "forum/thread_create.html"
+    form_class = ThreadForm
+
+
+
+    # request.user.is_staff
+    # is_superuser
+    # pass
+
 
 # class PostCreateView(CreateView):
 #     model = Post
 #     template_name = 
 
-class PostList(ListView):
+class PostList(LoginRequiredMixin,ListView):
     model = models.Post
     context_object_name = "posts"
     template_name = "forum/post_list.html"
@@ -93,6 +118,7 @@ class PostList(ListView):
 
             
             post.save()
+            # return redirect('forum:post-list')
             return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
         else:
             pass

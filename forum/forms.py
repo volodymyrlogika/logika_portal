@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, Thread, Category
 from django.forms import ModelForm, TextInput, Textarea, DateTimeInput, DateInput
 
 
@@ -16,4 +16,10 @@ class PostForm(forms.ModelForm):
                 
                 'files': forms.FileInput()
                 }
+        
+
+class ThreadForm(forms.ModelForm):
+    class Meta:
+        model = Thread
+        fields = ['category', 'theme', 'author','description', 'is_closed', 'image']
                 
