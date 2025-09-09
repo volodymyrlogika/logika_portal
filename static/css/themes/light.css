@@ -2,33 +2,31 @@
 
 body {
   background-color: #ffffff !important;
-  color: #212529 !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  color: #000000 !important;
 }
 
 /* Navbar */
 body[data-bs-theme="light"] .navbar {
-  background-color: #f8f9fa !important;
-  color: #212529 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 /* Footer */
 body[data-bs-theme="light"] footer {
-  background-color: #f8f9fa !important;
-  color: #212529 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 /* Cards */
 body[data-bs-theme="light"] .card {
   background-color: #ffffff !important;
-  color: #212529 !important;
-  border-color: #dee2e6 !important;
-  box-shadow: 0 .5rem 1rem rgba(0,0,0,.05);
+  color: #000000 !important;
+  border-color: #2c2c2c !important;
 }
 
 body[data-bs-theme="light"] .card .card-title,
 body[data-bs-theme="light"] .card .card-text {
-  color: #212529 !important;
+  color: #000000 !important;
 }
 
 /* Buttons */

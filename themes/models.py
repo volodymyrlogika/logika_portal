@@ -20,13 +20,31 @@ class Theme(models.Model):
     font_family = models.CharField(
         "Шрифт",
         max_length=100,
-        choices=[("Arial", "Arial"), ("Verdana", "Verdana"), ("Times New Roman", "Times New Roman"),
-                 ("Courier New", "Courier New"), ("Georgia", "Georgia"), ("Tahoma", "Tahoma"),
-                 ("Roboto", "Roboto"), ("Open Sans", "Open Sans"), ("Lato", "Lato"),
-                 ("Montserrat", "Montserrat"), ("Monospace", "Monospace")],
+        choices=[
+            ("Arial", "Arial"),
+            ("Verdana", "Verdana"),
+            ("Times New Roman", "Times New Roman"),
+            ("Courier New", "Courier New"),
+            ("Georgia", "Georgia"),
+            ("Tahoma", "Tahoma"),
+            ("Roboto", "Roboto"),
+            ("Open Sans", "Open Sans"),
+            ("Lato", "Lato"),
+            ("Montserrat", "Montserrat"),
+            ("Monospace", "Monospace"),
+        ],
         default="Arial",
     )
     custom_css = models.TextField("Кастомний CSS", blank=True)
+    background_mode = models.CharField(
+    max_length=20,
+    choices=[
+        ("cover", "На весь екран"),
+        ("tile", "Плитка (2000-і)"),
+        ("dim", "Затемнене фото"),
+    ],
+    default="cover",
+)
 
     is_active = models.BooleanField(default=False, verbose_name="Активна тема")
     created_by = models.ForeignKey(
@@ -34,15 +52,15 @@ class Theme(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # 👉 збережений CSS файл
+    css_file = models.FileField(upload_to="themes/css/", blank=True, null=True)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        super().save(*args, **kwargs)  # потрібен ID
-        from .utils import create_theme_css
-        create_theme_css(self)  # генеруємо css у static/css/themes
 
-    def __str__(self):
-        return self.name
+        super().save(*args, **kwargs)  # зберігаємо щоб отримати ID
+
         # Генеруємо CSS
         bg_image_css = ""
         if self.background_image:
@@ -72,7 +90,7 @@ class Theme(models.Model):
         {self.custom_css}
         """
 
-        # додаємо таймштамп щоб уникнути кешу
+        # додаємо таймштамп щоб уникнути кешування
         filename = f"{self.slug or self.id}_{int(time.time())}.css"
 
         # видаляємо старий CSS якщо був
@@ -92,16 +110,16 @@ class Theme(models.Model):
 # ==============================
 class GalleryItem(models.Model):
     MEDIA_CHOICES = (
-        ('image', 'Зображення'),
-        ('video', 'Відео'),
-        ('file', 'Файл'),
+        ("image", "Зображення"),
+        ("video", "Відео"),
+        ("file", "Файл"),
     )
 
-    title = models.CharField('Заголовок', max_length=200)
-    description = models.TextField('Опис', blank=True)
-    file = models.FileField('Файл', upload_to="gallery/")
+    title = models.CharField("Заголовок", max_length=200)
+    description = models.TextField("Опис", blank=True)
+    file = models.FileField("Файл", upload_to="gallery/")
     media_type = models.CharField(
-        'Тип медіа', max_length=10, choices=MEDIA_CHOICES, default='image'
+        "Тип медіа", max_length=10, choices=MEDIA_CHOICES, default="image"
     )
 
     uploader = models.ForeignKey(
@@ -133,7 +151,7 @@ class Workshop(models.Model):
     capacity = models.PositiveIntegerField(null=True, blank=True, verbose_name="Місткість")
 
     theme = models.ForeignKey(
-        Theme, on_delete=models.SET_NULL, null=True, blank=True, related_name='workshops'
+        Theme, on_delete=models.SET_NULL, null=True, blank=True, related_name="workshops"
     )
     is_published = models.BooleanField(default=True, verbose_name="Опубліковано")
 

@@ -37,15 +37,17 @@
             </a>
 
 
-{% if active_theme and active_theme.id != theme.id %}
-  <a href="#" class="btn btn-primary theme-switch" data-slug="{{ theme.slug }}">
-    <i class="bi bi-palette-fill"></i> Застосувати тему
+{% if active_theme and active_theme.slug == theme.slug %}
+  <a href="#" class="btn btn-danger theme-switch" data-slug="{{ theme.slug }}" data-active="true">
+    <i class="bi bi-x-circle"></i> Забрати тему
   </a>
 {% else %}
-  <span class="badge bg-success d-flex align-items-center">
-    <i class="bi bi-check-circle-fill me-1"></i> Активна тема
-  </span>
+  <a href="#" class="btn btn-primary theme-switch" data-slug="{{ theme.slug }}" data-active="false">
+    <i class="bi bi-palette-fill"></i> Застосувати тему
+  </a>
 {% endif %}
+
+
 
 
         <!-- Дропдаун зі списком всіх тем -->
@@ -83,47 +85,85 @@ function updateTheme(data) {
         result.style.display = "block";
         result.innerText = `✅ Застосовано тему: ${data.slug}`;
     }
+
+    const btn = document.querySelector(".theme-switch");
+    if (btn) {
+        if (data.slug === btn.dataset.slug) {
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-danger");
+            btn.innerHTML = '<i class="bi bi-x-circle"></i> Забрати тему';
+            btn.dataset.active = "true";
+        } else {
+            btn.classList.remove("btn-danger");
+            btn.classList.add("btn-primary");
+            btn.innerHTML = '<i class="bi bi-palette-fill"></i> Застосувати тему';
+            btn.dataset.active = "false";
+        }
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // кнопка "Застосувати тему"
+    // 🔹 Кнопка
     document.querySelectorAll(".theme-switch").forEach(btn => {
         btn.addEventListener("click", e => {
             e.preventDefault();
             const slug = btn.dataset.slug;
+
             fetch("{% url 'themes:set_theme' %}", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
+                    "X-CSRFToken": getCookie("csrftoken"),
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ theme: slug })
+                body: JSON.stringify({ theme: slug })   // ✅ має бути саме JSON
             })
+
             .then(r => r.json())
-            .then(data => { if (data.status === "ok") updateTheme(data); });
+            .then(data => {
+                console.log("Server response:", data);
+                if (data.status === "ok") updateTheme(data);
+            })
+            .catch(err => console.error("fetch error:", err));
         });
     });
 
-    // дропдаун
+    // 🔹 Дропдаун
     document.querySelectorAll(".apply-theme-link").forEach(link => {
         link.addEventListener("click", e => {
             e.preventDefault();
             const themeId = link.dataset.themeId;
-            fetch("/themes/set/", {
+            fetch("{% url 'themes:set_theme' %}", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
+                    "X-CSRFToken": getCookie("csrftoken"),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ theme_id: themeId })
             })
             .then(r => r.json())
-            .then(data => { if (data.status === "ok") updateTheme(data); });
+            .then(data => {
+                if (data.status === "ok") updateTheme(data);
+            })
+            .catch(err => console.error("fetch error:", err));
         });
     });
 });
 </script>
-
 
     </div>
   </div>

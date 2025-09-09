@@ -1,0 +1,19 @@
+/* Автоматично створений CSS для теми: test */
+        body {
+            background-color: #ff0000;
+            color: #000000;
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #ff0000;
+        }
+        a {
+            color: #000000;
+        }
+        
+            body {
+                background-image: url('/media/themes/backgrounds/Знімок_екрана_2025-06-20_141306_10VyOYl.png');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }

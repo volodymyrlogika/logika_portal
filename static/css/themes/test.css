@@ -1,25 +1,25 @@
 /* ===== test Theme Styles ===== */
 
 body {
-  background-color: #e61919 !important;
+  background-color: #ff0000 !important;
   color: #000000 !important;
 }
 
 /* Navbar */
 body[data-bs-theme="test"] .navbar {
-  background-color: #e61919 !important;
+  background-color: #ff0000 !important;
   color: #000000 !important;
 }
 
 /* Footer */
 body[data-bs-theme="test"] footer {
-  background-color: #e61919 !important;
+  background-color: #ff0000 !important;
   color: #000000 !important;
 }
 
 /* Cards */
 body[data-bs-theme="test"] .card {
-  background-color: #e61919 !important;
+  background-color: #ff0000 !important;
   color: #000000 !important;
   border-color: #2c2c2c !important;
 }

@@ -176,20 +176,21 @@ function getCookie(name) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // кнопки вибору теми
+    const urlSetTheme = "{% url 'themes:set_theme' %}" || "/themes/set/";
+
     document.querySelectorAll(".theme-switch").forEach(btn => {
         btn.addEventListener("click", e => {
             e.preventDefault();
             const slug = btn.dataset.slug;
 
-              fetch("/themes/set/", {
-                  method: "POST",
-                  headers: {
-                      "X-CSRFToken": getCookie("csrftoken"),
-                      "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify({ theme: slug })
-              })
+            fetch(urlSetTheme, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme: slug })
+            })
             .then(r => r.json())
             .then(data => {
                 console.log("server response:", data);
@@ -200,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
 
 
 </body>

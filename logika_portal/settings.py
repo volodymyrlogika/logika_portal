@@ -61,6 +61,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'themes.context_processors.active_theme',  # цього достатньо
+                'themes.context_processors.themes_list',
             ],
         },
     },

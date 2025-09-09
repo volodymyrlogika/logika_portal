@@ -7,73 +7,60 @@ from django.utils.text import slugify
 def _themes_dir() -> Path:
     """
     Повертає шлях до папки, де зберігати CSS теми:
-    C:/Users/sypen/Downloads/portal/logika_portal/static/css/themes
+    BASE_DIR/static/css/themes
     """
     return Path(settings.BASE_DIR) / "static" / "css" / "themes"
 
 
 def create_theme_css(theme):
-    """
-    Генерує css для теми у вигляді файлу <slug>.css
-    """
-    slug = slugify(theme.slug or theme.name)
+    """Генерує CSS файл для вибраної теми"""
 
-    css = f"""
-/* ===== {theme.name} Theme Styles ===== */
+    bg_image_css = ""
+    if theme.background_image:
+        if theme.background_mode == "cover":
+            bg_image_css = f"""
+            body {{
+                background: url('{settings.MEDIA_URL}{theme.background_image.name}') center/cover no-repeat fixed;
+            }}
+            """
+        elif theme.background_mode == "tile":
+            bg_image_css = f"""
+            body {{
+                background: url('{settings.MEDIA_URL}{theme.background_image.name}') repeat;
+            }}
+            """
+        elif theme.background_mode == "dim":
+            bg_image_css = f"""
+            body::before {{
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: url('{settings.MEDIA_URL}{theme.background_image.name}') center/cover no-repeat;
+                filter: brightness(0.5);
+                z-index: -1;
+            }}
+            """
 
-body {{
-  background-color: {theme.background_color} !important;
-  color: {theme.text_color} !important;
-}}
-
-/* Navbar */
-body[data-bs-theme="{slug}"] .navbar {{
-  background-color: {theme.background_color} !important;
-  color: {theme.text_color} !important;
-}}
-
-/* Footer */
-body[data-bs-theme="{slug}"] footer {{
-  background-color: {theme.background_color} !important;
-  color: {theme.text_color} !important;
-}}
-
-/* Cards */
-body[data-bs-theme="{slug}"] .card {{
-  background-color: {theme.background_color} !important;
-  color: {theme.text_color} !important;
-  border-color: #2c2c2c !important;
-}}
-
-body[data-bs-theme="{slug}"] .card .card-title,
-body[data-bs-theme="{slug}"] .card .card-text {{
-  color: {theme.text_color} !important;
-}}
-
-/* Buttons */
-body[data-bs-theme="{slug}"] .btn-primary {{
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: #fff;
-}}
-
-body[data-bs-theme="{slug}"] .btn-success {{
-  background-color: #198754;
-  border-color: #198754;
-  color: #fff;
-}}
-
-body[data-bs-theme="{slug}"] .btn-warning {{
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: #212529;
-}}
-
-{theme.custom_css or ""}
+    css_content = f"""
+    /* Автоматично згенерована тема: {theme.name} */
+    body {{
+        background-color: {theme.background_color};
+        color: {theme.text_color};
+        font-family: '{theme.font_family}', sans-serif;
+    }}
+    {bg_image_css}
+    {theme.custom_css}
     """.strip()
 
+    # папка для тем
     out_dir = _themes_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # назва файлу за slug
+    slug = slugify(theme.slug or theme.name)
     out_path = out_dir / f"{slug}.css"
-    out_path.write_text(css, encoding="utf-8")
+
+    # запис у файл
+    out_path.write_text(css_content, encoding="utf-8")
+
     return out_path
