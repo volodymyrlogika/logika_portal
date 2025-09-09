@@ -1,20 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>ви попали на сторінку тем</h1>
-
-
-<h2>Треди категорії {{ category_id }}</h2>
-<ul>
-    {% for thread in threads %}
-        <li>
-            <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}">
-                {{ thread.theme }}
-            </a>
-        </li>
-        {% endfor %}
-
-    {% for thread in threads %}
-        {% if status == True %}
+<div>
+    {% if status == True %}
     
         <a href="{% url 'forum:thread-create' category_id=category_id %}">
             <h3>додати як адміністратор</h3>
@@ -22,10 +10,18 @@
         {% else %}
         <p></p>
         {% endif %}
-        
-        {% endfor %} 
-        
-        
+</div>
+
+
+<h2>Треди категорії {{ category_id }}</h2>
+<ul>
+    {% for thread in threads %}
+ <li>
+            <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}">
+                {{ thread.theme }}
+            </a>
+        </li>
+        {% endfor %}
 </ul>
 
 {% endblock content %}

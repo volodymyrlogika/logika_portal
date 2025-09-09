@@ -63,17 +63,17 @@ class ThreadListView(LoginRequiredMixin, ListView):
                 status = False
             return status
     
-class ThreadCreateView(CreateView):
+class ThreadCreateView(LoginRequiredMixin, CreateView):
     model = models.Thread
     template_name = "forum/thread_create.html"
     form_class = ThreadForm
+    success_url = ("all-threads")
 
-
-
-    # request.user.is_staff
-    # is_superuser
-    # pass
-
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        
+        
+        return super().form_valid(form)
 
 # class PostCreateView(CreateView):
 #     model = Post

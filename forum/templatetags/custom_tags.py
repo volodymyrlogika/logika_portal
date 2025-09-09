@@ -6,3 +6,7 @@ register =  template.Library()
 
 def endswith(value, arg):
     return value.lower().endswith(arg.lower())
+
+def range(number):
+    context = range(number)
+    return context
