@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView, CreateView, View, UpdateV
 from django.contrib.auth.mixins import LoginRequiredMixin
 from forum import models
 from forum.forms import PostForm, ThreadForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 
 class AllCategoryListView(LoginRequiredMixin,ListView):
@@ -67,13 +67,17 @@ class ThreadCreateView(LoginRequiredMixin, CreateView):
     model = models.Thread
     template_name = "forum/thread_create.html"
     form_class = ThreadForm
-    success_url = ("http://127.0.0.1:8000/forum/home/")
+    # success_url = ("forum/home/")
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        
-        
+
         return super().form_valid(form)
+    
+    def get_success_url(self, *args, **kwargs):
+        category_id = self.kwargs.get("category_id")
+        return reverse_lazy("forum:thread-list", kwargs={"category_id": category_id}) ####то мені чот гпт підказав бо я хз чо варіант занизу не преренаправляв
+        # return reverse_lazy("forum:thread-list", category_id = category_id)
 
 # class PostCreateView(CreateView):
 #     model = Post

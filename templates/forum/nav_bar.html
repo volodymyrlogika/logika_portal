@@ -31,19 +31,22 @@
                 <li class="nav-item">
                   <a class="nav-link" href="#">Про форум</a>
                 </li>
-                {% comment %} {% if user.is_authenticated %}
+                {% comment %} <div>
+                {% if user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link text-danger" href="{% url 'auth_system:logout' %}">Вийти</a>
+                  {% csrf_token %}
+                  <a class="nav-link text-danger" href="{% url 'logout' %}">Вийти</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'auth_system:login' %}">Увійти</a>
+                  <a class="nav-link" href="{% url 'login' %}">Увійти</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'auth_system:register' %}">Реєстрація</a>
+                  <a class="nav-link" href="{% url 'register' %}">Реєстрація</a>
                 </li>
-                {% endif %} {% endcomment %}
-              </ul>
+                {% endif %} 
+              </ul></div> {% endcomment %}
+
 
               
             </div>
