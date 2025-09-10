@@ -1,5 +1,5 @@
 from django.urls import path
-from views import (
+from .views import (
     AnnouncementListView, AnnouncementDetailView,
     AnnouncementCreateView, AnnouncementUpdateView, AnnouncementDeleteView
 )
