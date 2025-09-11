@@ -6,17 +6,26 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# ==============================
-# ТЕМИ
-# ==============================
 class Theme(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(unique=True, blank=True)
+
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
     text_color = models.CharField("Колір тексту", max_length=7, default="#000000")
+
     background_image = models.ImageField(
         "Фонове зображення", upload_to="themes/backgrounds/", blank=True, null=True
     )
+
+    BACKGROUND_CHOICES = [
+        ("cover", "На весь екран"),
+        ("tile", "Плитка (2000-і)"),
+        ("dim", "Затемнене фото"),
+    ]
+    background_mode = models.CharField(
+        max_length=20, choices=BACKGROUND_CHOICES, default="cover"
+    )
+
     font_family = models.CharField(
         "Шрифт",
         max_length=100,
@@ -35,43 +44,54 @@ class Theme(models.Model):
         ],
         default="Arial",
     )
-    custom_css = models.TextField("Кастомний CSS", blank=True)
-    background_mode = models.CharField(
-    max_length=20,
-    choices=[
-        ("cover", "На весь екран"),
-        ("tile", "Плитка (2000-і)"),
-        ("dim", "Затемнене фото"),
-    ],
-    default="cover",
-)
 
+    custom_css = models.TextField("Кастомний CSS", blank=True)
+
+    # системна чи кастомна
+    is_system = models.BooleanField(default=False, verbose_name="Системна тема")
     is_active = models.BooleanField(default=False, verbose_name="Активна тема")
+
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name="themes"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # 👉 збережений CSS файл
     css_file = models.FileField(upload_to="themes/css/", blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
 
-        super().save(*args, **kwargs)  # зберігаємо щоб отримати ID
+        super().save(*args, **kwargs)  # спочатку зберігаємо, щоб був ID
 
-        # Генеруємо CSS
+        # 🔥 формуємо CSS в залежності від режиму фону
         bg_image_css = ""
         if self.background_image:
-            bg_image_css = f"""
-            body {{
-                background-image: url('{settings.MEDIA_URL}{self.background_image.name}');
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }}
-            """
+            if self.background_mode == "cover":
+                bg_image_css = f"""
+                body {{
+                    background: url('{settings.MEDIA_URL}{self.background_image.name}') 
+                                center/cover no-repeat fixed;
+                }}
+                """
+            elif self.background_mode == "tile":
+                bg_image_css = f"""
+                body {{
+                    background: url('{settings.MEDIA_URL}{self.background_image.name}') repeat;
+                }}
+                """
+            elif self.background_mode == "dim":
+                bg_image_css = f"""
+                body::before {{
+                    content: "";
+                    position: fixed;
+                    inset: 0;
+                    background: url('{settings.MEDIA_URL}{self.background_image.name}') 
+                                center/cover no-repeat;
+                    filter: brightness(0.5);
+                    z-index: -1;
+                }}
+                """
 
         css_content = f"""
         /* Автоматично створений CSS для теми: {self.name} */
@@ -103,62 +123,3 @@ class Theme(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# ==============================
-# ГАЛЕРЕЯ
-# ==============================
-class GalleryItem(models.Model):
-    MEDIA_CHOICES = (
-        ("image", "Зображення"),
-        ("video", "Відео"),
-        ("file", "Файл"),
-    )
-
-    title = models.CharField("Заголовок", max_length=200)
-    description = models.TextField("Опис", blank=True)
-    file = models.FileField("Файл", upload_to="gallery/")
-    media_type = models.CharField(
-        "Тип медіа", max_length=10, choices=MEDIA_CHOICES, default="image"
-    )
-
-    uploader = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="gallery_items"
-    )
-    workshop = models.ForeignKey(
-        "Workshop", on_delete=models.SET_NULL, null=True, blank=True, related_name="gallery_items"
-    )
-    theme = models.ForeignKey(
-        "Theme", on_delete=models.SET_NULL, null=True, blank=True, related_name="gallery_items"
-    )
-
-    approved = models.BooleanField(default=False, verbose_name="Схвалено")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title
-
-
-# ==============================
-# ВОРКШОПИ
-# ==============================
-class Workshop(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Назва")
-    description = models.TextField(blank=True, verbose_name="Опис")
-    start_at = models.DateTimeField(null=True, blank=True, verbose_name="Початок")
-    end_at = models.DateTimeField(null=True, blank=True, verbose_name="Кінець")
-    location = models.CharField(max_length=200, blank=True, verbose_name="Локація")
-    capacity = models.PositiveIntegerField(null=True, blank=True, verbose_name="Місткість")
-
-    theme = models.ForeignKey(
-        Theme, on_delete=models.SET_NULL, null=True, blank=True, related_name="workshops"
-    )
-    is_published = models.BooleanField(default=True, verbose_name="Опубліковано")
-
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="workshops"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title

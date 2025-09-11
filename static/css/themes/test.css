@@ -1,49 +1,10 @@
-/* ===== test Theme Styles ===== */
-
-body {
-  background-color: #ff0000 !important;
-  color: #000000 !important;
-}
-
-/* Navbar */
-body[data-bs-theme="test"] .navbar {
-  background-color: #ff0000 !important;
-  color: #000000 !important;
-}
-
-/* Footer */
-body[data-bs-theme="test"] footer {
-  background-color: #ff0000 !important;
-  color: #000000 !important;
-}
-
-/* Cards */
-body[data-bs-theme="test"] .card {
-  background-color: #ff0000 !important;
-  color: #000000 !important;
-  border-color: #2c2c2c !important;
-}
-
-body[data-bs-theme="test"] .card .card-title,
-body[data-bs-theme="test"] .card .card-text {
-  color: #000000 !important;
-}
-
-/* Buttons */
-body[data-bs-theme="test"] .btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: #fff;
-}
-
-body[data-bs-theme="test"] .btn-success {
-  background-color: #198754;
-  border-color: #198754;
-  color: #fff;
-}
-
-body[data-bs-theme="test"] .btn-warning {
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: #212529;
-}
+/* Автоматично згенерована тема: test */
+    body {
+        background-color: #ff0000;
+        color: #ffffff;
+        font-family: 'Arial', sans-serif;
+    }
+    
+            body {
+                background: url('/media/themes/backgrounds/Знімок_екрана_2025-06-20_141306_nJvDWn9.jpg') center/cover no-repeat fixed;
+            }
