@@ -17,32 +17,32 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
   <!-- ✅ Theme CSS -->
-{% if active_theme %}
-  <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/' %}{{ active_theme.slug }}.css?v={{ active_theme.created_at|date:'U' }}">
-{% else %}
-  <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
-{% endif %}
+  {% if active_theme %}
+    <link id="themeStylesheet" rel="stylesheet" href="/static/css/themes/{{ active_theme.slug }}.css?v={{ active_theme.updated_at|date:'U' }}">
+  {% else %}
+    <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
+  {% endif %}
+
+
+  <!-- 🔹 Фон через CSS змінну -->
+  <style>
+    body {
+      background: var(--theme-bg) no-repeat center center fixed;
+      background-size: cover;
+    }
+  </style>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body class="d-flex flex-column min-vh-100 {% if active_theme %}{{ active_theme.slug }}{% else %}light{% endif %}"
-      data-bs-theme="{{ active_theme.slug|default:'light' }}"
-      {% if active_theme and active_theme.background_image %}
-        style="
-          background-image: url('{{ active_theme.background_image.url }}');
-          {% if active_theme.background_mode == 'tile' %}
-            background-repeat: repeat;
-          {% else %}
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-          {% endif %}
-          {% if active_theme.background_mode == 'dim' %}
-            filter: brightness(0.5);
-          {% endif %}
-        "
-      {% endif %}>
+<body 
+  class="d-flex flex-column min-vh-100 {{ active_theme.slug|default:'light' }}"
+  data-bs-theme="{{ active_theme.slug|default:'light' }}"
+  {% if active_theme.background_image %}
+    style="--theme-bg: url('{{ active_theme.background_image.url }}');"
+    data-bg-mode="{{ active_theme.background_mode }}"
+  {% endif %}
+>
 
   <!-- Навбар -->
   <nav class="navbar navbar-expand-lg shadow-sm">
@@ -63,13 +63,15 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
               {% for theme in all_themes %}
-                <li><a class="dropdown-item theme-switch" href="#" data-slug="{{ theme.slug }}">{{ theme.name }}</a></li>
+                {% if "test" not in theme.slug %}
+                  <li><a class="dropdown-item theme-switch" href="#" data-slug="{{ theme.slug }}">{{ theme.name }}</a></li>
+                {% endif %}
               {% endfor %}
             </ul>
           </li>
 
           <!-- Меню -->
-          <li class="nav-item"><a class="nav-link" href="{% url 'workshops:page' %}"><i class="bi bi-easel"></i> Воркшопи</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'workshops:list' %}i> Воркшопи</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'themes:theme_list' %}"><i class="bi bi-palette"></i> Теми</a></li>
           <li class="nav-item"><a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}"><i class="bi bi-dice-5-fill"></i> Казино</a></li>
@@ -159,33 +161,30 @@
       });
   </script>
 
-  <!-- Theme Switch -->
+<!-- Theme Switch -->
 <script>
 const themeStylesheet = document.getElementById("themeStylesheet");
 
 function updateTheme(data) {
     console.log("updateTheme called:", data);
-
+    
     themeStylesheet.href = data.css_url + "?v=" + Date.now();
-
-    if (data.background_url) {
-        if (data.background_mode === "tile") {
-            document.body.style.background = `url(${data.background_url}) repeat`;
-            document.body.style.filter = "";
-        } else if (data.background_mode === "dim") {
-            document.body.style.background = `url(${data.background_url}) center/cover no-repeat fixed`;
-            document.body.style.filter = "brightness(0.5)";
-        } else {
-            document.body.style.background = `url(${data.background_url}) center/cover no-repeat fixed`;
-            document.body.style.filter = "";
-        }
-    } else {
-        document.body.style.background = "";
-        document.body.style.filter = "";
-    }
-
+    
+    // ставимо slug
     document.body.setAttribute("data-bs-theme", data.slug);
     document.body.className = document.body.className.replace(/\blight|dark\b/g, "") + " " + data.slug;
+    
+    // якщо бекенд дав фон → оновлюємо
+    if (data.background_url) {
+        document.body.style.setProperty("--theme-bg", `url(${data.background_url})`);
+        document.body.setAttribute("data-bg-mode", data.background_mode || "cover");
+        console.log("✅ background set:", document.body.style.getPropertyValue("--theme-bg"));
+    } else {
+        // 🧹 якщо фон відсутній → прибираємо старий
+        document.body.style.removeProperty("--theme-bg");
+        document.body.removeAttribute("data-bg-mode");
+        console.log("🧹 background cleared");
+    }
 }
 
 function getCookie(name) {
@@ -229,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
 
 </body>
 </html>

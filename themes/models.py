@@ -10,6 +10,8 @@ class Theme(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(unique=True, blank=True)
 
+    description = models.TextField("Опис", blank=True)
+
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
     text_color = models.CharField("Колір тексту", max_length=7, default="#000000")
 
@@ -60,9 +62,13 @@ class Theme(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
-
-        super().save(*args, **kwargs)  # спочатку зберігаємо, щоб був ID
+            base = slugify(self.name) or 'theme'
+            self.slug = base
+            i = 1
+            while Theme.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{base}-{i}"
+                i += 1
+        super().save(*args, **kwargs)
 
         # 🔥 формуємо CSS в залежності від режиму фону
         bg_image_css = ""

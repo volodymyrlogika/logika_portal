@@ -13,7 +13,7 @@
                     <i class="bi bi-journal-text display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Воркшопи</h5>
                     <p class="card-text">Переглядайте та приєднуйтесь до воркшопів</p>
-                    <a href="{% url 'workshops:page' %}" class="btn btn-primary">
+                    <a href="{% url 'workshops:list' %}" class="btn btn-primary">
                         <i class="bi bi-arrow-right-circle"></i> Перейти
                     </a>
                 </div>
@@ -51,44 +51,6 @@
 </div>
 
 <style>
-  .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-    border-radius: 1rem;
-  }
 
-  .card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  }
-
-  /* Темна тема */
-  body[data-bs-theme="dark"] .card {
-    background-color: #1e1e1e !important;
-    color: #f8f9fa !important;
-  }
-  body[data-bs-theme="dark"] .card .card-title,
-  body[data-bs-theme="dark"] .card .card-text {
-    color: #f8f9fa !important;
-  }
-
-  /* Світла тема */
-  body[data-bs-theme="light"] .card {
-    background-color: #ffffff !important;
-    color: #212529 !important;
-  }
-  body[data-bs-theme="light"] .card .card-title,
-  body[data-bs-theme="light"] .card .card-text {
-    color: #212529 !important;
-  }
-
-  /* Кнопки */
-  .card .btn {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .card .btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
-  }
 </style>
 {% endblock %}

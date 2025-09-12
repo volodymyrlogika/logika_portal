@@ -11,9 +11,7 @@
             color: #ffffff;
         }
         
-            body {
-                background-image: url('/media/themes/backgrounds/«н≥мок_екрана_2025-06-20_141306_1RiN36N.png');
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }
+                body {
+                    background: url('/media/themes/backgrounds/«н≥мок_екрана_2025-06-20_141306_5FsQ7ZI.png') 
+                                center/cover no-repeat fixed;
+                }

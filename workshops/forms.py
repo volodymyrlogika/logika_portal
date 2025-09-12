@@ -1,23 +1,31 @@
 from django import forms
-from themes.models import Theme, Workshop, GalleryItem
+from .models import Workshop, GalleryItem
+from themes.models import Theme  # ✅ додав імпорт
 
-class ThemeForm(forms.ModelForm):
-    class Meta:
-        model = Theme
-        fields = ['name', 'description']
+
+
+from django import forms
+from .models import Workshop, GalleryItem
+
 
 class WorkshopForm(forms.ModelForm):
     class Meta:
         model = Workshop
-        fields = ['title', 'description', 'start_at', 'end_at', 'location', 'capacity', 'theme', 'is_published']
+        fields = ["title", "description", "start_at", "location", "theme"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+            "start_at": forms.DateTimeInput(attrs={"class": "form-control", "type": "datetime-local"}),
+            "location": forms.TextInput(attrs={"class": "form-control"}),
+            "theme": forms.Select(attrs={"class": "form-select"}),
+        }
+
 
 class GalleryItemForm(forms.ModelForm):
     class Meta:
         model = GalleryItem
-        fields = ['title', 'caption', 'file']
-
-
-
+        fields = ["title", "file", "media_type"]
+    
     def clean_file(self):
         f = self.cleaned_data.get('file')
         if not f:

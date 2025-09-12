@@ -23,7 +23,7 @@ class GalleryItem(models.Model):
     uploader = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
     # 🆕 нові поля
     tags = models.ManyToManyField(Tag, blank=True)
     AGE_CHOICES = [

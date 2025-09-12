@@ -10,9 +10,10 @@
         <i class="bi bi-palette-fill"></i> {{ theme.name }}
       </h2>
 <link rel="stylesheet" href="{% static 'css/themes.css' %}">
-      <p class="fs-5">
-        {{ theme.description|default:"<em>Опис відсутній</em>"|safe }}
-      </p>
+<p class="fs-5 text-light">
+  {{ theme.description|default:"<span class='opacity-75 fst-italic'>Опис відсутній</span>"|safe }}
+</p>
+
 
       <div class="mt-3 text-light small opacity-75">
         <i class="bi bi-person-circle"></i> Автор: 
@@ -22,51 +23,51 @@
 
       <hr class="border-light">
 
-      <div class="d-flex gap-2 flex-wrap">
-            <a href="{% url 'themes:theme_list' %}" class="btn btn-outline-light">
-              <i class="bi bi-arrow-left"></i> Назад
-            </a>
-            <a href="{% url 'themes:theme_create' %}" class="btn btn-success">
-              <i class="bi bi-plus-circle"></i> Додати нову тему
-            </a>
-            <a href="{% url 'themes:theme_update' theme.slug %}" class="btn btn-warning">
-              <i class="bi bi-pencil-square"></i> Редагувати
-            </a>
-            <a href="{% url 'themes:theme_delete' theme.slug %}" class="btn btn-danger">
-              <i class="bi bi-trash"></i> Видалити
-            </a>
-
-
-{% if active_theme and active_theme.slug == theme.slug %}
-  <a href="#" class="btn btn-danger theme-switch" data-slug="{{ theme.slug }}" data-active="true">
-    <i class="bi bi-x-circle"></i> Забрати тему
+<div class="d-flex gap-2 flex-wrap">
+  <a href="{% url 'themes:theme_list' %}" class="btn btn-outline-light">
+    <i class="bi bi-arrow-left"></i> Назад
   </a>
-{% else %}
-  <a href="#" class="btn btn-primary theme-switch" data-slug="{{ theme.slug }}" data-active="false">
-    <i class="bi bi-palette-fill"></i> Застосувати тему
+  <a href="{% url 'themes:theme_create' %}" class="btn btn-success">
+    <i class="bi bi-plus-circle"></i> Додати нову тему
   </a>
-{% endif %}
+  <a href="{% url 'themes:theme_update' theme.slug %}" class="btn btn-warning">
+    <i class="bi bi-pencil-square"></i> Редагувати
+  </a>
+  <a href="{% url 'themes:theme_delete' theme.slug %}" class="btn btn-danger">
+    <i class="bi bi-trash"></i> Видалити
+  </a>
 
+  {% if active_theme and active_theme.slug == theme.slug %}
+    <a href="#" class="btn btn-danger theme-switch" data-slug="{{ theme.slug }}" data-active="true">
+      <i class="bi bi-x-circle"></i> Забрати тему
+    </a>
+  {% else %}
+    <a href="#" class="btn btn-primary theme-switch" data-slug="{{ theme.slug }}" data-active="false">
+      <i class="bi bi-palette-fill"></i> Застосувати тему
+    </a>
+  {% endif %}
 
+  <!-- 🔹 НОВА КНОПКА -->
+  <a href="{% url 'workshops:create' %}?theme={{ theme.pk }}" class="btn btn-info">
+    <i class="bi bi-easel"></i> Додати воркшоп
+  </a>
 
-
-        <!-- Дропдаун зі списком всіх тем -->
-        <div class="dropdown">
-          <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-list"></i> Інші теми
-          </button>
-          <ul class="dropdown-menu">
-            {% for t in themes %}
-              <li>
-                <a class="dropdown-item apply-theme-link {% if t.is_active %}active{% endif %}" 
-                   href="#" data-theme-id="{{ t.pk }}">
-                   {% if t.is_active %}✅{% endif %} {{ t.name }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+  <div class="dropdown">
+    <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
+      <i class="bi bi-list"></i> Інші теми
+    </button>
+    <ul class="dropdown-menu">
+      {% for t in themes %}
+        <li>
+          <a class="dropdown-item apply-theme-link {% if t.is_active %}active{% endif %}"
+             href="#" data-theme-id="{{ t.pk }}">
+             {% if t.is_active %}✅{% endif %} {{ t.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 
       <p id="apply-result" class="mt-3 text-success fw-bold" style="display:none;"></p>
 

@@ -8,7 +8,6 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 
 from .models import Theme
@@ -25,9 +24,7 @@ from .utils import create_theme_css
 def set_theme(request: HttpRequest) -> JsonResponse:
     """Зміна теми через AJAX (по slug або id)"""
     try:
-        print("RAW body:", request.body)
         data = json.loads(request.body.decode("utf-8"))
-        print("Parsed data:", data)
 
         slug = data.get("theme")
         theme_id = data.get("theme_id")
@@ -47,7 +44,7 @@ def set_theme(request: HttpRequest) -> JsonResponse:
         return JsonResponse({
             "status": "ok",
             "slug": theme.slug,
-            "css_url": theme.css_file.url if theme.css_file else f"/static/css/themes/{theme.slug}.css",
+            "css_url": f"/static/css/themes/{theme.slug}.css",
             "background_url": theme.background_image.url if theme.background_image else "",
             "background_mode": getattr(theme, "background_mode", "cover"),
         })
@@ -55,7 +52,6 @@ def set_theme(request: HttpRequest) -> JsonResponse:
     except json.JSONDecodeError:
         return JsonResponse({"status": "error", "msg": "invalid JSON"}, status=400)
     except Exception as e:
-        print("❌ ERROR in set_theme:", e)
         return JsonResponse({"status": "error", "msg": str(e)}, status=400)
 
 
@@ -92,6 +88,7 @@ class ThemeDetailView(DetailView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         active_slug = self.request.session.get("active_theme")
+
         if active_slug:
             context["active_theme"] = Theme.objects.filter(slug=active_slug).first()
         else:
@@ -99,8 +96,9 @@ class ThemeDetailView(DetailView):
 
         # тільки системні + мої кастомні
         if self.request.user.is_authenticated:
-            context["all_themes"] = Theme.objects.filter(is_system=True) | Theme.objects.filter(
-                created_by=self.request.user, is_system=False
+            context["all_themes"] = (
+                Theme.objects.filter(is_system=True)
+                | Theme.objects.filter(created_by=self.request.user, is_system=False)
             )
         else:
             context["all_themes"] = Theme.objects.filter(is_system=True)
