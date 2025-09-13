@@ -2,41 +2,47 @@
 {% block content %}
 {% load custom_tags %}
 
-{% for reply_post in reply_posts %}
-    <div>
-
-    <p>{{ reply_post.content_text }}</p>
-</div>
-{% endfor %}
+<div class="container">
+    <div class="row">
+    <div class="col">
 
 
 <h2>Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
 
-<ul>
+
+<h2 class="thread-title">Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
+
+<ul class="post-list">
     {% for post in posts %}
-        <li>
-            <p>{{ post.author }}</p>: {{ post.content_text }}
-        </li>   
+    <li class="post-item">
+        <p class="post-author">{{ post.author }}:</p>
+        <p class="post-content">{{ post.content_text }}</p>
 
         {% if post.files %}
         {% if post.files.url|endswith:"jpg" or post.files.url|endswith:"png" or post.files.url|endswith:".jpeg" %}
-            <img src="{{ post.files.url }}" alt="files" class="img-fluid rounded mb-2" style="max-width:480px;">
-            {% elif comment.files.url|endswith:".mp4" %}
-            <video controls class="w-100 rouded mb-2" style="max-width:480px;">
-                <source src="{{ post.files.url }}" type="video/mp4">ваш браузер не підтримує відео
-            </video>
+        <img src="{{ post.files.url }}" alt="files" class="post-image">
+        {% elif post.files.url|endswith:".mp4" %}
+        <video controls class="post-video">
+            <source src="{{ post.files.url }}" type="video/mp4">Ваш браузер не підтримує відео
+        </video>
         {% else %}
-            <a href="{{ post.files }}" class="d-line-block mb-2">завантажити файл</a>
-            {% endif %}
-            {% endif %}
-        <p>відповіді на Пост</p>
+        <a href="{{ post.files.url }}" class="post-file-link">Завантажити файл</a>
+        {% endif %}
+        {% endif %}
+
+        <p class="reply-label">Відповіді на пост:</p>
         {% for reply in post.reply_posts.all %}
-        <p>{{ reply.content_text }}</p>
+        <div class="reply-item">
+            <p class="reply-content">{{ reply.content_text }}</p>
+            <p class="reply-author">{{ reply.author }}</p>
+        </div>
         {% endfor %}
+    </li>
     {% endfor %}
-
 </ul>
+</div>
 
+<div class="col">
 <h3>доадати пост</h3>
 
 <form action="" method="post" enctype="multipart/form-data">
@@ -44,4 +50,11 @@
     {{ form.as_p }}
     <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
 </form>
+</div>
+</div>
 {% endblock content %}
+
+
+
+
+
