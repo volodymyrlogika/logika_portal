@@ -31,7 +31,7 @@ def __str__(self):
     return self.theme
 
 class Post(models.Model):
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="posts")
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content_text = models.TextField(null=False, verbose_name="текст контенту")
@@ -40,3 +40,17 @@ class Post(models.Model):
     
     url_thread_id = models.IntegerField(null=True, blank=True)
     url_category_id = models.IntegerField(null=True, blank=True)
+
+class ReplyPost(models.Model):
+    # thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reply_posts")
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content_text = models.TextField(null=False, verbose_name="текст контенту")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")
+    files = models.FileField(upload_to="posts/", null=True, blank=True)
+    
+    url_post_id = models.IntegerField()
+
+    def __str__(self):
+        return self

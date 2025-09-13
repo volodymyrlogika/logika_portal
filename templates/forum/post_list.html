@@ -2,7 +2,16 @@
 {% block content %}
 {% load custom_tags %}
 
+{% for reply_post in reply_posts %}
+    <div>
+
+    <p>{{ reply_post.content_text }}</p>
+</div>
+{% endfor %}
+
+
 <h2>Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
+
 <ul>
     {% for post in posts %}
         <li>
@@ -20,8 +29,12 @@
             <a href="{{ post.files }}" class="d-line-block mb-2">завантажити файл</a>
             {% endif %}
             {% endif %}
-    
+        <p>відповіді на Пост</p>
+        {% for reply in post.reply_posts.all %}
+        <p>{{ reply.content_text }}</p>
+        {% endfor %}
     {% endfor %}
+
 </ul>
 
 <h3>доадати пост</h3>

@@ -1,10 +1,11 @@
 {% include 'base.html' %}
 {% block content %}
     <p>thread create</p>
+    
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
+        </form>
 
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
-    </form>
 {% endblock content %}

@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Thread, Category
+from .models import Post, Thread, Category, ReplyPost
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from forum import models
-from forum.forms import PostForm, ThreadForm
+from forum.forms import PostForm, ThreadForm, ReplyPostForm
 from django.urls import reverse_lazy, reverse
 
 
@@ -39,7 +39,18 @@ class ForumHomeView(LoginRequiredMixin, ThreadMixin, CategoryMixin, TemplateView
         return context
 #########################################
 
-class ThreadListView(LoginRequiredMixin, ListView):
+class СheckUserAdminMixin:
+    def create_thread_button(self):
+            user = self.request.user
+            if user.is_staff:
+                status = True
+            elif user.is_superuser:
+                status = True
+            else:
+                status = False
+            return status
+    
+class ThreadListView(LoginRequiredMixin, ListView, СheckUserAdminMixin):
     model = Thread
     context_object_name = "threads"
     template_name = "forum/thread_list.html"
@@ -53,17 +64,9 @@ class ThreadListView(LoginRequiredMixin, ListView):
         context['status'] = self.create_thread_button()
         return context
     
-    def create_thread_button(self):
-            user = self.request.user
-            if user.is_staff:
-                status = True
-            elif user.is_superuser:
-                status = True
-            else:
-                status = False
-            return status
     
-class ThreadCreateView(LoginRequiredMixin, CreateView):
+
+class ThreadCreateView(LoginRequiredMixin, CreateView, СheckUserAdminMixin):
     model = models.Thread
     template_name = "forum/thread_create.html"
     form_class = ThreadForm
@@ -71,17 +74,18 @@ class ThreadCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        status = self.create_thread_button()
+        if status == True:
+            valid = super().form_valid(form)
+            return valid
+        else:
+            valid = super().form_invaid(form)
+            return valid
 
-        return super().form_valid(form)
-    
     def get_success_url(self, *args, **kwargs):
         category_id = self.kwargs.get("category_id")
         return reverse_lazy("forum:thread-list", kwargs={"category_id": category_id}) ####то мені чот гпт підказав бо я хз чо варіант занизу не преренаправляв
         # return reverse_lazy("forum:thread-list", category_id = category_id)
-
-# class PostCreateView(CreateView):
-#     model = Post
-#     template_name = 
 
 class PostList(LoginRequiredMixin,ListView):
     model = models.Post
@@ -126,3 +130,20 @@ class PostList(LoginRequiredMixin,ListView):
             return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
         else:
             pass
+
+    
+
+# class ReplyPostList(LoginRequiredMixin, ListView):
+#     model = models.ReplyPost
+#     context_object_name = "reply_posts"
+#     template_name = "forum/post_list.html"
+#     form_class = ReplyPostForm
+
+#     # def get_context_data(self, **kwargs):
+
+#     #     return context
+
+#     # def get_queryset(self):
+#     #     context = ReplyPost.object.filter(
+            
+#     #     )
