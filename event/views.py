@@ -25,7 +25,7 @@ class EventListView(LoginRequiredMixin, ListView):
         context['month_name'] = today.strftime('%B')
         context['year'] = today.year
 
-        # Build a mapping: day -> list of events
+        
         events_by_day = defaultdict(list)
         for event in Event.objects.filter(user=self.request.user, date__year=today.year, date__month=today.month):
             events_by_day[event.date.day].append(event)
@@ -51,7 +51,7 @@ class EventCreateView(LoginRequiredMixin, CreateView):
 class EventUpdateView(LoginRequiredMixin, UpdateView):
     model = Event
     template_name = 'calendar/calendar-update.html'
-    fields = ['title', 'description', 'date', 'speciality']
+    form_class = forms.EventForm
     success_url = reverse_lazy('calendar')
 
 

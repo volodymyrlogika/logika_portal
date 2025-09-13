@@ -18,13 +18,13 @@ class EventForm(forms.ModelForm):
 
 class EventFilterForm(forms.Form):
     speciality = (
-        ("", 'Усі'),
-        ("-", '-'),
-        ('+-', "+-"),
-        ('+', "+"),
-        ('++', "++")
+        ("", 'Усі події'),
+        ("низька", 'низька'),
+        ('середня', "середня"),
+        ('висока', "висока"),
+        ('дуже висока', "дуже висока")
     )
-    speciality = forms.ChoiceField(choices=speciality, required=False)
+    speciality = forms.ChoiceField(choices=speciality, required=False, label='Важливість події  ')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

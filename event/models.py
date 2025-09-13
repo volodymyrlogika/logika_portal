@@ -7,10 +7,10 @@ class Event(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name='Опис події')
     date = models.DateField(verbose_name='Дата події')
     speciality = (
-        ("-", 'none'),
-        ('+-', "soso"),
-        ('+', "indeed"),
-        ('++', "VERY NEED")
+        ("низька", 'низька'),
+        ('середня', "середня"),
+        ('висока', "висока"),
+        ('дуже висока', "дуже висока")
     )
     speciality = models.CharField(choices=speciality, default="-", verbose_name='Важливість події')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Користувач')    

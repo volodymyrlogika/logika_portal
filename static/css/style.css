@@ -13,3 +13,7 @@ body {
 main {
     flex: 1;
 }
+
+.abosut {
+    position: absolute;
+}
