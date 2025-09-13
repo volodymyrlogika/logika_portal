@@ -26,22 +26,17 @@
           </div>
         </div>
 
-        <!-- Колір тексту -->
-        <div class="mb-3 row align-items-center">
-          <label class="col-sm-3 col-form-label">Text color:</label>
-          <div class="col-sm-9 d-flex align-items-center gap-2">
-            {{ form.text_color|add_class:"form-control form-control-color" }}
-            <span id="text-preview" class="border rounded px-3 py-2">Aa</span>
-          </div>
-        </div>
-
         <!-- Фонове зображення -->
         <div class="mb-3 row">
           <label class="col-sm-3 col-form-label">Background image:</label>
           <div class="col-sm-9">
             {{ form.background_image|add_class:"form-control" }}
+            <!-- превʼю картинка -->
+            <img id="bg-image-preview" src="{% if form.instance.background_image %}{{ form.instance.background_image.url }}{% endif %}"
+                alt="" class="mt-2 img-fluid rounded border" style="max-height:150px;">
           </div>
         </div>
+
 
         <!-- Шрифт -->
         <div class="mb-3 row">
@@ -59,7 +54,13 @@
           </div>
         </div>
 
-        <div class="d-flex gap-2">
+        <!-- Попередній перегляд -->
+        <h5 class="mt-4">Попередній перегляд:</h5>
+        <div id="theme-preview" class="border rounded p-3">
+          Це приклад тексту у вибраній темі.
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
           <button type="submit" class="btn btn-primary">Зберегти</button>
           <a href="{% url 'themes:theme_list' %}" class="btn btn-secondary">Назад</a>
         </div>
@@ -68,25 +69,62 @@
   </div>
 </div>
 
+<style>
+#theme-preview {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+</style>
+
 <script>
-  // Прев’ю кольору
-  const bgInput = document.querySelector('input[name="background_color"]');
-  const textInput = document.querySelector('input[name="text_color"]');
-  const bgPreview = document.getElementById('bg-preview');
-  const textPreview = document.getElementById('text-preview');
+const bgColorInput    = document.querySelector('input[name="background_color"]');
+const bgImageInput    = document.querySelector('input[name="background_image"]');
+const fontFamilyInput = document.querySelector('select[name="font_family"]');
+const preview         = document.getElementById('theme-preview');
+const bgPreview       = document.getElementById('bg-preview');
+const bgImgPreview    = document.getElementById('bg-image-preview');
 
-  if (bgInput && bgPreview) {
-    bgPreview.style.backgroundColor = bgInput.value;
-    bgInput.addEventListener('input', () => {
-      bgPreview.style.backgroundColor = bgInput.value;
-    });
+function updatePreview() {
+  // фон кольором
+  if (bgColorInput) {
+    preview.style.backgroundColor = bgColorInput.value;
+    bgPreview.style.backgroundColor = bgColorInput.value;
   }
 
-  if (textInput && textPreview) {
-    textPreview.style.color = textInput.value;
-    textInput.addEventListener('input', () => {
-      textPreview.style.color = textInput.value;
-    });
+  // фон картинкою
+  if (bgImageInput && bgImageInput.files && bgImageInput.files.length > 0) {
+    // якщо вибрали новий файл – читаємо його
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.style.backgroundImage = `url(${e.target.result})`;
+      bgImgPreview.src = e.target.result; // оновлюємо <img>
+    };
+    reader.readAsDataURL(bgImageInput.files[0]);
+  } else {
+    // якщо редагуємо старий і є src у <img>
+    if (bgImgPreview.src) {
+      preview.style.backgroundImage = `url(${bgImgPreview.src})`;
+    } else {
+      preview.style.backgroundImage = 'none';
+    }
   }
+
+  // шрифт
+  if (fontFamilyInput) {
+    preview.style.fontFamily = fontFamilyInput.value;
+  }
+}
+
+// слухачі
+if (bgColorInput) bgColorInput.addEventListener('input', updatePreview);
+if (bgImageInput) bgImageInput.addEventListener('change', updatePreview);
+if (fontFamilyInput) fontFamilyInput.addEventListener('input', updatePreview);
+
+// старт
+updatePreview();
 </script>
+
 {% endblock %}

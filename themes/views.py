@@ -9,10 +9,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, redirect
 
 from .models import Theme
 from .forms import ThemeForm
 from .utils import create_theme_css
+from workshops.models import Workshop  # ✅ To get workshop data
 
 
 # ==========================
@@ -22,7 +24,7 @@ from .utils import create_theme_css
 @csrf_exempt
 @require_POST
 def set_theme(request: HttpRequest) -> JsonResponse:
-    """Зміна теми через AJAX (по slug або id)"""
+    """Change theme via AJAX (by slug or id)"""
     try:
         data = json.loads(request.body.decode("utf-8"))
 
@@ -36,9 +38,9 @@ def set_theme(request: HttpRequest) -> JsonResponse:
             theme = Theme.objects.filter(pk=theme_id).first()
 
         if not theme:
-            return JsonResponse({"status": "error", "msg": "theme not found"}, status=404)
+            return JsonResponse({"status": "error", "msg": "Theme not found"}, status=404)
 
-        # зберігаємо в сесію
+        # Save in session
         request.session["active_theme"] = theme.slug
 
         return JsonResponse({
@@ -50,7 +52,7 @@ def set_theme(request: HttpRequest) -> JsonResponse:
         })
 
     except json.JSONDecodeError:
-        return JsonResponse({"status": "error", "msg": "invalid JSON"}, status=400)
+        return JsonResponse({"status": "error", "msg": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"status": "error", "msg": str(e)}, status=400)
 
@@ -68,14 +70,14 @@ class ThemeListView(ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        # Системні теми
+        # System themes
         context["system_themes"] = Theme.objects.filter(is_system=True)
 
-        # Кастомні теми користувача
+        # User's custom themes
         if user.is_authenticated:
             context["user_themes"] = Theme.objects.filter(is_system=False, created_by=user)
         else:
-            context["user_themes"] = []
+            context["user_themes"] = Theme.objects.none()
 
         return context
 
@@ -89,17 +91,16 @@ class ThemeDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         active_slug = self.request.session.get("active_theme")
 
-        if active_slug:
-            context["active_theme"] = Theme.objects.filter(slug=active_slug).first()
-        else:
-            context["active_theme"] = Theme.objects.filter(is_active=True).first()
+        context["active_theme"] = (
+            Theme.objects.filter(slug=active_slug).first()
+            if active_slug
+            else Theme.objects.filter(is_active=True).first()
+        )
 
-        # тільки системні + мої кастомні
-        if self.request.user.is_authenticated:
-            context["all_themes"] = (
-                Theme.objects.filter(is_system=True)
-                | Theme.objects.filter(created_by=self.request.user, is_system=False)
-            )
+        # Only system + user's custom themes
+        user = self.request.user
+        if user.is_authenticated:
+            context["all_themes"] = Theme.objects.filter(is_system=True) | Theme.objects.filter(created_by=user, is_system=False)
         else:
             context["all_themes"] = Theme.objects.filter(is_system=True)
 
@@ -130,7 +131,7 @@ class ThemeUpdateView(LoginRequiredMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         theme = self.get_object()
         if theme.is_system:
-            raise PermissionDenied("Системні теми не можна редагувати.")
+            raise PermissionDenied("System themes cannot be edited.")
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: ThemeForm):
@@ -148,5 +149,44 @@ class ThemeDeleteView(LoginRequiredMixin, DeleteView):
     def dispatch(self, request, *args, **kwargs):
         theme = self.get_object()
         if theme.is_system:
-            raise PermissionDenied("Системні теми не можна видаляти.")
+            raise PermissionDenied("System themes cannot be deleted.")
         return super().dispatch(request, *args, **kwargs)
+
+
+# ==========================
+# Create from Workshop
+# ==========================
+
+class ThemeFromWorkshopCreateView(LoginRequiredMixin, CreateView):
+    model = Theme
+    form_class = ThemeForm
+    template_name = "themes/theme_form.html"
+    success_url = reverse_lazy("themes:theme_list")
+
+    def get(self, request, *args, **kwargs):
+        """Auto-create theme from workshop without showing form"""
+        workshop = get_object_or_404(Workshop, pk=self.kwargs["workshop_id"])
+
+        # Generate a unique name and slug
+        base_name = workshop.title
+        base_slug = slugify(base_name)
+        name = base_name
+        slug = base_slug
+        counter = 1
+
+        while Theme.objects.filter(name=name, created_by=request.user).exists() or Theme.objects.filter(slug=slug).exists():
+            name = f"{base_name} ({counter})"
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+
+        # Create new theme associated with logged-in user
+        theme = Theme.objects.create(
+            name=name,
+            description=workshop.description,
+            slug=slug,
+            created_by=request.user,
+            is_system=False,
+        )
+        create_theme_css(theme)
+
+        return redirect(self.success_url)

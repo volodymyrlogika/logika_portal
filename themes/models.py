@@ -13,7 +13,7 @@ class Theme(models.Model):
     description = models.TextField("Опис", blank=True)
 
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
-    text_color = models.CharField("Колір тексту", max_length=7, default="#000000")
+    
 
     background_image = models.ImageField(
         "Фонове зображення", upload_to="themes/backgrounds/", blank=True, null=True
@@ -103,14 +103,14 @@ class Theme(models.Model):
         /* Автоматично створений CSS для теми: {self.name} */
         body {{
             background-color: {self.background_color};
-            color: {self.text_color};
+            
             font-family: '{self.font_family}', sans-serif;
         }}
         .navbar {{
             background-color: {self.background_color};
         }}
         a {{
-            color: {self.text_color};
+            
         }}
         {bg_image_css}
         {self.custom_css}

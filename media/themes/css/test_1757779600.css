@@ -1,0 +1,17 @@
+/* Автоматично створений CSS для теми: test */
+        body {
+            background-color: #ffffff;
+            
+            font-family: 'Lato', sans-serif;
+        }
+        .navbar {
+            background-color: #ffffff;
+        }
+        a {
+            
+        }
+        
+                body {
+                    background: url('/media/themes/backgrounds/Знімок_екрана_2025-06-20_141306_iKAJAqC.jpg') 
+                                center/cover no-repeat fixed;
+                }

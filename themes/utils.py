@@ -45,7 +45,7 @@ def create_theme_css(theme):
     /* Автоматично згенерована тема: {theme.name} */
     body {{
         background-color: {theme.background_color};
-        color: {theme.text_color};
+       
         font-family: '{theme.font_family}', sans-serif;
     }}
     {bg_image_css}

@@ -5,11 +5,11 @@ from .models import Theme
 class ThemeForm(forms.ModelForm):
     class Meta:
         model = Theme
-        fields = ["name", "background_color", "text_color", "background_image", "font_family", "custom_css"]
+        fields = ["name", "background_color",  "background_image", "font_family", "custom_css"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "background_color": forms.TextInput(attrs={"type": "color", "class": "form-control form-control-color"}),
-            "text_color": forms.TextInput(attrs={"type": "color", "class": "form-control form-control-color"}),
+            
             "background_image": forms.ClearableFileInput(attrs={"class": "form-control"}),
             "font_family": forms.Select(
                 choices=[
