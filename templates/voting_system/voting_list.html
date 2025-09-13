@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
   <h2 class="mb-4 text-center">Список голосувань</h2>
-
+    <a href="{% url 'vote-create' %}" class="btn btn-outline-primary mb-3">Додати голосування</a>
   {% if votes %}
     <div class="list-group">
       {% for vote in votes %}
