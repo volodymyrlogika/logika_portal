@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
   <div class="card shadow-lg rounded-3">
-    <div class="card-body">
+    <ul class="card-body">
       <h2 class="card-title text-center mb-4">{{ vote.name }}</h2>
 
 
@@ -28,25 +28,24 @@
           </button>
         </form>
         {% else %}
+          <ul>
           {% for option in vote.options.all %}
-          <div class="form-check mb-1`">
-            <li>{{ option.name }} — {{ option.option_votes.count }} голосів</li>
-          </div>
-          {% if user_voted.option_vote == option %}
 
-          <h5 class="mb-3 text-secondary">Ваш голос:</h5>
-           <div class="form-check mb-">
-                <li>{{ option.name }}</li>
-           </div>
-
+            <li>{{ option.name }} — {{ option.option_votes.count }} голосів
+            {% if user_voted.option_vote == option %}
+              - Ваш голос
             {% endif %}
+            </li>
+
+
           {% endfor %}
-      {% endif %}
+            </ul>
+
+        {% endif %}
       <div class="mt-4 text-center">
       <a href="{% url 'vote-delete' vote.id %}" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
         </a>
       </div>
-    </div>
   </div>
 </div>
 {% endblock %}

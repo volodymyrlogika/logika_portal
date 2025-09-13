@@ -38,15 +38,7 @@ class VoteDetailView(LoginRequiredMixin, DetailView):
         return redirect('vote-list')
 
 
-class VoteCreateView(LoginRequiredMixin, CreateView):
-    model = Voting
-    template_name = 'voting_system/voting_form.html'
-    form_class = VotingForm
-    success_url = reverse_lazy('vote-list')
 
-    def form_valid(self, form):
-        form.instance.creator = self.request.user
-        return super().form_valid(form)
 
 class VoteDeleteView(LoginRequiredMixin, DeleteView, UserIsOwnerMixins):
     model = Voting
