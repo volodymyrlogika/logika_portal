@@ -1,14 +1,14 @@
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
-from .models import GalleryItem
 from django.shortcuts import redirect, get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import GalleryItem, Tag
-from django import forms
-from .forms import GalleryItemForm
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
-from django.contrib.auth.mixins import UserPassesTestMixin
+
+from .models import GalleryItem
+from .forms import GalleryItemForm
+
+
 class GalleryListView(ListView):
     model = GalleryItem
     template_name = "gallery/gallery_list.html"
@@ -16,10 +16,16 @@ class GalleryListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        # Звичайні користувачі бачать тільки approved
+        tag = self.request.GET.get("tag")  # ?tag=назва_тегу
         if self.request.user.is_staff:
-            return GalleryItem.objects.all().order_by('-created_at')
-        return GalleryItem.objects.filter(status="approved").order_by('-created_at')
+            queryset = GalleryItem.objects.all().order_by('-created_at')
+        else:
+            queryset = GalleryItem.objects.filter(status="approved").order_by('-created_at')
+
+        if tag:
+            queryset = queryset.filter(tags__name__iexact=tag)
+
+        return queryset
 
 
 class GalleryCreateView(LoginRequiredMixin, CreateView):
@@ -31,6 +37,7 @@ class GalleryCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.uploader = self.request.user
         return super().form_valid(form)
+
 
 class GalleryModerationListView(UserPassesTestMixin, ListView):
     model = GalleryItem
@@ -52,6 +59,7 @@ def approve_gallery_item(request, pk):
     item.save(update_fields=['status'])
     messages.success(request, "Матеріал схвалено.")
     return redirect('gallery:moderation')
+
 
 @user_passes_test(lambda u: u.is_staff)
 def delete_gallery_item(request, pk):
