@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.transaction import commit
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, DeleteView
 
-from voting_system.forms import VotingForm
+from voting_system.forms import CreateVotingForm
 from voting_system.mixins import UserIsOwnerMixins
 from voting_system.models import *
 
@@ -38,7 +40,31 @@ class VoteDetailView(LoginRequiredMixin, DetailView):
         return redirect('vote-list')
 
 
+@login_required
+def create_voting(request):
+    form = CreateVotingForm()
 
+    if request.method == 'POST':
+        form = CreateVotingForm(request.POST)
+        if form.is_valid():
+            voting_create = Voting.objects.create(name=form.cleaned_data['name'],
+                                  data_start=form.cleaned_data['data_start'],
+                                  data_end=form.cleaned_data['data_end'],
+                                  author=request.user)
+
+            Option.objects.create(name=form.cleaned_data['option_1'],
+                                  voting=voting_create).save()
+
+            Option.objects.create(name=form.cleaned_data['option_2'],
+                                  voting=voting_create).save()
+
+            voting_create.save()
+            return redirect('vote-list')
+
+    context = {
+        'form': form,
+    }
+    return render(request, template_name='voting_system/voting_form.html', context=context)
 
 class VoteDeleteView(LoginRequiredMixin, DeleteView, UserIsOwnerMixins):
     model = Voting

@@ -1,18 +1,9 @@
 from django import forms
-from voting_system.models import *
 
-class VotingForm(forms.ModelForm):
-    class Meta:
-        model = Voting
-        fields = ['name', 'data_start', 'data_end']
-        widgets = {
-            'data_start': forms.DateInput(attrs={'type': 'date'}),
-            'data_end': forms.DateInput(attrs={'type': 'date'})
-        }
 
-    def __init__(self, *args, **kwargs):
-        super(VotingForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
-        self.fields['data_start'].widget.attrs['class'] += ' my-custom=datepicker'
-
+class CreateVotingForm(forms.Form):
+    name = forms.CharField(label='Назва голосування', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    data_start = forms.DateTimeField(label='Початок голосування', widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))
+    data_end = forms.DateTimeField(label='Кінець голосування', widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}))
+    option_1 = forms.CharField(label='Відповідь 1', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    option_2 = forms.CharField(label='Відповідь 2', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
