@@ -17,6 +17,7 @@
     <li class="post-item">
         <p class="post-author">{{ post.author }}:</p>
         <p class="post-content">{{ post.content_text }}</p>
+        <p>{{ post.id }}</p>
 
         {% if post.files %}
         {% if post.files.url|endswith:"jpg" or post.files.url|endswith:"png" or post.files.url|endswith:".jpeg" %}
@@ -36,6 +37,21 @@
             <p class="reply-content">{{ reply.content_text }}</p>
             <p class="reply-author">{{ reply.author }}</p>
         </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <h3 class = "add_reply_button">додати відповідь</h3>
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>форма додавання</p>
+
+
+              </div>
+            </div>
+          </div>
         {% endfor %}
     </li>
     {% endfor %}
@@ -50,8 +66,16 @@
     {{ form.as_p }}
     <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
 </form>
+<h2>Додати відповідь</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ reply_form.as_p }}  <!-- Форма для створення відповіді -->
+    <button type="submit">Додати відповідь</button>
+  </form>
 </div>
 </div>
+
+
 {% endblock content %}
 
 

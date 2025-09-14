@@ -96,6 +96,7 @@ class PostList(LoginRequiredMixin,ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = PostForm()
+        context['reply_form'] = ReplyPostForm()
         context['category_id'] = self.kwargs['category_id']
         context['thread_id'] = self.kwargs['thread_id']
         return context
@@ -108,30 +109,82 @@ class PostList(LoginRequiredMixin,ListView):
     
     def post(self, request, *args, **kwargs):
         post_form = PostForm(request.POST, request.FILES)
+        reply_form = ReplyPostForm(request.POST, request.FILES)
+
+        if reply_form.is_valid():
+            reply = reply_form.save(commit=False)
+            reply.author = request.user
+            reply.save()
+
+        else:
+            pass
+
         if post_form.is_valid():
             post = post_form.save(commit=False)
             post.author = request.user
-
             thread_id = self.kwargs.get("thread_id")
             category_id = self.kwargs.get("category_id")
-
-            # thread_id = get_object_or_404(Thread, pk=thread_id)
-
             thread = get_object_or_404(Thread, pk=thread_id) 
-            
             post.thread = thread
-            
             post.url_category_id = category_id
             post.url_thread_id = thread.id
-
-            
             post.save()
             # return redirect('forum:post-list')
             return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
         else:
             pass
+    # def reply(self, request, *args, **kwargs):
+    #     reply_form = ReplyPostForm(request.POST, request.FILES)
+    #     if reply_form.is_valid():
+    #         reply = reply_form.save(commit=False)
+    #         reply.author = request.user
+    #         reply.save()
 
+    #     else:
+    #         pass
+
+
+    # def reply_post(self, request, *args, **kwargs):
+    #     reply_post_form = ReplyPostForm(request.POST, request.FILES)
+    #     if reply_post_form.is_valid():
+    #         reply = reply_post_form.save(commit = False)
+    #         reply.author = request.user
+            
+    #         reply.save()
+    #         return redirect("")
+    #     else:
+    #         print("форма не валідна")
+
+
+# class ReplyCreateView(LoginRequiredMixin,CreateView):
+#     model = ReplyPost
+#     form_class = ReplyPostForm
+#     template_name = "forum/post_list.html"
+#     context_object_name = "reply_posts"
+
+#     def form_valid(self, form):
+#         reply = form.save(commit=False)
+#         reply.author = self.request.user
+#         reply.save()
+#         return redirect("")
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['reply_form'] = context['form']
+#         context['reply_form'] = ReplyPostForm()
+#         return context
     
+    # def reply_post(self, request, *args, **kwargs):
+    #     reply_post_form = ReplyPostForm(request.POST, request.FILES)
+    #     if reply_post_form.is_valid():
+    #         reply = reply_post_form.save(commit = False)
+    #         reply.author = request.user
+            
+    #         reply.save()
+    #         return redirect("")
+    #     else:
+    #         print("форма не валідна")
+
 
 # class ReplyPostList(LoginRequiredMixin, ListView):
 #     model = models.ReplyPost

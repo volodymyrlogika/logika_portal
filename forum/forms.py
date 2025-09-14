@@ -29,4 +29,4 @@ class ThreadForm(forms.ModelForm):
 class ReplyPostForm(forms.ModelForm):
     class Meta:
         model = ReplyPost
-        fields = ["content_text", "files"]
+        fields = ["content_text", "files", "post"]

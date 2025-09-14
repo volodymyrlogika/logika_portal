@@ -50,7 +50,7 @@ class ReplyPost(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")
     files = models.FileField(upload_to="posts/", null=True, blank=True)
     
-    url_post_id = models.IntegerField()
+
 
     def __str__(self):
         return self
