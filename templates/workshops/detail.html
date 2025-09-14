@@ -24,23 +24,5 @@
 
   <hr>
 
-  <h3>Галерея</h3>
-  <div class="row g-3">
-    {% for i in workshop.gallery_items.all %}
-      <div class="col-6 col-md-3">
-        <div class="bg-dark p-2 rounded">
-          {% if i.media_type == 'image' %}
-            <img src="{{ i.file.url }}" alt="{{ i.title }}" class="img-fluid rounded">
-          {% elif i.media_type == 'video' %}
-            <video src="{{ i.file.url }}" controls class="w-100 rounded"></video>
-          {% else %}
-            <a href="{{ i.file.url }}" target="_blank">{{ i.title }}</a>
-          {% endif %}
-          <div class="small mt-1">{{ i.title }}</div>
-        </div>
-      </div>
-    {% empty %}
-      <p class="text-muted">Поки немає матеріалів.</p>
-    {% endfor %}
-  </div>
+
 {% endblock %}

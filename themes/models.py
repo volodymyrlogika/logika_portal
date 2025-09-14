@@ -24,9 +24,7 @@ class Theme(models.Model):
         ("tile", "Плитка (2000-і)"),
         ("dim", "Затемнене фото"),
     ]
-    background_mode = models.CharField(
-        max_length=20, choices=BACKGROUND_CHOICES, default="cover"
-    )
+
 
     font_family = models.CharField(
         "Шрифт",
@@ -70,51 +68,6 @@ class Theme(models.Model):
                 i += 1
         super().save(*args, **kwargs)
 
-        # 🔥 формуємо CSS в залежності від режиму фону
-        bg_image_css = ""
-        if self.background_image:
-            if self.background_mode == "cover":
-                bg_image_css = f"""
-                body {{
-                    background: url('{settings.MEDIA_URL}{self.background_image.name}') 
-                                center/cover no-repeat fixed;
-                }}
-                """
-            elif self.background_mode == "tile":
-                bg_image_css = f"""
-                body {{
-                    background: url('{settings.MEDIA_URL}{self.background_image.name}') repeat;
-                }}
-                """
-            elif self.background_mode == "dim":
-                bg_image_css = f"""
-                body::before {{
-                    content: "";
-                    position: fixed;
-                    inset: 0;
-                    background: url('{settings.MEDIA_URL}{self.background_image.name}') 
-                                center/cover no-repeat;
-                    filter: brightness(0.5);
-                    z-index: -1;
-                }}
-                """
-
-        css_content = f"""
-        /* Автоматично створений CSS для теми: {self.name} */
-        body {{
-            background-color: {self.background_color};
-            
-            font-family: '{self.font_family}', sans-serif;
-        }}
-        .navbar {{
-            background-color: {self.background_color};
-        }}
-        a {{
-            
-        }}
-        {bg_image_css}
-        {self.custom_css}
-        """
 
         # додаємо таймштамп щоб уникнути кешування
         filename = f"{self.slug or self.id}_{int(time.time())}.css"
@@ -124,7 +77,7 @@ class Theme(models.Model):
             self.css_file.delete(save=False)
 
         # зберігаємо у FileField (MEDIA)
-        self.css_file.save(filename, ContentFile(css_content.strip()), save=False)
+
         super().save(update_fields=["css_file"])
 
     def __str__(self):

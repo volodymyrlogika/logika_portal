@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, CreateView, ListView
 from django.urls import reverse_lazy
-from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Workshop
@@ -19,7 +18,7 @@ def workshop_page(request):
 
 class WorkshopListView(ListView):
     model = Workshop
-    template_name = "workshops/list.html"
+    template_name = "workshops/workshop_list.html"  # ✅ правильний шаблон
     context_object_name = "workshops"
 
     def get_queryset(self):

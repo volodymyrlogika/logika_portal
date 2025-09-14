@@ -48,7 +48,7 @@ def set_theme(request: HttpRequest) -> JsonResponse:
             "slug": theme.slug,
             "css_url": f"/static/css/themes/{theme.slug}.css",
             "background_url": theme.background_image.url if theme.background_image else "",
-            "background_mode": getattr(theme, "background_mode", "cover"),
+            
         })
 
     except json.JSONDecodeError:
