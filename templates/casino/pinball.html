@@ -1,0 +1,63 @@
+<div class="card shadow-lg mb-4">
+  <div class="card-body text-center">
+    <h3 class="mb-3">
+      <i class="bi bi-controller text-primary"></i>
+      3D Pinball – Space Cadet (WinXP)
+    </h3>
+
+    <!-- Контейнер для гри -->
+    <div class="position-relative mx-auto w-100" style="max-width: 600px; aspect-ratio: 4/5;">
+      <iframe id="pinballFrame"
+              src="https://alula.github.io/SpaceCadetPinball/"
+              allowfullscreen
+              allow="gamepad *; keyboard *"
+              style="border:4px solid #0dcaf0; border-radius:12px; width:100%; height:100%; transition: all 0.3s;">
+      </iframe>
+
+      <!-- Кнопка фулскрін -->
+      <button id="btnFullscreen"
+              class="btn btn-dark btn-sm position-absolute"
+              style="top:10px; right:10px; opacity:0.85; z-index:10;">
+        <i class="bi bi-arrows-fullscreen"></i>
+      </button>
+    </div>
+
+    <p class="text-info mt-3 fw-bold" style="font-size: 1.1rem;">
+      <i class="bi bi-joystick text-primary"></i>
+      Вітаємо у <span class="text-primary">легендарному Pinball з Windows XP</span>!<br>
+      <i class="bi bi-trophy-fill text-warning"></i>
+      Твоє завдання — набити максимум очок і стати справжнім Космічним Кадетом
+      <i class="bi bi-rocket-takeoff-fill text-danger"></i>
+    </p>
+
+    <p class="text-muted">
+      <kbd>Z</kbd> = лівий фліпер &nbsp; | &nbsp; 
+      <kbd>/</kbd> = правий фліпер &nbsp; | &nbsp; 
+      <kbd>Space</kbd> = запуск кулі
+    </p>
+  </div>
+</div>
+
+<script>
+  const iframe = document.getElementById("pinballFrame");
+  const btnFs = document.getElementById("btnFullscreen");
+
+  btnFs.addEventListener("click", () => {
+    if (iframe.requestFullscreen) {
+      iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) {
+      iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) {
+      iframe.msRequestFullscreen();
+    }
+  });
+</script>
+
+<style>
+  iframe:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+</style>

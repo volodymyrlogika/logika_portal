@@ -17,6 +17,9 @@
     <button class="btn btn-outline-success mx-2" onclick="showGame('dice')">
       <i class="bi bi-dice-5"></i> Кубик
     </button>
+    <button class="btn btn-outline-info mx-2" onclick="showGame('pinball')">
+      <i class="bi bi-circle-fill"></i> Пінбол
+    </button>
   </div>
 
   <!-- Ігри -->
@@ -31,12 +34,30 @@
   <div id="dice" class="game d-none">
     {% include "casino/dice.html" %}
   </div>
+
+  <div id="pinball" class="game d-none">
+    {% include "casino/pinball.html" %}
+  </div>
 </div>
 
 <script>
 function showGame(id) {
+  // сховати всі ігри
   document.querySelectorAll(".game").forEach(el => el.classList.add("d-none"));
+  // показати вибрану
   document.getElementById(id).classList.remove("d-none");
+  // додати хеш у URL
+  window.location.hash = id;
 }
+
+// при завантаженні сторінки — відновити з хешу
+document.addEventListener("DOMContentLoaded", () => {
+  const hash = window.location.hash.replace("#", "");
+  if (hash && document.getElementById(hash)) {
+    showGame(hash);
+  } else {
+    showGame("slots"); // дефолт
+  }
+});
 </script>
 {% endblock %}

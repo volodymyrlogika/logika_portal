@@ -1,6 +1,6 @@
 <div class="card shadow-lg mb-4">
   <div class="card-body text-center">
-    <h3>✊✋✌ Камінь-Ножиці-Папір</h3>
+    <h3><i class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i> <i class="bi bi-scissors"></i> Камінь-Ножиці-Папір</h3>
     
     <div class="d-flex justify-content-center align-items-center my-4">
       <i id="playerHand" class="bi bi-square-fill hand player"></i>
@@ -61,12 +61,10 @@ function playRPS(playerChoice) {
   const cpuHand = document.getElementById("cpuHand");
   const msgEl = document.getElementById("rpsMessage");
 
-  // скидаємо
   playerHand.className = "bi bi-square-fill hand player";
   cpuHand.className = "bi bi-square-fill hand cpu";
-  msgEl.innerText = "";
+  msgEl.innerHTML = "";
 
-  // качання
   playerHand.classList.add("shake");
   cpuHand.classList.add("shake");
 
@@ -74,21 +72,19 @@ function playRPS(playerChoice) {
     playerHand.classList.remove("shake");
     cpuHand.classList.remove("shake");
 
-    // показуємо вибір
     playerHand.className = "bi " + icons[playerChoice] + " hand player";
     cpuHand.className = "bi " + icons[cpuChoice] + " hand cpu";
 
-    // визначаємо переможця
     if (playerChoice === cpuChoice) {
-      msgEl.innerText = "🤝 Нічия!";
+      msgEl.innerHTML = `<i class="bi bi-emoji-neutral-fill text-info"></i> Нічия!`;
     } else if (
       (playerChoice === "rock" && cpuChoice === "scissors") ||
       (playerChoice === "paper" && cpuChoice === "rock") ||
       (playerChoice === "scissors" && cpuChoice === "paper")
     ) {
-      msgEl.innerText = "🎉 Ти виграв!";
+      msgEl.innerHTML = `<i class="bi bi-trophy-fill text-success"></i> Ти виграв!`;
     } else {
-      msgEl.innerText = "💀 CPU виграв!";
+      msgEl.innerHTML = `<i class="bi bi-emoji-dizzy-fill text-danger"></i> CPU виграв!`;
     }
   }, 2000);
 }
