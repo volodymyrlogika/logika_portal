@@ -10,8 +10,6 @@
 <h2>Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
 
 
-<h2 class="thread-title">Пости у треді {{ thread_id }} (категорія {{ category_id }})</h2>
-
 <ul class="post-list">
     {% for post in posts %}
     <li class="post-item">
@@ -31,14 +29,16 @@
         {% endif %}
         {% endif %}
 
-        <p class="reply-label">Відповіді на пост:</p>
         {% for reply in post.reply_posts.all %}
         <div class="reply-item">
             <p class="reply-content">{{ reply.content_text }}</p>
             <p class="reply-author">{{ reply.author }}</p>
         </div>
 
-        <div class="accordion-item">
+
+        {% endfor %}        
+        <div class="dodatu_vidpovid">
+          <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                 <h3 class = "add_reply_button">додати відповідь</h3>
@@ -47,33 +47,32 @@
             <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p>форма додавання</p>
+        <form method="post">
+        {% csrf_token %}
+        {{ reply_form.as_p }} 
+        <button type="submit">Додати відповідь</button>
+        </form>
+      </div>
+      </div>
+      </div>
+      </div>
 
 
-              </div>
-            </div>
-          </div>
-        {% endfor %}
+
+        <p>бє</p>
     </li>
     {% endfor %}
 </ul>
 </div>
 
 <div class="col">
-<h3>доадати пост</h3>
+<h3>додати пост</h3>
 
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
 </form>
-<h2>Додати відповідь</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ reply_form.as_p }}  <!-- Форма для створення відповіді -->
-    <button type="submit">Додати відповідь</button>
-  </form>
-</div>
-</div>
 
 
 {% endblock content %}

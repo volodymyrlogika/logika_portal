@@ -126,7 +126,7 @@ class PostList(LoginRequiredMixin,ListView):
             category_id = self.kwargs.get("category_id")
             thread = get_object_or_404(Thread, pk=thread_id) 
             post.thread = thread
-            post.url_category_id = category_id
+            post.url_category_id = categoіry_id
             post.url_thread_id = thread.id
             post.save()
             # return redirect('forum:post-list')
