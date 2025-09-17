@@ -17,8 +17,11 @@ class WorkshopForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
+        # Якщо є параметр theme у GET — приховуємо поле і ставимо значення
         if request and request.GET.get("theme"):
+            theme_id = request.GET.get("theme")
             self.fields["theme"].widget = forms.HiddenInput()
+            self.initial["theme"] = theme_id
 
 
 class GalleryItemForm(forms.ModelForm):

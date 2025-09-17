@@ -40,6 +40,14 @@ def set_theme(request: HttpRequest) -> JsonResponse:
         if not theme:
             return JsonResponse({"status": "error", "msg": "Theme not found"}, status=404)
 
+        # ❌ Спочатку скидаємо активні теми користувача
+        if request.user.is_authenticated:
+            Theme.objects.filter(created_by=request.user, is_active=True).update(is_active=False)
+
+        # ✅ Робимо поточну тему активною
+        theme.is_active = True
+        theme.save(update_fields=["is_active"])
+
         # Save in session
         request.session["active_theme"] = theme.slug
 
@@ -48,7 +56,6 @@ def set_theme(request: HttpRequest) -> JsonResponse:
             "slug": theme.slug,
             "css_url": f"/static/css/themes/{theme.slug}.css",
             "background_url": theme.background_image.url if theme.background_image else "",
-            
         })
 
     except json.JSONDecodeError:
@@ -157,6 +164,8 @@ class ThemeDeleteView(LoginRequiredMixin, DeleteView):
 # Create from Workshop
 # ==========================
 
+# themes/views.py
+# themes/views.py
 class ThemeFromWorkshopCreateView(LoginRequiredMixin, CreateView):
     model = Theme
     form_class = ThemeForm
@@ -164,29 +173,32 @@ class ThemeFromWorkshopCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("themes:theme_list")
 
     def get(self, request, *args, **kwargs):
-        """Auto-create theme from workshop without showing form"""
         workshop = get_object_or_404(Workshop, pk=self.kwargs["workshop_id"])
 
-        # Generate a unique name and slug
         base_name = workshop.title
         base_slug = slugify(base_name)
-        name = base_name
-        slug = base_slug
-        counter = 1
+        name, slug, counter = base_name, base_slug, 1
 
         while Theme.objects.filter(name=name, created_by=request.user).exists() or Theme.objects.filter(slug=slug).exists():
             name = f"{base_name} ({counter})"
             slug = f"{base_slug}-{counter}"
             counter += 1
 
-        # Create new theme associated with logged-in user
+        # ❌ Скидаємо старі активні теми
+        Theme.objects.filter(created_by=request.user, is_active=True).update(is_active=False)
+
+        # ✅ Створюємо нову як активну
         theme = Theme.objects.create(
             name=name,
             description=workshop.description,
             slug=slug,
             created_by=request.user,
             is_system=False,
+            is_active=True,   # <----
         )
         create_theme_css(theme)
+
+        # зберігаємо slug у сесію
+        request.session["active_theme"] = theme.slug
 
         return redirect(self.success_url)

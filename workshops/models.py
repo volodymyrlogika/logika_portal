@@ -14,14 +14,16 @@ class Workshop(models.Model):
     theme = models.ForeignKey(
         Theme,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         related_name="workshops"
     )
     is_published = models.BooleanField("Опубліковано", default=False)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         related_name="created_workshops"
     )
     created_at = models.DateTimeField("Створено", auto_now_add=True)

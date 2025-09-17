@@ -15,9 +15,23 @@
     <div class="row">
       {% for ws in workshops %}
         <div class="col-md-4 col-sm-6">
-          <div class="card mb-4 shadow-sm h-100">
+          <div class="card mb-4 shadow-sm h-100"
+               style="
+                 {% if ws.theme and ws.theme.bg_color %}background-color: {{ ws.theme.bg_color }};{% endif %}
+                 {% if ws.theme and ws.theme.font_family %}font-family: {{ ws.theme.font_family }};{% endif %}
+               ">
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title">{{ ws.title }}</h5>
+
+              {# Theme image as a header if exists #}
+              {% if ws.theme and ws.theme.image %}
+                <img src="{{ ws.theme.image.url }}" 
+                     alt="{{ ws.theme.name }}" 
+                     class="img-fluid rounded mb-2">
+              {% endif %}
+
+              <h5 class="card-title">
+                {{ ws.title }}
+              </h5>
 
               {% if ws.theme %}
                 <span class="badge bg-info mb-2">Тема: {{ ws.theme.name }}</span>
@@ -38,7 +52,7 @@
                 </a>
                 {% if user.is_authenticated %}
                   <a href="{% url 'themes:add_from_workshop' ws.id %}" 
-                    class="btn btn-outline-success btn-sm w-100">
+                     class="btn btn-outline-success btn-sm w-100">
                     <i class="bi bi-plus-circle"></i> Додати до тем
                   </a>
                 {% endif %}

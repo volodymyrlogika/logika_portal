@@ -18,7 +18,7 @@ def workshop_page(request):
 
 class WorkshopListView(ListView):
     model = Workshop
-    template_name = "workshops/workshop_list.html"  # ✅ правильний шаблон
+    template_name = "workshops/workshop_list.html"
     context_object_name = "workshops"
 
     def get_queryset(self):
@@ -52,6 +52,9 @@ class WorkshopCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
+        # Якщо тема передана через GET і форма її приховала — підставляємо явно
+        if not form.cleaned_data.get("theme") and self.request.GET.get("theme"):
+            form.instance.theme_id = self.request.GET.get("theme")
         return super().form_valid(form)
 
     def get_success_url(self):
