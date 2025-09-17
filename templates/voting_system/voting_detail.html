@@ -33,7 +33,7 @@
 
             <li>{{ option.name }} — {{ option.option_votes.count }} голосів
             {% if user_voted.option_vote == option %}
-              - Ваш голос
+              - <i class="bi bi-check-all"></i>
             {% endif %}
             </li>
 
