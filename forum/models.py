@@ -25,7 +25,7 @@ class Thread(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name="опис")
     date_start = models.DateTimeField(auto_now_add=True)
     is_closed = models.BooleanField(default=False)
-    image = models.ImageField(upload_to="Thread", null=True, blank=True)
+    image = models.ImageField(upload_to="threads/", null=True, blank=True)
 
 def __str__(self):
     return self.theme
@@ -48,7 +48,7 @@ class ReplyPost(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content_text = models.TextField(null=False, verbose_name="текст контенту")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")
-    files = models.FileField(upload_to="posts/", null=True, blank=True)
+    files = models.FileField(upload_to="reply_post/", null=True, blank=True)
     
 
 

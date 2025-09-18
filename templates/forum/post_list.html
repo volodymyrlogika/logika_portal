@@ -50,7 +50,7 @@
         <form method="post">
         {% csrf_token %}
         {{ reply_form.as_p }} 
-        <button type="submit">Додати відповідь</button>
+        <button type="submit" name="action" value="reply" >Додати відповідь</button>
         </form>
       </div>
       </div>
@@ -70,8 +70,8 @@
 
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-sucess"> зберегти коментар</button>
+    {{ post_form.as_p }}
+    <button type="submit" name="action" value="post" class="btn btn-sucess"> зберегти коментар</button>
 </form>
 
 

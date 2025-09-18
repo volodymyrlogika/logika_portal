@@ -95,7 +95,7 @@ class PostList(LoginRequiredMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = PostForm()
+        context["post_form"] = PostForm()
         context['reply_form'] = ReplyPostForm()
         context['category_id'] = self.kwargs['category_id']
         context['thread_id'] = self.kwargs['thread_id']
@@ -108,31 +108,39 @@ class PostList(LoginRequiredMixin,ListView):
         return context
     
     def post(self, request, *args, **kwargs):
-        post_form = PostForm(request.POST, request.FILES)
-        reply_form = ReplyPostForm(request.POST, request.FILES)
+        action = request.POST.get("action")
+        # post_form = PostForm(request.POST, request.FILES)
+        # reply_form = ReplyPostForm(request.POST, request.FILES)
 
-        if reply_form.is_valid():
-            reply = reply_form.save(commit=False)
-            reply.author = request.user
-            reply.save()
+        if action == "reply":
+            reply_form = ReplyPostForm(request.POST, request.FILES)
+            if reply_form.is_valid():
+                reply = reply_form.save(commit=False)
+                reply.author = request.user
+                reply.save()
+                thread_id = self.kwargs.get("thread_id")
+                category_id = self.kwargs.get("category_id")
+                return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
+            else:
+                pass
 
-        else:
-            pass
+        elif action == "post":
+            post_form = PostForm(request.POST, request.FILES)
 
-        if post_form.is_valid():
-            post = post_form.save(commit=False)
-            post.author = request.user
-            thread_id = self.kwargs.get("thread_id")
-            category_id = self.kwargs.get("category_id")
-            thread = get_object_or_404(Thread, pk=thread_id) 
-            post.thread = thread
-            post.url_category_id = categoіry_id
-            post.url_thread_id = thread.id
-            post.save()
-            # return redirect('forum:post-list')
-            return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
-        else:
-            pass
+            if post_form.is_valid():
+                post = post_form.save(commit=False)
+                post.author = request.user
+                thread_id = self.kwargs.get("thread_id")
+                category_id = self.kwargs.get("category_id")
+                thread = get_object_or_404(Thread, pk=thread_id) 
+                post.thread = thread
+                post.url_category_id = category_id
+                post.url_thread_id = thread.id
+                post.save()
+
+                return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
+            else:
+                pass
     # def reply(self, request, *args, **kwargs):
     #     reply_form = ReplyPostForm(request.POST, request.FILES)
     #     if reply_form.is_valid():

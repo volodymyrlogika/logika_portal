@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-{% for thread in threads %}
+{% comment %} {% for thread in threads %}
 
 <p>тема {{ thread.theme }}</p>
-{% endfor %}
+{% endfor %} {% endcomment %}
 
 <div class = "room_list d-flex flex-wrap gap-3">
 {% for category in categories %}
