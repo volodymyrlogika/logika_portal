@@ -24,7 +24,6 @@ from workshops.models import Workshop  # ✅ To get workshop data
 @csrf_exempt
 @require_POST
 def set_theme(request: HttpRequest) -> JsonResponse:
-    """Change theme via AJAX (by slug or id)"""
     try:
         data = json.loads(request.body.decode("utf-8"))
 
@@ -33,22 +32,21 @@ def set_theme(request: HttpRequest) -> JsonResponse:
 
         theme = None
         if slug:
-            theme = Theme.objects.filter(slug=slug).first()
+            theme = Theme.objects.filter(slug=slug, created_by=request.user).first()
         elif theme_id:
-            theme = Theme.objects.filter(pk=theme_id).first()
+            theme = Theme.objects.filter(pk=theme_id, created_by=request.user).first()
 
         if not theme:
             return JsonResponse({"status": "error", "msg": "Theme not found"}, status=404)
 
-        # ❌ Спочатку скидаємо активні теми користувача
-        if request.user.is_authenticated:
-            Theme.objects.filter(created_by=request.user, is_active=True).update(is_active=False)
+        # вимикаємо інші теми юзера
+        Theme.objects.filter(created_by=request.user, is_active=True).update(is_active=False)
 
-        # ✅ Робимо поточну тему активною
+        # робимо цю активною
         theme.is_active = True
         theme.save(update_fields=["is_active"])
 
-        # Save in session
+        # зберігаємо в сесії
         request.session["active_theme"] = theme.slug
 
         return JsonResponse({
@@ -62,6 +60,7 @@ def set_theme(request: HttpRequest) -> JsonResponse:
         return JsonResponse({"status": "error", "msg": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"status": "error", "msg": str(e)}, status=400)
+
 
 
 # ==========================

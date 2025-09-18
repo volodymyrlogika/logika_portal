@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView, CreateView, ListView
+from django.views.generic import DetailView, CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Workshop
 from .forms import WorkshopForm
@@ -22,7 +22,10 @@ class WorkshopListView(ListView):
     context_object_name = "workshops"
 
     def get_queryset(self):
-        return Workshop.objects.filter(is_published=True).select_related("theme", "created_by")
+        return (
+            Workshop.objects.filter(is_published=True)
+            .select_related("theme", "created_by")
+        )
 
 
 class WorkshopDetailView(DetailView):
@@ -59,6 +62,31 @@ class WorkshopCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy("workshops:detail", kwargs={"slug": self.object.slug})
+
+
+class WorkshopUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Workshop
+    form_class = WorkshopForm
+    template_name = "workshops/form.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def test_func(self):
+        return self.get_object().created_by == self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy("workshops:detail", kwargs={"slug": self.object.slug})
+
+
+class WorkshopDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Workshop
+    template_name = "workshops/confirm_delete.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+    success_url = reverse_lazy("workshops:list")
+
+    def test_func(self):
+        return self.get_object().created_by == self.request.user
 
 
 @login_required

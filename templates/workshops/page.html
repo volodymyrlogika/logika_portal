@@ -9,12 +9,15 @@
       {% for theme in themes %}
         <div class="col-md-4 mb-4">
           <div class="card shadow h-100">
+            {% if theme.image %}
+              <img src="{{ theme.image.url }}" class="card-img-top" alt="{{ theme.name }}">
+            {% endif %}
             <div class="card-body">
-              <h5 class="card-title">{{ theme.title }}</h5>
+              <h5 class="card-title">{{ theme.name }}</h5>
               <p class="card-text">{{ theme.description|default:"Без опису" }}</p>
             </div>
             <div class="card-footer text-end">
-              <a href="{% url 'themes:detail' theme.id %}" class="btn btn-primary btn-sm">
+              <a href="{% url 'themes:theme_detail' theme.slug %}" class="btn btn-primary btn-sm">
                 <i class="bi bi-arrow-right-circle"></i> Переглянути
               </a>
             </div>
