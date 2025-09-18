@@ -80,6 +80,7 @@
         <form method="post">
         {% csrf_token %}
         {{ reply_form.as_p }} 
+        <input type="hidden" name="post_id" value="{{ post.id }}">
         <button type="submit" name="action" value="reply" >Додати відповідь</button>
         </form>
       </div>

@@ -117,7 +117,12 @@ class PostList(LoginRequiredMixin,ListView):
             if reply_form.is_valid():
                 reply = reply_form.save(commit=False)
                 reply.author = request.user
-                reply.save()
+                post_id = request.POST.get("post_id")
+                if post_id:
+                    post = get_object_or_404(Post, id=post_id)
+                    reply.post = post
+
+                    reply.save()
                 thread_id = self.kwargs.get("thread_id")
                 category_id = self.kwargs.get("category_id")
                 return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
