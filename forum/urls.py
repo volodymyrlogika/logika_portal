@@ -10,6 +10,9 @@ urlpatterns = [
     path('category/<int:category_id>/thread/', views.ThreadListView.as_view(), name="thread-list"),
     path('category/<int:category_id>/thread/create', views.ThreadCreateView.as_view(), name="thread-create"),
     path('category/<int:category_id>/thread/<int:thread_id>/', views.PostList.as_view(), name="post-list"),
+    path('category/<int:category_id>/thread/<int:thread_id>/post/<int:pk>delete', views.PostDeleteView.as_view(), name="post-list-delete"),
+    path('category/<int:category_id>/thread/<int:thread_id>/post/<int:pk>update', views.PostUpdateView.as_view(), name="post-list-update"),
+
 
 ]
 app_name = 'forum'

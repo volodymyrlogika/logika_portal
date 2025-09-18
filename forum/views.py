@@ -146,27 +146,69 @@ class PostList(LoginRequiredMixin,ListView):
                 return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
             else:
                 pass
-    # def reply(self, request, *args, **kwargs):
-    #     reply_form = ReplyPostForm(request.POST, request.FILES)
-    #     if reply_form.is_valid():
-    #         reply = reply_form.save(commit=False)
-    #         reply.author = request.user
-    #         reply.save()
 
-    #     else:
-    #         pass
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = "forum/post_list_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "forum:post-list",
+            kwargs={
+                "category_id": self.kwargs["category_id"], ####це тре спіціально для роботи видалення
+                "thread_id": self.kwargs["thread_id"],
+            },
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_id'] = self.kwargs['category_id']
+        context['thread_id'] = self.kwargs['thread_id']
+        return context
+    
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "forum/post_list_update.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "forum:post-list",
+            kwargs={
+                "category_id":self.kwargs["category_id"],
+                "thread_id":self.kwargs["thread_id"],
+            }
+        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_id'] = self.kwargs['category_id']
+        context['thread_id'] = self.kwargs['thread_id']
+        return context
+    
 
 
-    # def reply_post(self, request, *args, **kwargs):
-    #     reply_post_form = ReplyPostForm(request.POST, request.FILES)
-    #     if reply_post_form.is_valid():
-    #         reply = reply_post_form.save(commit = False)
-    #         reply.author = request.user
+
+#     def reply(self, request, *args, **kwargs):
+#         reply_form = ReplyPostForm(request.POST, request.FILES)
+#         if reply_form.is_valid():
+#             reply = reply_form.save(commit=False)
+#             reply.author = request.user
+#             reply.save()
+
+#         else:
+#             pass
+
+
+#     def reply_post(self, request, *args, **kwargs):
+#         reply_post_form = ReplyPostForm(request.POST, request.FILES)
+#         if reply_post_form.is_valid():
+#             reply = reply_post_form.save(commit = False)
+#             reply.author = request.user
             
-    #         reply.save()
-    #         return redirect("")
-    #     else:
-    #         print("форма не валідна")
+#             reply.save()
+#             return redirect("")
+#         else:
+#             print("форма не валідна")
 
 
 # class ReplyCreateView(LoginRequiredMixin,CreateView):
@@ -187,16 +229,16 @@ class PostList(LoginRequiredMixin,ListView):
 #         context['reply_form'] = ReplyPostForm()
 #         return context
     
-    # def reply_post(self, request, *args, **kwargs):
-    #     reply_post_form = ReplyPostForm(request.POST, request.FILES)
-    #     if reply_post_form.is_valid():
-    #         reply = reply_post_form.save(commit = False)
-    #         reply.author = request.user
+#     def reply_post(self, request, *args, **kwargs):
+#         reply_post_form = ReplyPostForm(request.POST, request.FILES)
+#         if reply_post_form.is_valid():
+#             reply = reply_post_form.save(commit = False)
+#             reply.author = request.user
             
-    #         reply.save()
-    #         return redirect("")
-    #     else:
-    #         print("форма не валідна")
+#             reply.save()
+#             return redirect("")
+#         else:
+#             print("форма не валідна")
 
 
 # class ReplyPostList(LoginRequiredMixin, ListView):

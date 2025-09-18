@@ -15,7 +15,9 @@
     <li class="post-item">
         <p class="post-author">{{ post.author }}:</p>
         <p class="post-content">{{ post.content_text }}</p>
-        <p>{{ post.id }}</p>
+        <a class = "btn btn-warning justify-content-between align-items-center bi-trash" href="{% url 'forum:post-list-delete' category_id=category_id thread_id=thread_id pk=post.pk%}">видалити</a>
+        <a class = "btn btn-secondary justify-content-between align-items-center" href="{% url "forum:post-list-update" category_id=category_id thread_id=thread_id pk=post.pk%}">редагувати </a>
+
 
         {% if post.files %}
         {% if post.files.url|endswith:"jpg" or post.files.url|endswith:"png" or post.files.url|endswith:".jpeg" %}
