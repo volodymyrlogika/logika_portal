@@ -38,7 +38,7 @@
 
         {% endfor %}        
         <div class="dodatu_vidpovid">
-          <div class="accordion-item">
+          {% comment %} <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                 <h3 class = "add_reply_button">додати відповідь</h3>
@@ -56,10 +56,36 @@
       </div>
       </div>
       </div>
+    </li>
+    {% endfor %}
+</ul>
+</div> {% endcomment %}
 
 
-
-        <p>бє</p>
+        <div class="dodatu_vidpovid">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ post.id }}">
+              <button class="accordion-button collapsed"
+               type="button" 
+               data-bs-toggle="collapse" 
+               data-bs-target="#collapse{{ post.id }}"
+                aria-expanded="false" 
+                aria-controls="collapse{{ post.id }}">
+                <h3 class = "add_reply_button">додати відповідь</h3>
+              </button>
+            </h2>
+            <div id="collapse{{ post.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>форма додавання</p>
+        <form method="post">
+        {% csrf_token %}
+        {{ reply_form.as_p }} 
+        <button type="submit" name="action" value="reply" >Додати відповідь</button>
+        </form>
+      </div>
+      </div>
+      </div>
+      </div>
     </li>
     {% endfor %}
 </ul>
