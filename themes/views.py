@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404, redirect
 from .models import Theme
 from .forms import ThemeForm
 from .utils import create_theme_css
-from workshops.models import Workshop  # ✅ To get workshop data
+from workshops.models import Workshop
 
 
 # ==========================
@@ -32,21 +32,21 @@ def set_theme(request: HttpRequest) -> JsonResponse:
 
         theme = None
         if slug:
-            theme = Theme.objects.filter(slug=slug, created_by=request.user).first()
+            theme = Theme.objects.filter(slug=slug).first()
         elif theme_id:
-            theme = Theme.objects.filter(pk=theme_id, created_by=request.user).first()
+            theme = Theme.objects.filter(pk=theme_id).first()
 
         if not theme:
             return JsonResponse({"status": "error", "msg": "Theme not found"}, status=404)
 
-        # вимикаємо інші теми юзера
-        Theme.objects.filter(created_by=request.user, is_active=True).update(is_active=False)
+        # вимикаємо всі інші теми
+        Theme.objects.filter(is_active=True).update(is_active=False)
 
         # робимо цю активною
         theme.is_active = True
         theme.save(update_fields=["is_active"])
 
-        # зберігаємо в сесії
+        # зберігаємо в сесії (для зручності)
         request.session["active_theme"] = theme.slug
 
         return JsonResponse({
@@ -62,7 +62,6 @@ def set_theme(request: HttpRequest) -> JsonResponse:
         return JsonResponse({"status": "error", "msg": str(e)}, status=400)
 
 
-
 # ==========================
 # Views
 # ==========================
@@ -76,14 +75,8 @@ class ThemeListView(ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        # System themes
         context["system_themes"] = Theme.objects.filter(is_system=True)
-
-        # User's custom themes
-        if user.is_authenticated:
-            context["user_themes"] = Theme.objects.filter(is_system=False, created_by=user)
-        else:
-            context["user_themes"] = Theme.objects.none()
+        context["user_themes"] = Theme.objects.filter(is_system=False, created_by=user) if user.is_authenticated else Theme.objects.none()
 
         return context
 
@@ -95,15 +88,13 @@ class ThemeDetailView(DetailView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        active_slug = self.request.session.get("active_theme")
 
+        active_slug = self.request.session.get("active_theme")
         context["active_theme"] = (
             Theme.objects.filter(slug=active_slug).first()
-            if active_slug
-            else Theme.objects.filter(is_active=True).first()
+            if active_slug else Theme.objects.filter(is_active=True).first()
         )
 
-        # Only system + user's custom themes
         user = self.request.user
         if user.is_authenticated:
             context["all_themes"] = Theme.objects.filter(is_system=True) | Theme.objects.filter(created_by=user, is_system=False)
@@ -163,8 +154,6 @@ class ThemeDeleteView(LoginRequiredMixin, DeleteView):
 # Create from Workshop
 # ==========================
 
-# themes/views.py
-# themes/views.py
 class ThemeFromWorkshopCreateView(LoginRequiredMixin, CreateView):
     model = Theme
     form_class = ThemeForm
@@ -178,26 +167,29 @@ class ThemeFromWorkshopCreateView(LoginRequiredMixin, CreateView):
         base_slug = slugify(base_name)
         name, slug, counter = base_name, base_slug, 1
 
-        while Theme.objects.filter(name=name, created_by=request.user).exists() or Theme.objects.filter(slug=slug).exists():
+        while Theme.objects.filter(name=name).exists() or Theme.objects.filter(slug=slug).exists():
             name = f"{base_name} ({counter})"
             slug = f"{base_slug}-{counter}"
             counter += 1
 
-        # ❌ Скидаємо старі активні теми
-        Theme.objects.filter(created_by=request.user, is_active=True).update(is_active=False)
+        # 🚫 Не чіпаємо активні теми
+        # Theme.objects.filter(is_active=True).update(is_active=False)
 
-        # ✅ Створюємо нову як активну
+        # 🟢 Створюємо нову, але НЕ активну
         theme = Theme.objects.create(
             name=name,
             description=workshop.description,
             slug=slug,
             created_by=request.user,
             is_system=False,
-            is_active=True,   # <----
+            is_active=False,
+            background_color=getattr(workshop, "background_color", "#ffffff"),
+            background_image=getattr(workshop, "background_image", None),
+            font=getattr(workshop, "font", "Arial"),
+            extra_css=getattr(workshop, "extra_css", ""),
         )
-        create_theme_css(theme)
 
-        # зберігаємо slug у сесію
-        request.session["active_theme"] = theme.slug
+
+        # 🚫 Не міняємо request.session["active_theme"]
 
         return redirect(self.success_url)

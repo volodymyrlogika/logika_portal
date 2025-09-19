@@ -1,4 +1,3 @@
-# themes/utils.py
 from pathlib import Path
 from django.conf import settings
 from django.utils.text import slugify
@@ -16,20 +15,23 @@ def create_theme_css(theme):
     """Генерує CSS файл для вибраної теми"""
 
     bg_image_css = ""
-    if theme.background_image:
-        if theme.background_mode == "cover":
+    if getattr(theme, "background_image", None):
+        # якщо є поле background_mode → використовуємо його
+        mode = getattr(theme, "background_mode", "cover")
+
+        if mode == "cover":
             bg_image_css = f"""
             body {{
                 background: url('{settings.MEDIA_URL}{theme.background_image.name}') center/cover no-repeat fixed;
             }}
             """
-        elif theme.background_mode == "tile":
+        elif mode == "tile":
             bg_image_css = f"""
             body {{
                 background: url('{settings.MEDIA_URL}{theme.background_image.name}') repeat;
             }}
             """
-        elif theme.background_mode == "dim":
+        elif mode == "dim":
             bg_image_css = f"""
             body::before {{
                 content: "";
@@ -40,16 +42,23 @@ def create_theme_css(theme):
                 z-index: -1;
             }}
             """
+        else:
+            # дефолт – як cover
+            bg_image_css = f"""
+            body {{
+                background: url('{settings.MEDIA_URL}{theme.background_image.name}') center/cover no-repeat fixed;
+            }}
+            """
 
     css_content = f"""
     /* Автоматично згенерована тема: {theme.name} */
     body {{
-        background-color: {theme.background_color};
-       
-        font-family: '{theme.font_family}', sans-serif;
+        background-color: {getattr(theme, "background_color", "#ffffff")};
+        font-family: '{getattr(theme, "font_family", "Arial")}', sans-serif;
+        color: {getattr(theme, "text_color", "#000000")};
     }}
     {bg_image_css}
-    {theme.custom_css}
+    {getattr(theme, "custom_css", "")}
     """.strip()
 
     # папка для тем
@@ -57,7 +66,7 @@ def create_theme_css(theme):
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # назва файлу за slug
-    slug = slugify(theme.slug or theme.name)
+    slug = slugify(getattr(theme, "slug", None) or theme.name)
     out_path = out_dir / f"{slug}.css"
 
     # запис у файл

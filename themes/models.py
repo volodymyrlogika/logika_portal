@@ -12,18 +12,15 @@ class Theme(models.Model):
 
     description = models.TextField("Опис", blank=True)
 
+    # 🎨 Основні кольори
+    primary_color = models.CharField("Основний колір", max_length=7, default="#000000")
+    secondary_color = models.CharField("Другорядний колір", max_length=7, default="#666666")
     background_color = models.CharField("Колір фону", max_length=7, default="#ffffff")
-    
+    text_color = models.CharField("Колір тексту", max_length=7, default="#000000")
 
     background_image = models.ImageField(
         "Фонове зображення", upload_to="themes/backgrounds/", blank=True, null=True
     )
-
-    BACKGROUND_CHOICES = [
-        ("cover", "На весь екран"),
-        ("tile", "Плитка (2000-і)"),
-        ("dim", "Затемнене фото"),
-    ]
 
 
     font_family = models.CharField(
@@ -60,14 +57,13 @@ class Theme(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base = slugify(self.name) or 'theme'
+            base = slugify(self.name) or "theme"
             self.slug = base
             i = 1
             while Theme.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
                 self.slug = f"{base}-{i}"
                 i += 1
         super().save(*args, **kwargs)
-
 
         # додаємо таймштамп щоб уникнути кешування
         filename = f"{self.slug or self.id}_{int(time.time())}.css"
@@ -77,7 +73,6 @@ class Theme(models.Model):
             self.css_file.delete(save=False)
 
         # зберігаємо у FileField (MEDIA)
-
         super().save(update_fields=["css_file"])
 
     def __str__(self):
