@@ -21,7 +21,7 @@ class PostForm(forms.ModelForm):
 class ThreadForm(forms.ModelForm):
     class Meta:
         model = Thread
-        fields = ['category', 'theme','description', 'is_closed', 'image']
+        fields = ['theme','description', 'is_closed', 'image']
     widgets = {
         'image':forms.ImageField()
     }

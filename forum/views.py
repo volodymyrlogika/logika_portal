@@ -72,14 +72,20 @@ class ThreadCreateView(LoginRequiredMixin, CreateView, СheckUserAdminMixin):
     form_class = ThreadForm
     # success_url = ("forum/home/")
 
-    def form_valid(self, form):
+    def form_valid(self, form, *args, **kwargs):
         form.instance.author = self.request.user
-        status = self.create_thread_button()
+        status = self.create_thread_button()###викликаєм перевірк статус
+        category_id = self.kwargs["category_id"]      # пдіставляє м url
+        form.instance.category_id = category_id ## без цього не юуде працювати
+
+
         if status == True:
             valid = super().form_valid(form)
             return valid
         else:
-            valid = super().form_invaid(form)
+            print("form invalid")
+            valid = super().form_invalid(form)
+
             return valid
 
     def get_success_url(self, *args, **kwargs):
