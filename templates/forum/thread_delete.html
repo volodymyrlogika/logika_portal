@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>сторінка видалення теми адміістраторів</h3>
+    <div class="container">
+
+        <h2>видаленння завдань</h2>
+        <p>ви впевненні що хочите видалити завдвння "{{ thread.id }}"?</p>
+    
+    
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn bnt-danger">так видалити</button>
+            <a href="{% url 'forum:thread-list' category_id=category_id %}" class = "btn btn-secondary">ні поверутись до списку завдань</a>
+    
+        </form>
+    
+    </div>
+{% endblock content %}

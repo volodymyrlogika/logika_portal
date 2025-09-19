@@ -15,8 +15,8 @@
     <li class="post-item">
         <p class="post-author">{{ post.author }}:</p>
         <p class="post-content">{{ post.content_text }}</p>
-        <a class = "btn btn-warning justify-content-between align-items-center bi-trash" href="{% url 'forum:post-list-delete' category_id=category_id thread_id=thread_id pk=post.pk%}">видалити</a>
-        <a class = "btn btn-secondary justify-content-between align-items-center" href="{% url "forum:post-list-update" category_id=category_id thread_id=thread_id pk=post.pk%}">редагувати </a>
+        <a class = "btn btn-warning justify-content-between align-items-center bi-trash" href="{% url 'forum:post-delete' category_id=category_id thread_id=thread_id pk=post.pk%}">видалити</a>
+        <a class = "btn btn-secondary justify-content-between align-items-center" href="{% url "forum:post-update" category_id=category_id thread_id=thread_id pk=post.pk%}">редагувати </a>
 
 
         {% if post.files %}
@@ -35,7 +35,19 @@
         <div class="reply-item">
             <p class="reply-content">{{ reply.content_text }}</p>
             <p class="reply-author">{{ reply.author }}</p>
-        </div>
+            
+          {% if reply.files %}
+          {% if reply.files.url|endswith:"jpg" or reply.files.url|endswith:"png" or reply.files.url|endswith:".jpeg" %}
+          <img src="{{ reply.files.url }}" alt="files" class="post-image">
+          {% elif reply.files.url|endswith:".mp4" %}
+          <video controls class="post-video">
+              <source src="{{ reply.files.url }}" type="video/mp4">Ваш браузер не підтримує відео
+          </video>
+          {% else %}
+          <a href="{{ reply.files.url }}" class="post-file-link">Завантажити файл</a>
+          {% endif %}
+          {% endif %}
+          </div>
 
 
         {% endfor %}        
@@ -79,7 +91,7 @@
             <div id="collapse{{ post.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p>форма додавання</p>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ reply_form.as_p }} 
         <input type="hidden" name="post_id" value="{{ post.id }}">

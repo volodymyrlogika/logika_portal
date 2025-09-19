@@ -87,6 +87,40 @@ class ThreadCreateView(LoginRequiredMixin, CreateView, СheckUserAdminMixin):
         return reverse_lazy("forum:thread-list", kwargs={"category_id": category_id}) ####то мені чот гпт підказав бо я хз чо варіант занизу не преренаправляв
         # return reverse_lazy("forum:thread-list", category_id = category_id)
 
+class ThreadDeleteView(LoginRequiredMixin, DeleteView):
+    model = Thread
+    template_name = "forum/thread_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "forum:thread-list",
+        kwargs={
+            "category_id": self.kwargs["category_id"],
+        },
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_id'] = self.kwargs['category_id']
+        return context
+
+class ThreadUpdateView(LoginRequiredMixin, UpdateView):
+    model = Thread
+    form_class = ThreadForm
+    template_name = "forum/thread_update.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "forum:thread-list",
+            kwargs={
+                "category_id":self.kwargs["category_id"],
+            }
+        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_id'] = self.kwargs['category_id']
+        return context
+    
 class PostList(LoginRequiredMixin,ListView):
     model = models.Post
     context_object_name = "posts"
@@ -121,7 +155,6 @@ class PostList(LoginRequiredMixin,ListView):
                 if post_id:
                     post = get_object_or_404(Post, id=post_id)
                     reply.post = post
-
                     reply.save()
                 thread_id = self.kwargs.get("thread_id")
                 category_id = self.kwargs.get("category_id")

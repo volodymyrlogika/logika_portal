@@ -30,3 +30,6 @@ class ReplyPostForm(forms.ModelForm):
     class Meta:
         model = ReplyPost
         fields = ["content_text", "files"]
+    widgets = {
+        'files':forms.FileInput()
+    }

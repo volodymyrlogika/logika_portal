@@ -49,8 +49,5 @@ class ReplyPost(models.Model):
     content_text = models.TextField(null=False, verbose_name="текст контенту")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата створення")
     files = models.FileField(upload_to="reply_post/", null=True, blank=True)
-    
-
-
     def __str__(self):
-        return self
+        return self.content_text

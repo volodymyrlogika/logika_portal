@@ -29,7 +29,7 @@
 </ul> {% endcomment %}
 
 
-<div class="row row-cols-3 row-cols-md-4 g-4 ">
+<div class="row row-cols-3 row-cols-md-3 g-4 ">
     {% for thread in threads %}
     <div class="col">
       <div class="card h-100">
@@ -40,11 +40,15 @@
         {% endif %}
         <div class="card-body">
 
+          <a href="{% url 'forum:thread-delete' category_id=category_id pk=thread.pk %}" class="btn btn-primary btn-sm">del</a>
+          <a href="{% url 'forum:thread-update' category_id=category_id pk=thread.pk %}" class="btn btn-primary btn-sm">update</a>
+
           <h5 class="card-title">{{ thread.theme }}</h5>
           <p class="card-text">{{ thread.description|truncatechars:40 }}</p>
+  
           <p>{{ thread.date_start }}</p>
           <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}" class="btn btn-primary">Go somewhere</a>
-        
+
         </div>
       </div>
     </div> 
