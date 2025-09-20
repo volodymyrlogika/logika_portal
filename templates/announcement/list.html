@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Оголошення</h2>
+<div class="d-flex flex-wrap gap-3">
+  {% for ann in announcements %}
+<div class="card" style="max-width: 20rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{ ann.title }}</h5>
+    <p class="card-text">{{ann.content}}</p>
+    <p class="card-text"><small class="text-body-secondary">{{ ann.created_at|date:"d.m.Y H:i" }}</small></p>
+  </div>
+  <a href="{% url 'announcement_detail' ann.pk %}" class="stretched-link">
+    </a>
+    {% if ann.image %}
+      <img src="{{ann.image.url}}" class="card-img-bottom" alt="...">
+    {% endif %}
+  
+</div>
+    
+  {% empty %}
+    <p class="text-muted">Немає оголошень</p>
+  {% endfor %}
+</div>
+
+{% if user.is_authenticated  and request.user.is_staff %}
+  <a href="{% url 'announcement_create' %}" class="btn btn-success mt-3"> Створити оголошення</a>
+{% endif %}
+{% endblock %}
+
+
