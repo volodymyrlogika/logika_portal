@@ -8,6 +8,7 @@ class Announcement(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="Створено")
     updated = models.DateTimeField(auto_now=True, verbose_name="Оновлено")
     is_published = models.BooleanField(default=True, verbose_name="Опубліковано")
+    image = models.ImageField(upload_to='announcements/', null=True, blank=True, verbose_name="Зображення")
 
     class Meta:
         ordering = ["created"]

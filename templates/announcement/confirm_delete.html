@@ -1,7 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <h2>Видалити оголошення?</h2>
-<p>Ви впевнені, що хочете видалити: <b>{{ announcement.title }}</b>?</p>
+<p>Ви впевнені, що хочете видалити <b>{{ announcement.title }}</b>?</p>
 <form method="post">
-  {% csrf_token %}
-  <button type="submit">✅ Так, видалити</button>
-  <a href="{% url 'announcement_list' %}">❌ Скасувати</a>
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger"> Так, видалити</button>
+    <a href="{% url 'announcement_list' %}" class="btn btn-secondary"> Скасувати</a>
 </form>
+{% endblock %}

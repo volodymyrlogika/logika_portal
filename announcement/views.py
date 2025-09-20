@@ -12,7 +12,7 @@ class ModeratorRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 # Список оголошень
 class AnnouncementListView(ListView):
     model = Announcement
-    template_name = "announcements/list.html"
+    template_name = "announcement/list.html"
     context_object_name = "announcements"
 
     def get_queryset(self):
@@ -21,14 +21,14 @@ class AnnouncementListView(ListView):
 # Деталі оголошення
 class AnnouncementDetailView(DetailView):
     model = Announcement
-    template_name = "announcements/detail.html"
+    template_name = "announcement/detail.html"
     context_object_name = "announcement"
 
 # Створення
 class AnnouncementCreateView(ModeratorRequiredMixin, CreateView):
     model = Announcement
-    fields = ["title", "content", "is_published"]
-    template_name = "announcements/form.html"
+    fields = ["title", "content", "is_published", "image"]
+    template_name = "announcement/form.html"
     success_url = reverse_lazy("announcement_list")
 
     def form_valid(self, form):
@@ -39,12 +39,12 @@ class AnnouncementCreateView(ModeratorRequiredMixin, CreateView):
 class AnnouncementUpdateView(ModeratorRequiredMixin, UpdateView):
     model = Announcement
     fields = ["title", "content", "is_published"]
-    template_name = "announcements/form.html"
+    template_name = "announcement/form.html"
     success_url = reverse_lazy("announcement_list")
 
 # Видалення
 class AnnouncementDeleteView(ModeratorRequiredMixin, DeleteView):
     model = Announcement
-    template_name = "announcements/confirm_delete.html"
+    template_name = "announcement/confirm_delete.html"
     success_url = reverse_lazy("announcement_list")
 

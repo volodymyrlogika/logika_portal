@@ -1,16 +1,29 @@
-<h1>Оголошення</h1>
+{% extends 'base.html' %}
 
-<ul>
+{% block content %}
+<h2>Оголошення</h2>
+<div class="list-group">
   {% for ann in announcements %}
-    <li>
-      <a href="{% url 'announcement_detail' ann.pk %}">{{ ann.title }}</a>
-      <small>{{ ann.created_at|date:"d.m.Y H:i" }}</small>
-    </li>
+    <a href="{% url 'announcement_detail' ann.pk %}" class="list-group-item list-group-item-action">
+      <strong>{{ ann.title }}</strong>
+      <small class="text-muted"> ({{ ann.created_at|date:"d.m.Y H:i" }})</small>
+    </a>
   {% empty %}
-    <li>Немає оголошень</li>
+    <p class="text-muted">Немає оголошень</p>
   {% endfor %}
-</ul>
+</div>
 
-{% if user.is_authenticated and (user.is_staff or user.groups.filter(name="Moderators").exists) %}
-  <a href="{% url 'announcement_create' %}"> Створити оголошення</a>
+{% if user.is_authenticated  and request.user.is_staff %}
+  <a href="{% url 'announcement_create' %}" class="btn btn-success mt-3"> Створити оголошення</a>
 {% endif %}
+{% endblock %}
+
+
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">announcement</h5>
+    <p class="card-text"> content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
