@@ -27,6 +27,6 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('', include('forum.urls')),
     path('votings/', include('voting_system.urls')),
-    path('', views.material, name='material'),
     path('announcement/', include('announcement.urls')),
+    path('materials/', include('material.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container text-center">
+    <div class="row" width: 85%>
+        <div class="col">
+            <h2>видалити матеріал</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <p>Ви впевнені, що хочете видалити матеріал "{{ material.name }}"?</p>
+                <button type="submit" class="btn btn-danger">Так, видалити</button>
+                <a class="btn btn-secondary" href="{% url 'material' %}" role="button">Скасувати</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
