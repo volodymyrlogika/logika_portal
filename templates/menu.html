@@ -1,3 +1,81 @@
-<header>
-    
-</header>
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <div class="container-fluid">
+    <!-- Логотип -->
+    <a class="navbar-brand fw-bold" href="/">
+      <i class="bi bi-grid-3x3-gap-fill me-1"></i> Logika Portal
+    </a>
+
+    <!-- Кнопка для мобільного меню -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Меню -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'workshops:home' %}">
+            <i class="bi bi-journal-text me-1"></i> Воркшопи
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'gallery:home' %}">
+            <i class="bi bi-image me-1"></i> Галерея
+          </a>
+        </li>
+
+        <!-- Дропменю Теми -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="themesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-palette me-1"></i> Теми
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="themesDropdown">
+            <li><a class="dropdown-item" href="{% url 'themes:theme_list' %}"><i class="bi bi-list"></i> Всі теми</a></li>
+            <li><a class="dropdown-item" href="{% url 'themes:theme_create' %}"><i class="bi bi-plus-circle"></i> Додати тему</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'themes:set_theme' %}"><i class="bi bi-magic"></i> Перемкнути тему</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Права частина -->
+<!-- Дропменю перемикання тем -->
+<li class="nav-item dropdown">
+  <button class="btn nav-link dropdown-toggle d-flex align-items-center" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i id="themeIcon" class="bi bi-palette me-1"></i> Тема
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+    {% for theme in themes_list %}
+      <li>
+        <a class="dropdown-item {% if theme.slug == active_theme_slug %}active{% endif %}" href="#" data-theme="{{ theme.slug }}">
+          <i class="bi bi-palette"></i> {{ theme.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</li>
+
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i> {{ user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Профіль</a></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'login' %}">
+              <i class="bi bi-box-arrow-in-right"></i> Увійти
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

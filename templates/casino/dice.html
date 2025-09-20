@@ -1,0 +1,74 @@
+<div class="card shadow-lg mb-4">
+  <div class="card-body text-center">
+    <h3><i class="bi bi-dice-2"></i> Кубик</h3>
+
+    <div class="dice-wrapper">
+      <i id="diceResult" class="bi bi-dice-1 dice"></i>
+    </div>
+
+    <button class="btn btn-primary mt-3" onclick="rollDice()">
+      <i class="bi bi-arrow-repeat"></i> Кинути
+    </button>
+  </div>
+</div>
+
+<style>
+.dice-wrapper {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.dice {
+  font-size: 4rem;
+  display: inline-block;
+}
+
+
+
+
+
+@keyframes bounceAnim {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.3); }
+  60%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+</style>
+
+<script>
+const diceFaces = [
+  "bi-dice-1",
+  "bi-dice-2",
+  "bi-dice-3",
+  "bi-dice-4",
+  "bi-dice-5",
+  "bi-dice-6"
+];
+
+function rollDice() {
+  const diceEl = document.getElementById("diceResult");
+
+  diceEl.classList.add("spin");
+
+  let interval = setInterval(() => {
+    let rand = diceFaces[Math.floor(Math.random() * 6)];
+    diceEl.className = "bi " + rand + " dice";
+  }, 100);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    diceEl.classList.remove("spin");
+
+    let result = diceFaces[Math.floor(Math.random() * 6)];
+    diceEl.className = "bi " + result + " dice";
+
+    diceEl.classList.add("bounce");
+    setTimeout(() => diceEl.classList.remove("bounce"), 400);
+
+  }, 1000);
+}
+</script>

@@ -1,0 +1,89 @@
+/* ===== Light Theme Styles ===== */
+body[data-bs-theme="light"] {
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+  font-family: 'Montserrat', sans-serif;
+
+  /* ✅ фон: якщо є змінна --theme-bg → використовуємо її, інакше світлий градієнт */
+  background: var(--theme-bg, linear-gradient(180deg, #ffffff 0%, #f1f3f5 100%)) center/cover no-repeat fixed;
+}
+
+/* Якщо режим = tile */
+body[data-bs-theme="light"][data-bg-mode="tile"] {
+  background: var(--theme-bg) repeat !important;
+}
+
+/* Якщо режим = dim (затемнення) */
+body[data-bs-theme="light"][data-bg-mode="dim"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--theme-bg) center/cover no-repeat;
+  filter: brightness(0.85);
+  z-index: -1;
+}
+
+/* Navbar */
+body[data-bs-theme="light"] .navbar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #212529 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(6px);
+}
+
+/* Footer */
+body[data-bs-theme="light"] footer {
+  background: #f8f9fa !important;
+  color: #666 !important;
+}
+
+/* Cards */
+body[data-bs-theme="light"] .card {
+  background: #fff !important;
+  color: #212529 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+body[data-bs-theme="light"] .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Text */
+body[data-bs-theme="light"] .card .card-title,
+body[data-bs-theme="light"] .card .card-text {
+  color: #212529 !important;
+}
+
+/* Buttons */
+body[data-bs-theme="light"] .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+  box-shadow: 0 0 6px rgba(13, 110, 253, 0.4);
+}
+body[data-bs-theme="light"] .btn-primary:hover {
+  box-shadow: 0 0 12px rgba(13, 110, 253, 0.7);
+}
+
+body[data-bs-theme="light"] .btn-success {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+  box-shadow: 0 0 6px rgba(25, 135, 84, 0.4);
+}
+body[data-bs-theme="light"] .btn-success:hover {
+  box-shadow: 0 0 12px rgba(25, 135, 84, 0.7);
+}
+
+body[data-bs-theme="light"] .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #000;
+  box-shadow: 0 0 6px rgba(255, 193, 7, 0.4);
+}
+body[data-bs-theme="light"] .btn-warning:hover {
+  box-shadow: 0 0 12px rgba(255, 193, 7, 0.7);
+}

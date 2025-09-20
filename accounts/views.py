@@ -23,8 +23,3 @@ class RegisterView(CreateView):
     template_name = 'accounts/register.html'
     form_class = RegisterForm
     success_url = reverse_lazy('login')
-
-def material(request):
-    materials = Material.objects.all()
-
-    return render(request, 'material/material.html', {'materials': materials})

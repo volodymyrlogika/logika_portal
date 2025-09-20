@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1 class="fw-bold">Вітаємо у Logika Portal</h1>
+    <p class="lead">Ваш центр для воркшопів, галереї та керування темами</p>
+
+    <div class="row g-4 mt-4">
+        <!-- Воркшопи -->
+        <div class="col-md-4">
+            <div class="card shadow-lg p-4">
+                <div class="card-body text-center">
+                    <i class="bi bi-journal-text display-4 text-primary"></i>
+                    <h5 class="card-title mt-3">Воркшопи</h5>
+                    <p class="card-text">Переглядайте та приєднуйтесь до воркшопів</p>
+                    <a href="{% url 'workshops:list' %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle"></i> Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Галерея -->
+        <div class="col-md-4">
+            <div class="card shadow-lg p-4">
+                <div class="card-body text-center">
+                    <i class="bi bi-image display-4 text-success"></i>
+                    <h5 class="card-title mt-3">Галерея</h5>
+                    <p class="card-text">Дивіться фото та відео з наших подій</p>
+                    <a href="{% url 'gallery:home' %}" class="btn btn-success">
+                        <i class="bi bi-arrow-right-circle"></i> Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Теми -->
+        <div class="col-md-4">
+            <div class="card shadow-lg p-4">
+                <div class="card-body text-center">
+                    <i class="bi bi-palette display-4 text-warning"></i>
+                    <h5 class="card-title mt-3">Теми</h5>
+                    <p class="card-text">Налаштуйте вигляд порталу</p>
+                    <a href="{% url 'themes:theme_list' %}" class="btn btn-warning">
+                        <i class="bi bi-arrow-right-circle"></i> Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+</style>
+{% endblock %}

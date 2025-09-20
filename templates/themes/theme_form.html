@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Створити тему{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg rounded-4">
+        <div class="card-body">
+          <h2 class="fw-bold mb-4">Створити тему</h2>
+
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Назва -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Назва теми:</label>
+              <div class="col-sm-9">
+                {{ form.name|add_class:"form-control" }}
+                {% if form.name.errors %}
+                  <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Фон -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">
+                Колір фону:
+                <i class="bi bi-exclamation-circle text-warning ms-1"
+                   data-bs-toggle="tooltip"
+                   title="Увага! Якщо вибрано фонове зображення, колір фону не буде застосовано.">
+                </i>
+              </label>
+              <div class="col-sm-9 d-flex align-items-center">
+                {{ form.background_color|add_class:"form-control form-control-color me-2" }}
+                <span id="bgColorValue">{{ form.background_color.value }}</span>
+                {% if form.background_color.errors %}
+                  <div class="text-danger small mt-1">{{ form.background_color.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Фонове зображення -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Фонове зображення:</label>
+              <div class="col-sm-9">
+                {{ form.background_image|add_class:"form-control" }}
+                {% if form.background_image.errors %}
+                  <div class="text-danger small mt-1">{{ form.background_image.errors.0 }}</div>
+                {% endif %}
+
+                <!-- превʼю -->
+                <div id="image-preview" class="mt-3 text-center" style="display:none;">
+                  <img id="preview-img" src="" alt="Превʼю зображення" class="img-fluid rounded shadow" style="max-height:150px;">
+                </div>
+
+
+            <!-- Шрифти -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Шрифт:</label>
+              <div class="col-sm-9">
+                {{ form.font_family|add_class:"form-select" }}
+                {% if form.font_family.errors %}
+                  <div class="text-danger small mt-1">{{ form.font_family.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Кастомний CSS -->
+            <div class="mb-3 row">
+              <label class="col-sm-3 col-form-label">Додатковий CSS:</label>
+              <div class="col-sm-9">
+                {{ form.custom_css|add_class:"form-control" }}
+                {% if form.custom_css.errors %}
+                  <div class="text-danger small mt-1">{{ form.custom_css.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Попередній перегляд -->
+            <div class="mb-4">
+              <label class="form-label">Попередній перегляд:</label>
+              <div id="themePreview" class="p-5 rounded border text-center" 
+                  style="min-height: 300px; height: 50vh; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center;">
+                Це приклад тексту у вибраній темі.
+              </div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex justify-content-start gap-2">
+              <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> Зберегти</button>
+              <a href="{% url 'themes:theme_list' %}" class="btn btn-secondary">⬅ Назад</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS для оновлення прев'ю -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const bgPicker = document.querySelector("#id_background_color");
+  const fontSelect = document.querySelector("#id_font_family");
+  const customCSS = document.querySelector("#id_custom_css");
+  const bgValue = document.querySelector("#bgColorValue");
+  const preview = document.querySelector("#themePreview");
+
+  const imgInput = document.getElementById("id_background_image");
+  const imgPreviewBox = document.getElementById("image-preview");
+  const imgPreview = document.getElementById("preview-img");
+  const bgModeSelect = document.getElementById("id_background_mode");
+
+  let bgImageUrl = "";
+
+  function updatePreview() {
+    // шрифт
+    preview.style.fontFamily = fontSelect.value || "inherit";
+
+    // фон
+    if (bgImageUrl) {
+      // якщо є картинка – ставимо її
+      if (bgModeSelect.value === "cover") {
+        preview.style.background = `url(${bgImageUrl}) center/cover no-repeat`;
+      } else if (bgModeSelect.value === "contain") {
+        preview.style.background = `url(${bgImageUrl}) center/contain no-repeat`;
+      } else if (bgModeSelect.value === "repeat") {
+        preview.style.background = `url(${bgImageUrl}) repeat`;
+      } else if (bgModeSelect.value === "dim") {
+        preview.style.background =
+          `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${bgImageUrl}) center/cover no-repeat`;
+      }
+    } else {
+      // якщо картинки немає – чистимо background і ставимо тільки колір
+      preview.style.background = bgPicker.value;
+    }
+
+    // відображаємо вибраний колір
+    bgValue.textContent = bgPicker.value;
+
+    // кастомний CSS
+    let customStyleTag = document.getElementById("previewCustomCSS");
+    if (!customStyleTag) {
+      customStyleTag = document.createElement("style");
+      customStyleTag.id = "previewCustomCSS";
+      document.head.appendChild(customStyleTag);
+    }
+    customStyleTag.innerHTML = `#themePreview { ${customCSS.value} }`;
+  }
+
+  // слухачі
+  if (bgPicker) bgPicker.addEventListener("input", updatePreview);
+  if (fontSelect) fontSelect.addEventListener("change", updatePreview);
+  if (customCSS) customCSS.addEventListener("input", updatePreview);
+  if (bgModeSelect) bgModeSelect.addEventListener("change", updatePreview);
+
+  // превʼю зображення
+  if (imgInput) {
+    imgInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          bgImageUrl = e.target.result;
+          imgPreview.src = bgImageUrl;
+          imgPreviewBox.style.display = "block";
+          updatePreview();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        bgImageUrl = "";
+        imgPreviewBox.style.display = "none";
+        updatePreview();
+      }
+    });
+  }
+
+  updatePreview();
+
+  // Bootstrap tooltip init
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+});
+</script>
+
+{% endblock %}

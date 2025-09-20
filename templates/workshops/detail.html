@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+  {% if workshop.theme and workshop.theme.css_file %}
+    <link rel="stylesheet" href="{{ workshop.theme.css_file.url }}">
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm bg-dark text-light rounded-4 mb-4">
+    <div class="card-body">
+      <h1 class="mb-3">{{ workshop.title }}</h1>
+
+      <div class="text-muted mb-3">
+        {% if workshop.start_at %}
+          <i class="bi bi-calendar-event"></i> {{ workshop.start_at|date:"d.m.Y H:i" }}
+        {% endif %}
+        {% if workshop.location %}
+          • <i class="bi bi-geo-alt"></i> {{ workshop.location }}
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        {{ workshop.description|linebreaks }}
+      </div>
+
+      {% if workshop.theme %}
+        <div class="card shadow-sm mb-4"
+             style="
+               {% if workshop.theme.bg_color %}background-color: {{ workshop.theme.bg_color }};{% endif %}
+               {% if workshop.theme.font_family %}font-family: {{ workshop.theme.font_family }};{% endif %}
+             ">
+          <div class="card-body">
+            {% if workshop.theme.image %}
+              <img src="{{ workshop.theme.image.url }}"
+                   alt="{{ workshop.theme.name }}"
+                   class="img-fluid rounded mb-3">
+            {% endif %}
+
+            <h3 class="fw-bold">{{ workshop.theme.name }}</h3>
+
+            {% if workshop.theme.description %}
+              <p class="mb-2">{{ workshop.theme.description }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if user.is_authenticated and workshop.created_by == user %}
+        <div class="d-flex gap-2">
+          {% if not workshop.is_published %}
+            <form method="post" action="{% url 'workshops:publish' workshop.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-upload"></i> Опублікувати
+              </button>
+            </form>
+          {% endif %}
+          <a href="{% url 'workshops:update' workshop.slug %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Редагувати
+          </a>
+          <a href="{% url 'workshops:delete' workshop.slug %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Видалити
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if workshop.gallery_items.exists %}
+    <h3 class="mb-3">Галерея</h3>
+    <div class="row">
+      {% for item in workshop.gallery_items.all %}
+        <div class="col-md-4 mb-3">
+          <div class="card h-100 shadow-sm">
+            {% if item.media_type == "image" %}
+              <img src="{{ item.file.url }}" class="card-img-top rounded" alt="{{ item.title }}">
+            {% elif item.media_type == "video" %}
+              <video class="w-100 rounded" controls>
+                <source src="{{ item.file.url }}" type="video/mp4">
+              </video>
+            {% endif %}
+            <div class="card-body">
+              <h6 class="card-title">{{ item.title }}</h6>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

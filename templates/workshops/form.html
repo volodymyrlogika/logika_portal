@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm bg-dark text-light rounded-4">
+    <div class="card-body">
+      <h1 class="h4 mb-4">
+        {% if form.instance.pk %}
+          Редагувати воркшоп
+        {% else %}
+          Створити новий воркшоп
+        {% endif %}
+      </h1>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+          {{ form.title.label_tag }}
+          {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.description.label_tag }}
+          {{ form.description }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.theme.label_tag }}
+          {{ form.theme }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.start_at.label_tag }}
+          {{ form.start_at }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.location.label_tag }}
+          {{ form.location }}
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-lg"></i> Зберегти
+          </button>
+          <a href="{% url 'workshops:list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Назад
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

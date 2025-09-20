@@ -1,30 +1,50 @@
-"""
-URL configuration for logika_portal project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-logika_portals:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 from django.conf.urls.static import static
-from accounts import views
+from django.contrib.auth.views import LogoutView
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
 
-from . import settings
+# ✅ кастомний LogoutView з підтримкою GET
+class CustomLogoutView(LogoutView):
+    next_page = 'main:home'
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+# ✅ кастомна реєстрація
+def register_view(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")  # після реєстрації → на логін
+    else:
+        form = UserCreationForm()
+    return render(request, "register.html", {"form": form})
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('main.urls')),
-    path('', include('accounts.urls')),
-    path('', include('forum.urls')),
-    path('', views.material, name='material'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("admin/", admin.site.urls),
+    path("", include("main.urls")),
+    path("gallery/", include("gallery.urls")),
+    path("workshops/", include("workshops.urls")),
+    path("casino/", include("casino.urls")),
+
+    # accounts
+    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("logout/", CustomLogoutView.as_view(next_page="main:home"), name="logout"),
+    path("profiles/", include("profiles.urls")),
+
+    # ✅ themes (залишаємо тільки один include)
+    path("themes/", include(("themes.urls", "themes"), namespace="themes")),
+
+    # ✅ реєстрація
+    path("accounts/register/", register_view, name="register"),
+]
+
+# ✅ медіа тільки у DEBUG режимі
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,91 @@
+<div class="card shadow-lg mb-4">
+  <div class="card-body text-center">
+    <h3><i class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i> <i class="bi bi-scissors"></i> Камінь-Ножиці-Папір</h3>
+    
+    <div class="d-flex justify-content-center align-items-center my-4">
+      <i id="playerHand" class="bi bi-square-fill hand player"></i>
+      <div class="vs-text">VS</div>
+      <i id="cpuHand" class="bi bi-square-fill hand cpu"></i>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-danger" onclick="playRPS('rock')">
+        <i class="bi bi-square-fill"></i> Камінь
+      </button>
+      <button class="btn btn-success" onclick="playRPS('paper')">
+        <i class="bi bi-file-text"></i> Папір
+      </button>
+      <button class="btn btn-warning" onclick="playRPS('scissors')">
+        <i class="bi bi-scissors"></i> Ножиці
+      </button>
+    </div>
+
+    <p id="rpsMessage" class="mt-3 fw-bold"></p>
+  </div>
+</div>
+
+<style>
+.hand {
+  font-size: 5rem;
+  margin: 0 20px;
+  transition: transform 0.3s ease;
+}
+.vs-text {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 20px;
+}
+.shake {
+  animation: shake 0.6s infinite;
+}
+@keyframes shake {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-15px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
+</style>
+
+<script>
+function playRPS(playerChoice) {
+  const choices = ["rock", "paper", "scissors"];
+  const icons = {
+    rock: "bi-square-fill",
+    paper: "bi-file-text",
+    scissors: "bi-scissors"
+  };
+  const cpuChoice = choices[Math.floor(Math.random() * choices.length)];
+
+  const playerHand = document.getElementById("playerHand");
+  const cpuHand = document.getElementById("cpuHand");
+  const msgEl = document.getElementById("rpsMessage");
+
+  playerHand.className = "bi bi-square-fill hand player";
+  cpuHand.className = "bi bi-square-fill hand cpu";
+  msgEl.innerHTML = "";
+
+  playerHand.classList.add("shake");
+  cpuHand.classList.add("shake");
+
+  setTimeout(() => {
+    playerHand.classList.remove("shake");
+    cpuHand.classList.remove("shake");
+
+    playerHand.className = "bi " + icons[playerChoice] + " hand player";
+    cpuHand.className = "bi " + icons[cpuChoice] + " hand cpu";
+
+    if (playerChoice === cpuChoice) {
+      msgEl.innerHTML = `<i class="bi bi-emoji-neutral-fill text-info"></i> Нічия!`;
+    } else if (
+      (playerChoice === "rock" && cpuChoice === "scissors") ||
+      (playerChoice === "paper" && cpuChoice === "rock") ||
+      (playerChoice === "scissors" && cpuChoice === "paper")
+    ) {
+      msgEl.innerHTML = `<i class="bi bi-trophy-fill text-success"></i> Ти виграв!`;
+    } else {
+      msgEl.innerHTML = `<i class="bi bi-emoji-dizzy-fill text-danger"></i> CPU виграв!`;
+    }
+  }, 2000);
+}
+</script>

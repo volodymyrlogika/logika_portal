@@ -1,0 +1,151 @@
+<div class="card shadow-lg mb-4">
+  <div class="card-body text-center">
+    <h3><i class="bi bi-dice-5"></i> Слоти</h3>
+
+    <div class="slot-machine my-3">
+      <div class="reel"><div class="symbols" id="reel1"></div></div>
+      <div class="reel"><div class="symbols" id="reel2"></div></div>
+      <div class="reel"><div class="symbols" id="reel3"></div></div>
+    </div>
+
+    <button class="btn btn-warning btn-spin" onclick="spin()">
+      <i class="bi bi-arrow-repeat"></i> SPIN
+    </button>
+
+    <p id="slotMessage" class="mt-3 fw-bold fs-5"></p>
+  </div>
+</div>
+
+<style>
+.slot-machine {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #222;
+  padding: 20px;
+  border: 5px solid red;
+  border-radius: 15px;
+  width: 300px;
+  margin: auto;
+}
+.reel {
+  width: 80px;
+  height: 120px;
+  margin: 0 5px;
+  overflow: hidden;
+  border: 2px solid gold;
+  border-radius: 10px;
+  background: black;
+  text-align: center;
+  font-size: 3rem;
+  color: white;
+}
+.symbols {
+  display: flex;
+  flex-direction: column;
+}
+.symbol {
+  height: 120px;
+  line-height: 120px;
+}
+.reel-spin {
+  animation: reel-spin 0.15s linear infinite;
+  filter: blur(3px);
+}
+@keyframes reel-spin {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-120px); }
+}
+.reel-stop {
+  animation: bounce-stop 0.4s ease-out;
+}
+@keyframes bounce-stop {
+  0%   { transform: translateY(-20px); }
+  50%  { transform: translateY(10px); }
+  70%  { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+.btn-spin {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+</style>
+
+<script>
+const symbols = [
+  "bi-suit-heart-fill",
+  "bi-suit-diamond-fill",
+  "bi-suit-club-fill",
+  "bi-suit-spade-fill",
+  "bi-star-fill"
+];
+
+function fillReel(id) {
+  const reel = document.getElementById(id);
+  reel.innerHTML = "";
+  for (let i = 0; i < 20; i++) {
+    const sym = symbols[Math.floor(Math.random() * symbols.length)];
+    const div = document.createElement("div");
+    div.className = "symbol";
+    div.innerHTML = `<i class="bi ${sym}"></i>`;
+    reel.appendChild(div);
+  }
+}
+
+function stopReel(id) {
+  const reel = document.getElementById(id);
+  reel.classList.remove("reel-spin");
+  reel.style.filter = "none";
+
+  const sym = symbols[Math.floor(Math.random() * symbols.length)];
+  reel.innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "symbol";
+  div.innerHTML = `<i class="bi ${sym}"></i>`;
+  reel.appendChild(div);
+
+  reel.classList.add("reel-stop");
+  setTimeout(() => reel.classList.remove("reel-stop"), 400);
+
+  return sym;
+}
+
+function spin() {
+  document.getElementById("slotMessage").innerHTML = "";
+
+  fillReel("reel1");
+  fillReel("reel2");
+  fillReel("reel3");
+
+  const reel1 = document.getElementById("reel1");
+  const reel2 = document.getElementById("reel2");
+  const reel3 = document.getElementById("reel3");
+
+  reel1.classList.add("reel-spin");
+  reel2.classList.add("reel-spin");
+  reel3.classList.add("reel-spin");
+
+  setTimeout(() => {
+    const r1 = stopReel("reel1");
+    setTimeout(() => {
+      const r2 = stopReel("reel2");
+      setTimeout(() => {
+        const r3 = stopReel("reel3");
+
+        const messageEl = document.getElementById("slotMessage");
+        if (r1 === r2 && r2 === r3) {
+          messageEl.innerHTML = `<i class="bi bi-stars text-success"></i> Виграш!`;
+        } else {
+          messageEl.innerHTML = `<i class="bi bi-x-circle text-danger"></i> Спробуй ще!`;
+        }
+      }, 1000);
+    }, 1000);
+  }, 2000);
+}
+</script>

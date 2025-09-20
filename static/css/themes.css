@@ -1,0 +1,13 @@
+/* themes.css */
+
+/* світла */
+[data-theme="light"] {
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #212529;
+}
+
+/* темна */
+[data-theme="dark"] {
+  --bs-body-bg: #121212;
+  --bs-body-color: #f8f9fa;
+}

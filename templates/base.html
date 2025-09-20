@@ -1,28 +1,236 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% block title %} Сайт {% endblock %}
-    </title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <!-- Custom CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    {% include 'menu.html' %}
-    <main class="container my-4">
-    {% block content %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Логіка Портал{% endblock %}</title>
+  
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    {% endblock %}
-    </main>
-    {% include 'footer.html' %}
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    <script src="{% static 'js/script.js' %}"></script>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Cropper.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <!-- ✅ Theme CSS -->
+  {% if active_theme %}
+    <link id="themeStylesheet" rel="stylesheet" href="/static/css/themes/{{ active_theme.slug }}.css?v={{ active_theme.updated_at|date:'U' }}">
+  {% else %}
+    <link id="themeStylesheet" rel="stylesheet" href="{% static 'css/themes/light.css' %}">
+  {% endif %}
+
+
+  <!-- 🔹 Фон через CSS змінну -->
+  <style>
+    body {
+      background: var(--theme-bg) no-repeat center center fixed;
+      background-size: cover;
+    }
+  </style>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body 
+  class="d-flex flex-column min-vh-100 {{ active_theme.slug|default:'light' }}"
+  data-bs-theme="{{ active_theme.slug|default:'light' }}"
+  {% if active_theme.background_image %}
+    style="--theme-bg: url('{{ active_theme.background_image.url }}');"
+    data-bg-mode="{{ active_theme.background_mode }}"
+  {% endif %}
+>
+
+  <!-- Навбар -->
+  <nav class="navbar navbar-expand-lg shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="{% url 'main:home' %}">
+<img src="/media/logo.png" alt="Логіка Портал" style="width: 60x; height: 60px;">
+Логіка Портал
+
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <!-- Кнопка перемикання теми -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i id="themeIcon" class="bi"></i> Тема
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+              {% for theme in all_themes %}
+                {% if "test" not in theme.slug %}
+                  <li><a class="dropdown-item theme-switch" href="#" data-slug="{{ theme.slug }}">{{ theme.name }}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </li>
+
+          <!-- Меню -->
+          <li class="nav-item"><a class="nav-link" href="{% url 'workshops:list' %}i> Воркшопи</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'gallery:home' %}"><i class="bi bi-images"></i> Галерея</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'themes:theme_list' %}"><i class="bi bi-palette"></i> Теми</a></li>
+          <li class="nav-item"><a class="nav-link text-danger fw-bold" href="{% url 'casino:home' %}"><i class="bi bi-dice-5-fill"></i> Казино</a></li>
+
+          <!-- Акаунт -->
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="{% url 'profiles:profile' %}">
+              {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="Avatar"
+                     class="rounded-circle me-2" width="32" height="32"
+                     data-bs-toggle="popover" data-bs-trigger="hover focus"
+                     data-bs-html="true"
+                     title="<strong>{{ user.username }}</strong>"
+                     data-bs-content="<div class='card shadow-sm border-0' style='width: 220px;'><div class='card-body p-2'><p class='mb-1'><small>{{ user.profile.bio|default:'(без біо)' }}</small></p></div></div>">
+              {% else %}
+                <i class="bi bi-person me-2"></i>
+              {% endif %}
+              Профіль
+            </a>
+          </li>
+          <a class="nav-link" href="{% url 'profiles:settings' %}"><i class="bi bi-gear"></i> Налаштування</a>
+          <li class="nav-item d-flex align-items-center">
+            <span class="nav-link">{{ user.username }}</span>
+            <form action="{% url 'logout' %}" method="post" class="ms-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link text-danger p-0">
+                <i class="bi bi-box-arrow-right"></i> Вийти
+              </button>
+            </form>
+          </li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Увійти</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Реєстрація</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Контент -->
+  <main class="container my-4 flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 mt-auto">
+    <p class="mb-0">&copy; {{ year }} Логіка Портал</p>
+  </footer>
+
+  <!-- KONAMI OVERLAY -->
+  <div id="konamiOverlay" role="dialog" aria-modal="true" aria-hidden="true"
+       style="display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+              background:rgba(0,0,0,0.85); z-index:2000;
+              flex-direction:column; align-items:center; justify-content:center;">
+      <iframe id="konamiVideo" width="560" height="315" src=""
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <button class="btn btn-danger mt-3" onclick="hideKonami()" aria-label="Закрити відео">
+        <i class="bi bi-x-lg"></i> Закрити
+      </button>
+  </div>
+
+  <!-- Konami JS -->
+  <script>
+      const overlay = document.getElementById('konamiOverlay');
+      const iframe = document.getElementById('konamiVideo');
+      const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'];
+      let buffer = [];
+
+      function showKonami() {
+          overlay.style.display = 'flex';
+          overlay.setAttribute('aria-hidden', 'false');
+          iframe.src = "https://www.youtube.com/embed/RV0VJNvcBFU?autoplay=1&controls=1&loop=1&playlist=RV0VJNvcBFU";
+      }
+      function hideKonami() {
+          overlay.style.display = 'none';
+          overlay.setAttribute('aria-hidden', 'true');
+          iframe.src = "";
+      }
+      document.addEventListener('keydown', (e) => {
+          buffer.push(e.code);
+          if (buffer.length > konamiCode.length) buffer.shift();
+          if (JSON.stringify(buffer) === JSON.stringify(konamiCode)) {
+              showKonami();
+              buffer = [];
+          }
+      });
+  </script>
+
+<!-- Theme Switch -->
+<script>
+const themeStylesheet = document.getElementById("themeStylesheet");
+
+function updateTheme(data) {
+    console.log("updateTheme called:", data);
+    
+    themeStylesheet.href = data.css_url + "?v=" + Date.now();
+    
+    // ставимо slug
+    document.body.setAttribute("data-bs-theme", data.slug);
+    document.body.className = document.body.className.replace(/\blight|dark\b/g, "") + " " + data.slug;
+    
+    // якщо бекенд дав фон → оновлюємо
+    if (data.background_url) {
+        document.body.style.setProperty("--theme-bg", `url(${data.background_url})`);
+        document.body.setAttribute("data-bg-mode", data.background_mode || "cover");
+        console.log("✅ background set:", document.body.style.getPropertyValue("--theme-bg"));
+    } else {
+        // 🧹 якщо фон відсутній → прибираємо старий
+        document.body.style.removeProperty("--theme-bg");
+        document.body.removeAttribute("data-bg-mode");
+        console.log("🧹 background cleared");
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const urlSetTheme = "{% url 'themes:set_theme' %}" || "/themes/set/";
+
+    document.querySelectorAll(".theme-switch").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            const slug = btn.dataset.slug;
+
+            fetch(urlSetTheme, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme: slug })
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log("server response:", data);
+                if (data.status === "ok") updateTheme(data);
+            })
+            .catch(err => console.error("fetch error:", err));
+        });
+    });
+});
+</script>
+
+
 </body>
 </html>
