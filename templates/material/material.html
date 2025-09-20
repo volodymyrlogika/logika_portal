@@ -21,11 +21,12 @@
                     <iframe src="{{m.yt_url}}" title="" style="width: 20%; height: 15%; border: none"  referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 {% endif %}
                 </div>
+                    <a class="btn btn-primary" href="{% url 'delet_material' m.id %}" role="button">delete</a>
         </div>
         <p></p>
     <p style="text-align: left;">{{m.creator}}</p>
-    <a class="btn btn-primary" href="{% url 'add_material' %}" role="button">Додати новиі матеріали</a>
-    </div>
+</div>
 </div>
 {% endfor %}
+<a class="btn btn-primary" href="{% url 'add_material' %}" role="button">Додати новиі матеріали</a>
 {% endblock %}

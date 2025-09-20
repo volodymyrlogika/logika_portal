@@ -23,3 +23,10 @@ def add_material(request):
             return render(request, 'material/add_material.html', {'error': 'Будь ласка, додайте файл, зображення або URL відео.'})
         return redirect('material')
     return render(request, 'material/add_material.html')
+
+def delet_material(request, material_id):
+    material = Material.objects.get(id=material_id)
+    if request.method == 'POST':
+        material.delete()
+        return redirect('material')
+    return render(request, 'material/delet_material.html', {'material': material})
