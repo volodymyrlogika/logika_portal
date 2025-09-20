@@ -2,6 +2,10 @@
 
 {% block content %}
 <h2>{{ announcement.title }}</h2>
+{% if announcement.image %}
+  <img src="{{ announcement.image.url}}" alt="" class="img-fluid mb-3" style="max-height: 400px; ">
+{% endif %}
+
 <p>{{ announcement.content }}</p>
 <p class="text-muted">Автор: {{ announcement.author.username }} | {{ announcement.created_at|date:"d.m.Y H:i" }}</p>
 

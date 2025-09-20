@@ -38,7 +38,7 @@ class AnnouncementCreateView(ModeratorRequiredMixin, CreateView):
 # Редагування
 class AnnouncementUpdateView(ModeratorRequiredMixin, UpdateView):
     model = Announcement
-    fields = ["title", "content", "is_published"]
+    fields = ["title", "content", "is_published", "image"]
     template_name = "announcement/form.html"
     success_url = reverse_lazy("announcement_list")
 
