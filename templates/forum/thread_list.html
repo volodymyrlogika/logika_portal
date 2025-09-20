@@ -39,15 +39,18 @@
         {% comment %} <img src="{% static 'img/standart_page_not_found.png' %}" class="card-img-top" alt="no image"> {% endcomment %}
         {% endif %}
         <div class="card-body">
-
+          {% if request.user == thread.author %}
+            
+          
           <a href="{% url 'forum:thread-delete' category_id=category_id pk=thread.pk %}" class="btn btn-primary btn-sm">del</a>
           <a href="{% url 'forum:thread-update' category_id=category_id pk=thread.pk %}" class="btn btn-primary btn-sm">update</a>
-
+        {% endif %}
+          <h6 class="card-title">{{ thread.author }}</h6>
           <h5 class="card-title">{{ thread.theme }}</h5>
           <p class="card-text">{{ thread.description|truncatechars:40 }}</p>
   
           <p>{{ thread.date_start }}</p>
-          <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}" class="btn btn-primary">Go somewhere</a>
+          <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}" class="btn btn-primary">перейти</a>
 
         </div>
       </div>

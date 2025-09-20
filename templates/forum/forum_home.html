@@ -20,7 +20,7 @@
     <div class="card-body">
       <h5 class="card-title">{{ category.name }}</h5>
       <p class="card-text">{{ category.description|truncatechars:75 }}</p>
-      <a href="{% url 'forum:thread-list' category_id=category.id %}" class="btn btn-primary">Go somewhere</a>
+      <a href="{% url 'forum:thread-list' category_id=category.id %}" class="btn btn-primary">перейти</a>
     </div>
   </div>
 

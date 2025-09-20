@@ -24,15 +24,37 @@
               <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрити"></button>
             </div>
             <div class="offcanvas-body">
-              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">                
+                <li class="nav-item">
+                  <p>{{ user.username }}</p>
+                </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'forum:categories' %}">Категорії</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#">Про форум</a>
                 </li>
-                <div>
+
+
+
                 {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit">Вийти</button>
+              </form>
+              {% else %}
+              <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Увійти</button>
+            </form>
+
+            <form action="{% url 'register' %}" method="post">
+              {% csrf_token %}
+              <button type="submit">Зарейструватися</button>
+          </form>
+          {% endif %}             
+
+               {% comment %} {% if user.is_authenticated %}
                 <li class="nav-item">
                   {% csrf_token %}
                   <a class="nav-link text-danger" href="{% url 'logout' %}">Вийти</a>
@@ -44,7 +66,7 @@
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'register' %}">Реєстрація</a>
                 </li>
-                {% endif %} 
+                {% endif %}   {% endcomment %}
               </ul></div>
 
 
