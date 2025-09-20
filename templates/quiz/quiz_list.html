@@ -10,6 +10,9 @@
 <body>
     <div class="container">
         <h1>Виберіть опитування</h1>
+        {% if user.is_staff %}
+            <a href="{% url 'quiz_admin' %}" class="btn">➕ Редагування</a>
+        {% endif %}
         <ul class="quiz-list">
             {% for quiz in quizzes %}
                 <li class="quiz-item">

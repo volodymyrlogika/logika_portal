@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-panel">
+    <h2>Панель керування опитуваннями</h2>
+    <p>Оберіть дію:</p>
+
+    <div class="buttons">
+        <a href="{% url 'create_quiz' %}" class="btn">Створити опитування</a>
+        <a href="{% url 'create_question' %}" class="btn">Створити питання</a>
+        <a href="{% url 'create_answer' %}" class="btn">Створити відповідь</a>
+    </div>
+</div>
+{% endblock %}
