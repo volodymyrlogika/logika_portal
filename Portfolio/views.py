@@ -17,7 +17,7 @@ def PortfolioCreated(request):
 
 def PortfolioListView(request):
     portfolio = Portfolio.objects.all()
-    return render(request, 'portfolio/portfolio_list.html', {'portfolio': Portfolio})
+    return render(request, 'portfolio/portfolio_list.html', {'portfolio': portfolio})
 
 
 # Create your views here.
