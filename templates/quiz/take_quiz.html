@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="survey-container">
+    <div class="survey-card">
+        <h1 class="survey-title">{{ quiz.name }}</h1>
+        <p class="survey-description">{{ quiz.discription }}</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div class="question-block">
+                <p class="question-text">{{ forloop.counter }}. {{ question.text }}</p>
+
+                {% if question.options.all %}
+                    <div class="options-group">
+                        {% for option in question.options.all %}
+                        <label class="option-item">
+                            <input 
+                                type="radio" 
+                                name="question_{{ question.id }}" 
+                                value="{{ option.id }}"
+                            >
+                            <span class="custom-radio"></span>
+                            {{ option.text }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <textarea 
+                        name="text_{{ question.id }}" 
+                        class="answer-textarea" 
+                        placeholder="Введіть вашу відповідь..."
+                    ></textarea>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="submit-container">
+                <button type="submit" class="submit-btn">Відправити</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Список опитувань</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Виберіть опитування</h1>
+        {% if user.is_staff %}
+            <a href="{% url 'quiz_admin' %}" class="btn">➕ Редагування</a>
+        {% endif %}
+        <ul class="quiz-list">
+            {% for quiz in quizzes %}
+                <li class="quiz-item">
+                    <a href="{% url 'take_quiz' quiz.id %}"> {{ quiz.name }} </a>
+                </li>
+            {% empty %}
+                <li>Немає доступних опитувань</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
+
+{% endblock %}
+

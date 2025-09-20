@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'main',
     'accounts',
     'forum',
+    'quiz',
     'voting_system',
     'material',
     'announcement',
