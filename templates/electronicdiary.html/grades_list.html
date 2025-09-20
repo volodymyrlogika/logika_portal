@@ -1,0 +1,29 @@
+{% extends "your_app/base.html" %}
+
+{% block title %}Оцінки{% endblock %}
+
+{% block content %}
+<h1>Оцінки учнів</h1>
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Учень</th>
+            <th>Урок</th>
+            <th>Оцінка</th>
+            <th>Дата</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for grade in grades %}
+        <tr>
+            <td>{{ grade.student.get_full_name }}</td>
+            <td>{{ grade.lesson.title }}</td>
+            <td>{{ grade.grade }}</td>
+            <td>{{ grade.date_creation|date:"d.m.Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Оцінок немає</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

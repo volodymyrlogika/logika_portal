@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Оцінки</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Оцінки всіх учнів</h2>
+        <table class="table table-bordered">
+            <thead class="table-success">
+                <tr>
+                    <th>№</th>
+                    <th>Ім’я</th>
+                    <th>Предмет</th>
+                    <th>Оцінка</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ grade.student_name }}</td>
+                    <td>{{ grade.subject }}</td>
+                    <td>{{ grade.score }}</td>
+                    <td>{{ grade.date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Оцінок поки немає</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'index' %}" class="btn btn-secondary mt-3">⬅ Назад на головну</a>
+    </div>
+</body>
+</html>
