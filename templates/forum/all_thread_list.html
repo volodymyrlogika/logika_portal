@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>всі теми обговорення</p>
+{% for thread in threds %}
+<p>{{ thread.theme }}</p>
+{% endfor %}
+
+{% endblock content %}

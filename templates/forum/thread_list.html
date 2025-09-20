@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>сторінка тем обговорення</h1>
+<div>
+    {% if status == True %}
+    
+        <a href="{% url 'forum:thread-create' category_id=category_id %}">
+            <h3>додати як адміністратор</h3>
+        </a>
+        {% else %}
+        <p></p>
+        {% endif %}
+</div>
+
+
+{% comment %} <h2>Треди категорії {{ category_id }}</h2>
+<ul>
+    {% for thread in threads %}
+ <li>
+            <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}">
+                {{ thread.theme }}
+            </a>
+        </li>
+
+        
+        {% endfor %}
+
+</ul> {% endcomment %}
+
+
+<div class="row row-cols-3 row-cols-md-3 g-4 ">
+    {% for thread in threads %}
+    <div class="col">
+      <div class="card h-100">
+        {% if thread.image %}
+        <img src="{{thread.image.url}}" class="card-img-top" alt="...">
+        {% else %}
+        {% comment %} <img src="{% static 'img/standart_page_not_found.png' %}" class="card-img-top" alt="no image"> {% endcomment %}
+        {% endif %}
+        <div class="card-body">
+          {% if request.user == thread.author %}
+            
+          
+          <a href="{% url 'forum:thread-delete' category_id=category_id pk=thread.pk %}" class="btn btn-primary btn-sm">del</a>
+          <a href="{% url 'forum:thread-update' category_id=category_id pk=thread.pk %}" class="btn btn-primary btn-sm">update</a>
+        {% endif %}
+          <h6 class="card-title">{{ thread.author }}</h6>
+          <h5 class="card-title">{{ thread.theme }}</h5>
+          <p class="card-text">{{ thread.description|truncatechars:40 }}</p>
+  
+          <p>{{ thread.date_start }}</p>
+          <a href="{% url 'forum:post-list' category_id=category_id thread_id=thread.id %}" class="btn btn-primary">перейти</a>
+
+        </div>
+      </div>
+    </div> 
+    {% endfor %}
+  </div>
+ 
+{% endblock content %}

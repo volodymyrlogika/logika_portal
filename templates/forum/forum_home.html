@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% comment %} {% for thread in threads %}
+
+<p>тема {{ thread.theme }}</p>
+{% endfor %} {% endcomment %}
+
+<div class = "room_list d-flex flex-wrap gap-3">
+{% for category in categories %}
+
+<div class="card" style="width: 18rem;">
+    {% if category.image %}
+    <img src="{{category.image.url}}" class="card-img-top" alt="...">
+    {% else %}
+    <img src="{% static 'img/standart_page_not_found.png' %}" class="card-img-top" alt="no image">
+    {% endif %}
+
+
+    <div class="card-body">
+      <h5 class="card-title">{{ category.name }}</h5>
+      <p class="card-text">{{ category.description|truncatechars:75 }}</p>
+      <a href="{% url 'forum:thread-list' category_id=category.id %}" class="btn btn-primary">перейти</a>
+    </div>
+  </div>
+
+
+{% endfor %}  </div>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>змінити тему</h2>
+
+<div class="container" >
+    <form action="" method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary" >оновити завдання</button>
+        <a href="{% url 'forum:thread-list' category_id=category_id %}" class = "btn btn-secondary">ні поверутись до списку завдань</a>
+
+    </form>
+</div>
+
+{% endblock content %}
