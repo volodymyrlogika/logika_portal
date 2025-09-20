@@ -93,7 +93,6 @@
             </h2>
             <div id="collapse{{ post.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
-                <p>форма додавання</p>
         <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ reply_form.as_p }} 
