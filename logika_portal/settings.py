@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'voting_system',
     'material',
     'announcement',
+    'event',
+
 ]
 
 MIDDLEWARE = [
