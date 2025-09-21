@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="mt-5">
   <div class="card shadow-lg rounded-3">
     <ul class="card-body">
       <h2 class="card-title text-center mb-4">{{ vote.name }}</h2>
@@ -46,6 +46,4 @@
       <a href="{% url 'vote-delete' vote.id %}" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
         </a>
       </div>
-  </div>
-</div>
 {% endblock %}

@@ -1,7 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container">
     <h2>Видалення голосування</h2>
     <p>Ви впевнені, що хочете видалити голосування "{{ object.name }}"?</p>
 
@@ -10,5 +9,4 @@
         <button type="submit" class="btn btn-danger">Так, видалити</button>
         <a href="{% url 'vote-list' %}" class="btn btn-secondary">Ні, повернутися до списку голосуваннь</a>
     </form>
-</div>
 {% endblock %}
