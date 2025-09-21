@@ -166,7 +166,7 @@ class PostList(LoginRequiredMixin,ListView):
                 category_id = self.kwargs.get("category_id")
                 return redirect('forum:post-list',category_id=category_id, thread_id=thread_id)
             else:
-                pass
+                pass 
 
         elif action == "post":
             post_form = PostForm(request.POST, request.FILES)
