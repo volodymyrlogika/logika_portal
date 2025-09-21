@@ -117,10 +117,30 @@
     <button type="submit" name="action" value="post" class="btn btn-primary">зберегти пост</button>
 </form>
 
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" name="action" value="cookies">Додати відповідь</button>
+</form>
 
+
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <nav aria-label="...">
+        <ul class="pagination pagination-lg">
+
+          {% for page_num in page_obj.paginator.page_range %}
+          {% if page_obj.number != page_num %}
+          <li class="page-item" aria-current="page">
+          {% else %}
+          <li class="page-item active" aria-current="page">
+            {% endif %}
+              <a class="page-link" href="?page={{ page_num }}" class="display: inline-block">{{ page_num }} </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
 {% endblock content %}
-
-
-
-
-

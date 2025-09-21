@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from forum import models
 from forum.forms import PostForm, ThreadForm, ReplyPostForm
 from django.urls import reverse_lazy, reverse
-
+from django.core.paginator import Paginator
 
 class AllCategoryListView(LoginRequiredMixin,ListView):
     model = Category
@@ -132,7 +132,7 @@ class PostList(LoginRequiredMixin,ListView):
     context_object_name = "posts"
     template_name = "forum/post_list.html"
     form_class = PostForm
-
+    paginate_by = 3
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["post_form"] = PostForm()
@@ -151,7 +151,13 @@ class PostList(LoginRequiredMixin,ListView):
         action = request.POST.get("action")
         # post_form = PostForm(request.POST, request.FILES)
         # reply_form = ReplyPostForm(request.POST, request.FILES)
+        if action == "cookies":
+            request.session['username'] = 'pipi'
+            return self.get(request, *args, **kwargs)
+        else:
+            pass
 
+    
         if action == "reply":
             reply_form = ReplyPostForm(request.POST, request.FILES)
             if reply_form.is_valid():

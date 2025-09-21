@@ -35,8 +35,6 @@
                   <a class="nav-link" href="#">Про форум</a>
                 </li>
 
-
-
                 {% if user.is_authenticated %}
                 <form action="{% url 'logout' %}" method="post">
                   {% csrf_token %}
