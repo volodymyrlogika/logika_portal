@@ -39,7 +39,7 @@ class VoteDetailView(LoginRequiredMixin, DetailView):
 
         return redirect('vote-list')
 
-#створення голосування
+
 @login_required
 def create_voting(request):
     form = CreateVotingForm()
