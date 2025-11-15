@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from accounts import views
+from announcement.views import AnnouncementListView
 
 from . import settings
 
@@ -27,6 +28,7 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('votings/', include('voting_system.urls')),
     path('announcement/', include('announcement.urls')),
+    path("", AnnouncementListView.as_view(), name="announcement_list"),
     path('materials/', include('material.urls')),
     path('forum/', include('forum.urls')),
     path('', include('event.urls')),
