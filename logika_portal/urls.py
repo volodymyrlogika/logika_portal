@@ -34,3 +34,8 @@ urlpatterns = [
     path('', include('event.urls')),
     path('', include('quiz.urls')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+admin.site.site_header = "LogikaPortal"
+admin.site.site_title = "Адмінка Сайту"
+admin.site.index_title = "Ласкаво просимо до адмінки"

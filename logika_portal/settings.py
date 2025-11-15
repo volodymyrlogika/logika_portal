@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,3 +143,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# JAZZMIN_SETTINGS = {
+#     # title of the window (Will default to current_admin_site.site_title if absent or None)
+#     "site_title": "Library Admin",
+#     }
